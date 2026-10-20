@@ -562,31 +562,70 @@ async function main() {
     s.addNotes("Impact, measured in people: Ria is believed, Mitali is protected, Ananya acts before the damage spreads. A pilot will measure these outcomes honestly. Women never pay; institutions that already have legal duties under the POSH Act fund it.");
   }
 
-  // ================= 16. CLOSING (full rani) =================
+  // ================= 16. CLOSING: the year, one dot per day =================
+  // Plum, like the cover, so the deck opens and closes on the same note. The calendar makes the
+  // closing line literal: 2026 as 365 dots, the five Kolkata Puja days (Shashthi 17 Oct to
+  // Dashami 21 Oct) lit white, and the other 360 in rani.
   pres.addSection({ title: "Closing" });
   {
-    const s = slide("Saakshi Pink Full", "Closing");
-    await imgW(s, asset("logo/seal-plum.png"), 7.85, 1.35, 4.8, "The Saakshi seal");
+    const s = slide("Saakshi Cover", "Closing");
+    await imgH(s, asset("logo/wordmark-on-dark.png"), M - 0.02, 0.62, 0.42, "Saakshi");
+    label(s, "Thank you", colX(9), 0.72, span(3), RANI_L, { align: "right" });
+
     anim(1, 0.4, 0.8);
-    serif(s, "For five days, we worship Shakti in every pandal.", { x: M, y: 1.3, w: span(7), h: 0.5, fontSize: TS.quote, color: ON_PINK });
-    anim(2, 0.7, 0.9);
-    serif(s, [{ text: "Saakshi is for", options: { breakLine: true } }, { text: "the other 360." }], {
-      x: M, y: 1.95, w: span(7), h: 2.32, fontSize: TS.big, color: "FFFFFF", lineSpacingMultiple: 0.95,
-    });
-    anim(3, 0.5, 0.7);
-    serif(s, "Every woman deserves a witness.", { x: M, y: 4.38, w: span(7), h: 0.5, fontSize: TS.quote, italic: true, color: PLUM });
-    anim(4, 0.4, 0.6);
-    t(s, [
-      { text: "ধন্যবাদ", options: { fontFace: BANGLA, fontSize: TS.quote, lang: "bn-IN" } },
-      { text: "     Thank you", options: { fontFace: SANS, fontSize: TS.body } },
-    ], { x: M, y: 5.12, w: span(6), h: 0.5, color: "FFFFFF", lineSpacingMultiple: 1.0, valign: "middle" });
+    serif(s, "For five days, we worship Shakti in every pandal.", { x: M, y: 1.45, w: span(9), h: 0.5, fontSize: TS.quote, italic: true, color: SOFT_D });
+    anim(2, 0.6, 0.9);
+    serif(s, [
+      { text: "Saakshi is for the other ", options: {} },
+      { text: "360", options: { color: RANI_L, italic: true } },
+      { text: "." },
+    ], { x: M, y: 2.0, w: CW, h: 1.2, fontSize: TS.big, color: "FFFFFF", lineSpacingMultiple: 0.95 });
+
+    // 2026 starts on a Thursday. Columns are weeks, rows run Monday to Sunday.
+    const P = CW / 53, D = 0.1, top = 3.95;
+    const jan1 = new Date(Date.UTC(2026, 0, 1));
+    const offset = (jan1.getUTCDay() + 6) % 7;
+    const puja = (m, d) => m === 9 && d >= 17 && d <= 21;
+    const at = (doy) => ({ x: M + Math.floor((doy + offset) / 7) * P + (P - D) / 2, y: top + ((doy + offset) % 7) * P + (P - D) / 2 });
+    anim(3, 0.3, 1.2);
+    for (let doy = 0; doy < 365; doy++) {
+      const day = new Date(jan1.getTime() + doy * 86400000);
+      if (puja(day.getUTCMonth(), day.getUTCDate())) continue;
+      const { x, y } = at(doy);
+      // 85% rani over plum: a touch softer, so the headline stays the loudest thing on the slide.
+      dot(s, x, y, D, "BA2060");
+    }
     still();
-    hline(s, M, 6.1, span(7), PINK_LINE);
-    [["Project", "Saakshi", 0], ["Team", "Appvengers", 3], ["Track", "02 · Dharma & Trust", 5]].forEach(([k, v, c]) => {
-      label(s, k, colX(c), 6.3, span(3), "FFFFFF");
-      t(s, v, { x: colX(c), y: 6.56, w: span(3), h: 0.3, fontSize: TS.small, color: "FFFFFF", lineSpacingMultiple: 1.0 });
+    "JFMAMJJASOND".split("").forEach((ch, m) => {
+      const doy = Math.round((Date.UTC(2026, m, 1) - jan1.getTime()) / 86400000);
+      t(s, ch, { x: at(doy).x - 0.02, y: top + 7 * P + 0.08, w: 0.3, h: 0.22, fontFace: SANS_M, fontSize: TS.label, color: "8C7383", lineSpacingMultiple: 1.0 });
     });
-    s.addNotes("For five days a year we celebrate Shakti in every pandal. Women live the other three hundred and sixty. Saakshi is built for those days, so that every woman, everywhere, has a witness. Thank you.");
+    anim(4, 0.5, 0.8);
+    const pujaDays = [];
+    for (let doy = 0; doy < 365; doy++) {
+      const day = new Date(jan1.getTime() + doy * 86400000);
+      if (puja(day.getUTCMonth(), day.getUTCDate())) pujaDays.push(at(doy));
+    }
+    pujaDays.forEach(({ x, y }) => dot(s, x, y, D, "FFFFFF"));
+    // Point at the top of the Puja column (Ashtami, Monday 19 Oct), not at a neighbouring day.
+    const head = pujaDays.reduce((a, b) => (b.y < a.y ? b : a));
+    const px = head.x + D / 2;
+    vline(s, px, 3.62, head.y - 0.06 - 3.62, "FFFFFF", 0.75);
+    label(s, "Durga Puja · 17–21 Oct", px - span(3) - 0.08, 3.5, span(3), "FFFFFF", { align: "right" });
+
+    anim(5, 0.5, 0.7);
+    hline(s, M, 6.18, CW, HAIR_D);
+    t(s, [
+      { text: "Every woman deserves a witness.", options: { fontFace: SERIF, italic: true, color: "FFFFFF" } },
+    ], { x: M, y: 6.42, w: span(6), h: 0.45, fontSize: TS.quote, lineSpacingMultiple: 1.0 });
+    t(s, [
+      { text: "ধন্যবাদ", options: { fontFace: BANGLA, color: RANI_L, lang: "bn-IN" } },
+      { text: "   ·   ", options: { fontFace: SANS, color: HAIR_D } },
+      { text: "धन्यवाद", options: { fontFace: DEVA, color: RANI_L, lang: "hi-IN" } },
+      { text: "   ·   ", options: { fontFace: SANS, color: HAIR_D } },
+      { text: "Team Appvengers", options: { fontFace: SANS, color: SOFT_D, fontSize: TS.small } },
+    ], { x: colX(6), y: 6.42, w: span(6), h: 0.45, fontSize: TS.lead, align: "right", lineSpacingMultiple: 1.0, valign: "middle" });
+    s.addNotes("For five days a year we celebrate Shakti in every pandal. Every dot here is a day of 2026: the five white ones are Durga Puja. Women live the other three hundred and sixty. Saakshi is built for those days, so that every woman, everywhere, has a witness. Thank you.");
   }
 
   await pres.writeFile({ fileName: OUT });
