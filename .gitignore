@@ -1,0 +1,26 @@
+# Secrets: never commit
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.vercel/
+.supabase/
+
+# Smart contract build output
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+
+# Old deck versions (the current deck stays in round1/)
+round1/archive-*/
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.log

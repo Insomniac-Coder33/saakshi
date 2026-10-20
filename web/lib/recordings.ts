@@ -1,0 +1,134 @@
+// Reading her recordings back: merges what's on the server with what's still in the local outbox,
+// and decrypts on the phone with her unlocked private key.
+import { decryptPiece, openSessionForReading } from "./crypto";
+import { getSession, localSessions, outbox, putSession, type LocalSession } from "./local";
+import { EVIDENCE_BUCKET, supabase } from "./supabase";
+import { drain } from "./sync";
+
+export interface PieceInfo {
+  kind: "media" | "location" | "text" | "image";
+  seq: number;
+  segment: number;
+  sha256: string;
+  size: number;
+  storagePath: string;
+  capturedAt: string;
+  local: Blob | null; // ciphertext still waiting in the outbox
+}
+
+export interface RecordingSummary {
+  session: LocalSession;
+  pieces: number;
+  pending: number;
+}
+
+/** Her recordings, newest first. Works offline from the local copy. */
+export async function listRecordings(): Promise<RecordingSummary[]> {
+  const [sessions, queued] = await Promise.all([localSessions(), outbox()]);
+  const counts = new Map<string, number>();
+  try {
+    const { data } = await supabase().from("pieces").select("session_id");
+    for (const row of data ?? []) counts.set(row.session_id, (counts.get(row.session_id) ?? 0) + 1);
+  } catch {
+    // Offline: show local counts only.
+  }
+  return sessions
+    .filter((s) => s.status !== "undone")
+    .map((s) => {
+      const pending = queued.filter((q) => q.sessionId === s.id).length;
+      return { session: s, pieces: (counts.get(s.id) ?? 0) + pending, pending };
+    })
+    .sort((a, b) => b.session.startedAt.localeCompare(a.session.startedAt));
+}
+
+export async function listPieces(sessionId: string): Promise<PieceInfo[]> {
+  const queued = (await outbox()).filter((q) => q.sessionId === sessionId);
+  const { data, error } = await supabase()
+    .from("pieces")
+    .select("kind, seq, segment, sha256, size, storage_path, captured_at")
+    .eq("session_id", sessionId);
+  const remote: PieceInfo[] = error
+    ? []
+    : (data ?? []).map((r) => ({
+        kind: r.kind,
+        seq: r.seq,
+        segment: r.segment,
+        sha256: r.sha256,
+        size: r.size,
+        storagePath: r.storage_path,
+        capturedAt: r.captured_at,
+        local: null,
+      }));
+  const seen = new Set(remote.map((p) => `${p.kind}:${p.seq}`));
+  for (const q of queued) {
+    if (seen.has(`${q.kind}:${q.seq}`)) continue;
+    remote.push({
+      kind: q.kind,
+      seq: q.seq,
+      segment: q.segment,
+      sha256: q.sha256,
+      size: q.size,
+      storagePath: q.storagePath,
+      capturedAt: q.capturedAt,
+      local: q.body,
+    });
+  }
+  return remote.sort((a, b) => (a.kind === b.kind ? a.seq - b.seq : a.kind.localeCompare(b.kind)));
+}
+
+async function cipherOf(p: PieceInfo): Promise<Uint8Array<ArrayBuffer>> {
+  if (p.local) return new Uint8Array(await p.local.arrayBuffer());
+  const { data, error } = await supabase().storage.from(EVIDENCE_BUCKET).download(p.storagePath);
+  if (error || !data) throw error ?? new Error("download failed");
+  return new Uint8Array(await data.arrayBuffer());
+}
+
+export interface Decrypted {
+  media: Blob[]; // one playable file per segment, in order
+  locations: { lat: number; lng: number; accuracy: number; at: string }[];
+}
+
+/** Decrypts a whole recording on the phone. Each segment's pieces join back into one playable file. */
+export async function decryptRecording(
+  session: LocalSession,
+  pieces: PieceInfo[],
+  privateKey: CryptoKey,
+): Promise<Decrypted> {
+  const key = await openSessionForReading(privateKey, session.ephemeralPublicKey, session.id);
+  const plain = await Promise.all(pieces.map(async (p) => ({ p, bytes: await decryptPiece(key, await cipherOf(p)) })));
+  const segments = new Map<number, ArrayBuffer[]>();
+  for (const x of plain.filter((x) => x.p.kind === "media")) {
+    segments.set(x.p.segment, [...(segments.get(x.p.segment) ?? []), x.bytes]);
+  }
+  const decoder = new TextDecoder();
+  const locations = plain
+    .filter((x) => x.p.kind === "location")
+    .map((x) => JSON.parse(decoder.decode(x.bytes)) as Decrypted["locations"][number]);
+  return {
+    media: [...segments.keys()]
+      .sort((a, b) => a - b)
+      .map((k) => new Blob(segments.get(k)!, { type: session.mime ?? "video/webm" })),
+    locations,
+  };
+}
+
+/** Erasure of one recording: marked here at once, removed from the server on the next sync. */
+export async function deleteRecording(sessionId: string): Promise<void> {
+  const s = await getSession(sessionId);
+  if (!s) return;
+  await putSession({ ...s, status: "undone", dirty: true });
+  await drain();
+}
+
+export function recordingTitle(iso: string, locale: string): string {
+  const d = new Date(iso);
+  const day = d.toLocaleDateString(locale, { weekday: "long" });
+  const time = d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" });
+  const h = d.getHours();
+  const part = h >= 21 || h < 4 ? "night" : h >= 17 ? "evening" : h >= 12 ? "afternoon" : "morning";
+  return locale.startsWith("en") ? `${day} ${part}, ${time.toLowerCase()}` : `${day}, ${time}`;
+}
+
+export function shortHash(hex: string): string {
+  return `${hex.slice(0, 8)} … ${hex.slice(-8)}`;
+}

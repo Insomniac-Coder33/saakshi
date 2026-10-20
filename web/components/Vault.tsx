@@ -1,0 +1,139 @@
+"use client";
+
+// Inside Saakshi, after her PIN: recordings, a manual SOS and settings.
+import { useCallback, useEffect, useState } from "react";
+import { digits, t, type StringKey } from "@/lib/i18n";
+import type { DeviceSetup, Language } from "@/lib/local";
+import { listRecordings, recordingTitle, type RecordingSummary } from "@/lib/recordings";
+import { onSynced } from "@/lib/sync";
+import { Recording } from "./Recording";
+import { Settings } from "./Settings";
+import { Button, LockIcon, RoundButton, Screen, Wordmark } from "./ui";
+
+export interface VaultProps {
+  setup: DeviceSetup;
+  privateKey: CryptoKey;
+  recording: boolean; // a capture is running (for example after the duress PIN)
+  onLock: () => void;
+  onStartSos: () => void;
+  onStopCapture: () => void;
+  onSetupChange: (s: DeviceSetup) => void;
+  onErased: () => void;
+}
+
+export const LOCALE: Record<Language, string> = { en: "en-IN", bn: "bn-IN", hi: "hi-IN" };
+
+export function Vault(props: VaultProps) {
+  const { setup, privateKey, recording, onLock, onStartSos, onStopCapture } = props;
+  const lang = setup.language;
+  const tr = (k: StringKey, v?: Record<string, string | number>) => t(lang, k, v);
+  const [view, setView] = useState<"home" | "settings" | { id: string }>("home");
+  const [items, setItems] = useState<RecordingSummary[] | null>(null);
+
+  const refresh = useCallback(() => {
+    listRecordings().then(setItems, () => setItems([]));
+  }, []);
+
+  useEffect(() => {
+    refresh();
+    return onSynced(refresh);
+  }, [refresh]);
+
+  if (view === "settings") return <Settings {...props} onBack={() => setView("home")} />;
+  if (typeof view === "object") {
+    const item = items?.find((i) => i.session.id === view.id);
+    if (item)
+      return (
+        <Recording
+          lang={lang}
+          summary={item}
+          privateKey={privateKey}
+          onBack={() => {
+            setView("home");
+            refresh();
+          }}
+        />
+      );
+  }
+
+  return (
+    <Screen>
+      <header className="flex h-14 items-center justify-between">
+        <Wordmark />
+        <RoundButton label={tr("lock")} onClick={onLock}>
+          <LockIcon />
+        </RoundButton>
+      </header>
+
+      <section className="mt-8 animate-rise" lang={lang}>
+        <h1 className="font-display text-h1 leading-[1.05]">
+          {setup.name ? tr("hello", { name: setup.name }) : tr("helloAnon")}
+        </h1>
+        <p className="mt-3 text-body leading-relaxed text-muted">{tr("vaultBody")}</p>
+      </section>
+
+      <section className="mt-8" lang={lang}>
+        {recording ? (
+          <div className="rounded-[20px] bg-plum p-5 text-on-dark">
+            <p className="flex items-center gap-2.5 text-[13px] font-medium tracking-[0.18em] text-rani-bright">
+              <i className="size-[9px] animate-pulse rounded-full bg-rani-bright" />
+              {tr("recordingNow").toUpperCase()}
+            </p>
+            <Button className="mt-4" onClick={onStopCapture}>
+              {tr("stopRecording")}
+            </Button>
+          </div>
+        ) : (
+          <>
+            <Button onClick={onStartSos}>{tr("startSos")}</Button>
+            <p className="mt-3 text-center text-caption text-muted">{tr("sosTip")}</p>
+          </>
+        )}
+      </section>
+
+      <section className="mt-10" lang={lang}>
+        <p className="label">{tr("recordings")}</p>
+        {items === null ? (
+          <div className="mt-4 h-20 animate-pulse rounded-card bg-blush" />
+        ) : items.length === 0 ? (
+          <p className="mt-3 border-t border-hairline pt-4 text-body-sm leading-relaxed text-muted">{tr("emptyRecordings")}</p>
+        ) : (
+          <ul className="mt-2">
+            {items.map((item) => (
+              <li key={item.session.id}>
+                <button
+                  type="button"
+                  onClick={() => setView({ id: item.session.id })}
+                  className="flex w-full items-center gap-4 border-b border-hairline py-4 text-left"
+                >
+                  <span className="flex-1">
+                    <span className="block font-display text-h3 leading-tight">
+                      {recordingTitle(item.session.startedAt, LOCALE[lang])}
+                    </span>
+                    <span className="mt-1 block text-caption text-muted">
+                      {tr("pieces", { n: digits(lang, item.pieces) })} ·{" "}
+                      {item.pending ? tr("uploading", { n: digits(lang, item.pending) }) : tr("allSaved")}
+                      {item.session.duress && <span className="text-rani"> · {tr("duressFlag")}</span>}
+                    </span>
+                  </span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="fill-none stroke-muted [stroke-width:1.8]">
+                    <path d="m6 3 5 5-5 5" />
+                  </svg>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <button
+        type="button"
+        onClick={() => setView("settings")}
+        className="mt-auto flex h-14 items-center justify-center text-body-sm font-medium text-muted"
+        lang={lang}
+      >
+        {tr("settings")}
+      </button>
+    </Screen>
+  );
+}

@@ -1,0 +1,42 @@
+/* Tailwind CSS v4 theme for the Saakshi web app.
+   Paste into app/globals.css after `@import "tailwindcss";`.
+   Load the fonts with next/font/google (Instrument_Serif, DM_Sans, Tiro_Bangla, Tiro_Devanagari_Hindi)
+   and expose them as the CSS variables used below. */
+@theme {
+  --color-rani: #d6246e;
+  --color-rani-bright: #ff6fa5;
+  --color-rani-deep: #a8154f;
+  --color-plum: #1c0914;
+  --color-plum-surface: #34122a;
+  --color-plum-line: #47203d;
+  --color-blush: #fceef3;
+  --color-blush-line: #f2d3df;
+  --color-ink: #1d1419;
+  --color-muted: #76626d;
+  --color-hairline: #ead8e0;
+  --color-on-dark: #cdb8c4;
+  --color-verified: #2f7a5f;
+  --color-verified-bg: #e6f2ec;
+  --color-alert-bg: #fbe3ec;
+
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-bangla: var(--font-tiro-bangla), "Noto Sans Bengali", serif;
+  --font-devanagari: var(--font-tiro-devanagari), "Noto Sans Devanagari", serif;
+
+  --text-label: 11px;
+  --text-label--letter-spacing: 0.16em;
+  --text-caption: 13px;
+  --text-body-sm: 15px;
+  --text-body: 17px;
+  --text-lead: 20px;
+  --text-h3: 24px;
+  --text-h2: 32px;
+  --text-h1: 44px;
+  --text-display: 64px;
+
+  --radius-card: 16px;
+  --radius-sheet: 24px;
+  --shadow-card: 0 1px 2px rgb(29 20 25 / 0.04), 0 8px 24px rgb(29 20 25 / 0.06);
+  --ease-calm: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

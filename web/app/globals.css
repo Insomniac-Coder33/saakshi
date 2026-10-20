@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* Saakshi tokens, from brand/theme.css. Rani pink is the only accent; green only means "untampered". */
+@theme {
+  --color-rani: #d6246e;
+  --color-rani-bright: #ff6fa5;
+  --color-rani-deep: #a8154f;
+  --color-plum: #1c0914;
+  --color-plum-night: #0b0509;
+  --color-plum-surface: #34122a;
+  --color-plum-line: #47203d;
+  --color-blush: #fceef3;
+  --color-blush-line: #f2d3df;
+  --color-ink: #1d1419;
+  --color-muted: #76626d;
+  --color-hairline: #ead8e0;
+  --color-on-dark: #cdb8c4;
+  --color-on-dark-muted: #a8939f;
+  --color-verified: #2f7a5f;
+  --color-verified-bg: #e6f2ec;
+  --color-alert-bg: #fbe3ec;
+  --color-calc: #0f0d0f;
+  --color-calc-key: #242025;
+  --color-calc-fn: #3b363a;
+  --color-calc-op: #3c1f34;
+  --color-calc-op-text: #ff8fb8;
+
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-bangla: var(--font-tiro-bangla), "Noto Sans Bengali", serif;
+  --font-devanagari: var(--font-tiro-devanagari), "Noto Sans Devanagari", serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Menlo, monospace;
+
+  --text-label: 11px;
+  --text-label--letter-spacing: 0.16em;
+  --text-caption: 13px;
+  --text-body-sm: 15px;
+  --text-body: 17px;
+  --text-lead: 20px;
+  --text-h3: 24px;
+  --text-h2: 32px;
+  --text-h1: 44px;
+  --text-display: 64px;
+
+  --radius-card: 16px;
+  --radius-sheet: 24px;
+  --shadow-card: 0 1px 2px rgb(29 20 25 / 0.04), 0 8px 24px rgb(29 20 25 / 0.06);
+  --ease-calm: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --animate-breathe: breathe 3.2s var(--ease-calm) infinite;
+  --animate-rise: rise 0.28s var(--ease-calm) both;
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: 0.7; }
+  }
+  @keyframes rise {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-calc);
+    overscroll-behavior: none;
+  }
+  :lang(bn) { font-family: var(--font-bangla); }
+  :lang(hi) { font-family: var(--font-devanagari); }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--color-rani); outline-offset: 2px; }
+}
+
+@utility label {
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-rani);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

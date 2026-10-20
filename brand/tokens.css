@@ -1,0 +1,73 @@
+/* Saakshi design tokens. One source of truth for the pitch deck, the UI kit (screens.html) and the web app. */
+:root {
+  /* Colour: rani pink is the only accent. Green is reserved for the "untampered" state. */
+  --saakshi-rani: #d6246e;          /* primary accent on light surfaces */
+  --saakshi-rani-bright: #ff6fa5;   /* accent on dark surfaces */
+  --saakshi-rani-deep: #a8154f;     /* pressed state, text-on-blush emphasis */
+  --saakshi-plum: #1c0914;          /* dark background; the SOS screen */
+  --saakshi-plum-surface: #34122a;  /* raised surface on plum */
+  --saakshi-plum-line: #47203d;     /* hairlines on plum */
+  --saakshi-blush: #fceef3;         /* tinted background */
+  --saakshi-blush-line: #f2d3df;    /* hairlines on blush */
+  --saakshi-white: #ffffff;
+  --saakshi-ink: #1d1419;           /* body text on light */
+  --saakshi-muted: #76626d;         /* secondary text on light (4.9:1 on blush) */
+  --saakshi-hairline: #ead8e0;      /* hairlines on white */
+  --saakshi-on-dark: #cdb8c4;       /* body text on plum */
+  --saakshi-on-dark-strong: #f6e3eb;
+  --saakshi-verified: #2f7a5f;
+  --saakshi-verified-bg: #e6f2ec;
+  --saakshi-alert-bg: #fbe3ec;
+
+  /* Type families */
+  --saakshi-font-display: "Instrument Serif", Georgia, serif;
+  --saakshi-font-body: "DM Sans", system-ui, sans-serif;
+  --saakshi-font-bangla: "Tiro Bangla", "Noto Sans Bengali", serif;
+  --saakshi-font-devanagari: "Tiro Devanagari Hindi", "Noto Sans Devanagari", serif;
+  --saakshi-font-mono: ui-monospace, "Cascadia Mono", Menlo, monospace;
+
+  /* Type scale (px). Display sizes use the serif; 11px labels are uppercase with wide tracking. */
+  --saakshi-text-label: 11px;
+  --saakshi-text-caption: 13px;
+  --saakshi-text-body-sm: 15px;
+  --saakshi-text-body: 17px;
+  --saakshi-text-lead: 20px;
+  --saakshi-text-h3: 24px;
+  --saakshi-text-h2: 32px;
+  --saakshi-text-h1: 44px;
+  --saakshi-text-display: 64px;
+  --saakshi-label-tracking: 0.16em;
+  --saakshi-leading-tight: 1.05;
+  --saakshi-leading-body: 1.5;
+
+  /* Space (4px base) */
+  --saakshi-space-1: 4px;
+  --saakshi-space-2: 8px;
+  --saakshi-space-3: 12px;
+  --saakshi-space-4: 16px;
+  --saakshi-space-5: 24px;
+  --saakshi-space-6: 32px;
+  --saakshi-space-7: 48px;
+  --saakshi-space-8: 64px;
+
+  /* Shape and depth */
+  --saakshi-radius-sm: 10px;
+  --saakshi-radius-md: 16px;
+  --saakshi-radius-lg: 24px;
+  --saakshi-radius-pill: 999px;
+  --saakshi-shadow-card: 0 1px 2px rgb(29 20 25 / 0.04), 0 8px 24px rgb(29 20 25 / 0.06);
+  --saakshi-shadow-float: 0 24px 60px -18px rgb(60 10 40 / 0.35);
+
+  /* Motion: calm, never alarming */
+  --saakshi-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --saakshi-duration-fast: 160ms;
+  --saakshi-duration: 280ms;
+  --saakshi-duration-slow: 600ms;
+
+  /* Touch: every control on the SOS path is at least this big */
+  --saakshi-touch-min: 56px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --saakshi-duration-fast: 0ms; --saakshi-duration: 0ms; --saakshi-duration-slow: 0ms; }
+}
