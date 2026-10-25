@@ -85,6 +85,35 @@
   color: var(--color-rani);
 }
 
+/* Showcase site only. A fine film grain over the dark sections. */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* Lifts into place as it scrolls into view, where the browser supports scroll-driven animation.
+   Motion only, never opacity: if the timeline doesn't run, the content must still be visible. */
+@keyframes lift {
+  from { transform: translateY(28px); }
+  to { transform: none; }
+}
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    animation: lift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

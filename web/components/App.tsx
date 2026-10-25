@@ -7,7 +7,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Capture, type CaptureStatus } from "@/lib/capture";
 import { getSetup, outbox, type DeviceSetup } from "@/lib/local";
-import { checkPin } from "@/lib/setup";
+import { checkPin, createSetup } from "@/lib/setup";
+import { DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
 import { onSynced, startBackgroundSync } from "@/lib/sync";
 import { Calculator } from "./Calculator";
 import { Onboarding } from "./Onboarding";
@@ -29,7 +30,11 @@ export function App() {
   const starting = useRef(false);
 
   useEffect(() => {
-    getSetup().then((s) => {
+    getSetup().then(async (s) => {
+      // The showcase site's live demo opens "/?demo": a fresh device skips onboarding with demo PINs.
+      if (!s && new URLSearchParams(location.search).has("demo")) {
+        s = await createSetup({ name: "", language: "en", ageGroup: "adult", pin: DEMO_PIN, duressPin: DEMO_DURESS_PIN }).catch(() => undefined);
+      }
       setSetup(s ?? null);
       setPhase(s ? "calculator" : "onboarding");
     });
