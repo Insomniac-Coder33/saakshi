@@ -1,0 +1,72 @@
+{
+  "chainId": 80002,
+  "network": "Polygon Amoy",
+  "address": "0x39eA5AB65824af57297cE863CB54B1A84E3C4719",
+  "relayer": "0xeFf094c2860B2aa0f3221AA7f2296C89234189dd",
+  "deployTx": "0xa32d3e28f094792ed74b8d64b9c039a586087a92db570b5db9afcd8ef3581c85",
+  "deployBlock": 51115067,
+  "compiler": "0.8.28+commit.7893614a.Emscripten.clang",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "NotRelayer",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "root",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "leaves",
+          "type": "uint32"
+        }
+      ],
+      "name": "Anchored",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "root",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "leaves",
+          "type": "uint32"
+        }
+      ],
+      "name": "anchor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "relayer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.28+commit.7893614a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"NotRelayer\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"root\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"leaves\",\"type\":\"uint32\"}],\"name\":\"Anchored\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"root\",\"type\":\"bytes32\"},{\"internalType\":\"uint32\",\"name\":\"leaves\",\"type\":\"uint32\"}],\"name\":\"anchor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"relayer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"title\":\"EvidenceAnchor\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"relayer()\":{\"notice\":\"The Saakshi relayer: the only account that can anchor, so a woman never needs a wallet.\"}},\"notice\":\"Saakshi seals evidence by anchoring one Merkle root per batch of salted fingerprints. Each leaf is SHA-256(salt || SHA-256 of one encrypted piece's plaintext), so a root reveals nothing about the content or whose it is; it only proves those fingerprints existed by this block. Roots live in the event log rather than storage, which keeps a seal at about 24k gas.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"EvidenceAnchor.sol\":\"EvidenceAnchor\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"EvidenceAnchor.sol\":{\"keccak256\":\"0xe5cc2d2f32997b989bebca811cf9643fea28bf6a4614443ebeaeb1382f29c2a1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://84d750b90185c56a4f7fd9f81a901b4614263bf562bd1ce98f1d62387e747823\",\"dweb:/ipfs/QmRAEyRQpaq2udsHhaZJLcWYX6GbY9QMQiKQ2X9693reuc\"]}},\"version\":1}"
+}

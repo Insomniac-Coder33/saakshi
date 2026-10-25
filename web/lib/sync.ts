@@ -39,6 +39,7 @@ export function drain(): Promise<SyncResult> {
     do {
       again = false;
       result = await drainOnce();
+      if (result.uploaded) requestSeal();
       listeners.forEach((fn) => fn());
     } while (again);
     return result;
@@ -126,6 +127,28 @@ async function drainOnce(): Promise<SyncResult> {
     uploaded++;
   }
   return { uploaded, pending: (await outbox()).length };
+}
+
+let sealTimer: number | undefined;
+
+/**
+ * Asks the server to seal what just arrived. The sealer spaces seals out; when it says "not yet",
+ * ask again once the gap has passed. A database cron also runs it every minute, for phones that
+ * were taken before their last pieces were sealed.
+ */
+export function requestSeal(delayMs = 0): void {
+  if (sealTimer !== undefined) return;
+  sealTimer = window.setTimeout(async () => {
+    sealTimer = undefined;
+    try {
+      const res = await fetch("/api/seal", { method: "POST" });
+      const body = (await res.json()) as { sealed?: number; retryAfter?: number };
+      if (body.retryAfter) requestSeal(body.retryAfter * 1000);
+    } catch {
+      // Offline or the sealer is down: the cron catches up.
+    }
+    listeners.forEach((fn) => fn());
+  }, delayMs);
 }
 
 /** Retries whenever the phone comes back online, and every 15 seconds while anything is waiting. */

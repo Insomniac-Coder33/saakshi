@@ -6,8 +6,10 @@ import { useEffect, useRef, useState } from "react";
 import type { CaptureStatus } from "@/lib/capture";
 import { digits, t } from "@/lib/i18n";
 import type { Language } from "@/lib/local";
+import { sealedCount } from "@/lib/recordings";
 
 const DIM_AFTER_MS = 8000;
+const SEAL_POLL_MS = 5000;
 const HOLD_MS = 1500;
 
 export interface SosProps {
@@ -30,6 +32,7 @@ export function Sos({ lang, status, pending, countdown, guardianName, onUndo, on
   const [now, setNow] = useState(() => Date.now());
   const [dim, setDim] = useState(false);
   const [holding, setHolding] = useState(false);
+  const [sealed, setSealed] = useState(0);
   const dimTimer = useRef<number | undefined>(undefined);
   const holdTimer = useRef<number | undefined>(undefined);
 
@@ -37,6 +40,13 @@ export function Sos({ lang, status, pending, countdown, guardianName, onUndo, on
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    const poll = () => sealedCount(status.sessionId).then(setSealed, () => {});
+    poll();
+    const id = window.setInterval(poll, SEAL_POLL_MS);
+    return () => window.clearInterval(id);
+  }, [status.sessionId]);
 
   function wake() {
     setDim(false);
@@ -77,7 +87,7 @@ export function Sos({ lang, status, pending, countdown, guardianName, onUndo, on
         </span>
         <span className="flex items-center gap-2 text-[13px] text-on-dark-muted">
           <img src="/brand/seal-pink.svg" alt="" className="size-[22px]" />
-          {digits(lang, saved)} {t(lang, "saved")}
+          {sealed > 0 ? `${digits(lang, sealed)} ${t(lang, "sealedShort")}` : `${digits(lang, saved)} ${t(lang, "saved")}`}
         </span>
       </div>
 
@@ -98,6 +108,7 @@ export function Sos({ lang, status, pending, countdown, guardianName, onUndo, on
       <div className="mx-6 mt-7 rounded-[20px] border border-[#2a1424] bg-white/[.025] px-[18px] py-1">
         <Row icon={<Disc />} note={t(lang, "now")}>
           {t(lang, "savedRow", { n: digits(lang, saved) })}
+          {sealed > 0 && <span className="block text-[12px] text-on-dark-muted">{t(lang, "sealedRow", { n: digits(lang, sealed) })}</span>}
           {pending > 0 && <span className="block text-[12px] text-on-dark-muted">{t(lang, "waiting", { n: digits(lang, pending) })}</span>}
         </Row>
         {status.mode !== "video" && <Row icon={<Mic />}>{t(lang, status.mode === "audio" ? "audioOnly" : "locationOnly")}</Row>}

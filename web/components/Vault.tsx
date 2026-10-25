@@ -112,7 +112,10 @@ export function Vault(props: VaultProps) {
                     </span>
                     <span className="mt-1 block text-caption text-muted">
                       {tr("pieces", { n: digits(lang, item.pieces) })} ·{" "}
-                      {item.pending ? tr("uploading", { n: digits(lang, item.pending) }) : tr("allSaved")}
+                      {item.pending ? tr("uploading", { n: digits(lang, item.pending) }) : tr("allSaved")} ·{" "}
+                      {item.sealed >= item.pieces
+                        ? tr("allSealed")
+                        : tr("sealedOf", { n: digits(lang, item.sealed), total: digits(lang, item.pieces) })}
                       {item.session.duress && <span className="text-rani"> · {tr("duressFlag")}</span>}
                     </span>
                   </span>

@@ -1,6 +1,6 @@
 // Reading her recordings back: merges what's on the server with what's still in the local outbox,
 // and decrypts on the phone with her unlocked private key.
-import { decryptPiece, openSessionForReading } from "./crypto";
+import { decryptPiece, openSessionForReading, sha256Hex } from "./crypto";
 import { getSession, localSessions, outbox, putSession, type LocalSession } from "./local";
 import { EVIDENCE_BUCKET, supabase } from "./supabase";
 import { drain } from "./sync";
@@ -14,21 +14,45 @@ export interface PieceInfo {
   storagePath: string;
   capturedAt: string;
   local: Blob | null; // ciphertext still waiting in the outbox
+  seal: SealInfo | null;
+}
+
+export interface SealInfo {
+  confirmed: boolean; // false while the transaction is still on its way
+  tx: string | null;
+  at: string | null; // the block's timestamp once confirmed
+}
+
+interface SealRow {
+  status: string;
+  tx_hash: string | null;
+  anchored_at: string | null;
+}
+
+// A seal still being built has no transaction yet, so it doesn't count.
+function sealOf(row: SealRow | null): SealInfo | null {
+  if (!row || (row.status !== "sent" && row.status !== "confirmed")) return null;
+  return { confirmed: row.status === "confirmed", tx: row.tx_hash, at: row.anchored_at };
 }
 
 export interface RecordingSummary {
   session: LocalSession;
   pieces: number;
   pending: number;
+  sealed: number;
 }
 
 /** Her recordings, newest first. Works offline from the local copy. */
 export async function listRecordings(): Promise<RecordingSummary[]> {
   const [sessions, queued] = await Promise.all([localSessions(), outbox()]);
   const counts = new Map<string, number>();
+  const sealed = new Map<string, number>();
   try {
-    const { data } = await supabase().from("pieces").select("session_id");
-    for (const row of data ?? []) counts.set(row.session_id, (counts.get(row.session_id) ?? 0) + 1);
+    const { data } = await supabase().from("pieces").select("session_id, seals(status, tx_hash, anchored_at)").overrideTypes<{ session_id: string; seals: SealRow | null }[]>();
+    for (const row of data ?? []) {
+      counts.set(row.session_id, (counts.get(row.session_id) ?? 0) + 1);
+      if (sealOf(row.seals)) sealed.set(row.session_id, (sealed.get(row.session_id) ?? 0) + 1);
+    }
   } catch {
     // Offline: show local counts only.
   }
@@ -36,7 +60,7 @@ export async function listRecordings(): Promise<RecordingSummary[]> {
     .filter((s) => s.status !== "undone")
     .map((s) => {
       const pending = queued.filter((q) => q.sessionId === s.id).length;
-      return { session: s, pieces: (counts.get(s.id) ?? 0) + pending, pending };
+      return { session: s, pieces: (counts.get(s.id) ?? 0) + pending, pending, sealed: sealed.get(s.id) ?? 0 };
     })
     .sort((a, b) => b.session.startedAt.localeCompare(a.session.startedAt));
 }
@@ -45,8 +69,9 @@ export async function listPieces(sessionId: string): Promise<PieceInfo[]> {
   const queued = (await outbox()).filter((q) => q.sessionId === sessionId);
   const { data, error } = await supabase()
     .from("pieces")
-    .select("kind, seq, segment, sha256, size, storage_path, captured_at")
-    .eq("session_id", sessionId);
+    .select("kind, seq, segment, sha256, size, storage_path, captured_at, seals(status, tx_hash, anchored_at)")
+    .eq("session_id", sessionId)
+    .overrideTypes<{ kind: PieceInfo["kind"]; seq: number; segment: number; sha256: string; size: number; storage_path: string; captured_at: string; seals: SealRow | null }[]>();
   const remote: PieceInfo[] = error
     ? []
     : (data ?? []).map((r) => ({
@@ -58,6 +83,7 @@ export async function listPieces(sessionId: string): Promise<PieceInfo[]> {
         storagePath: r.storage_path,
         capturedAt: r.captured_at,
         local: null,
+        seal: sealOf(r.seals),
       }));
   const seen = new Set(remote.map((p) => `${p.kind}:${p.seq}`));
   for (const q of queued) {
@@ -71,6 +97,7 @@ export async function listPieces(sessionId: string): Promise<PieceInfo[]> {
       storagePath: q.storagePath,
       capturedAt: q.capturedAt,
       local: q.body,
+      seal: null,
     });
   }
   return remote.sort((a, b) => (a.kind === b.kind ? a.seq - b.seq : a.kind.localeCompare(b.kind)));
@@ -110,6 +137,34 @@ export async function decryptRecording(
       .map((k) => new Blob(segments.get(k)!, { type: session.mime ?? "video/webm" })),
     locations,
   };
+}
+
+/** How many of this session's pieces are sealed, for the SOS screen's "6 sealed". */
+export async function sealedCount(sessionId: string): Promise<number> {
+  const { count } = await supabase()
+    .from("pieces")
+    .select("id", { count: "exact", head: true })
+    .eq("session_id", sessionId)
+    .not("seal_id", "is", null);
+  return count ?? 0;
+}
+
+/**
+ * Registers one segment's file, exactly as she downloads it, so the Verify page can find it by its
+ * fingerprint and split it back into sealed pieces. Only once every piece in it is on the server.
+ */
+export async function registerFile(sessionId: string, segment: number, file: Blob, pieces: PieceInfo[]): Promise<string> {
+  const sha256 = await sha256Hex(await file.arrayBuffer());
+  const inSegment = pieces.filter((p) => p.kind === "media" && p.segment === segment);
+  if (inSegment.length && inSegment.every((p) => !p.local)) {
+    await supabase()
+      .from("files")
+      .upsert(
+        { session_id: sessionId, segment, sha256, size: file.size, piece_count: inSegment.length },
+        { onConflict: "session_id,segment" },
+      );
+  }
+  return sha256;
 }
 
 /** Erasure of one recording: marked here at once, removed from the server on the next sync. */
