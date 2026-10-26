@@ -13,6 +13,23 @@ export function Phone({ children, className = "" }: { children: ReactNode; class
   );
 }
 
-export function Screenshot({ src, alt }: { src: string; alt: string }) {
-  return <img src={src} alt={alt} width={393} height={852} className="size-full object-cover object-top" loading="lazy" />;
+/**
+ * A real screenshot on the phone. Long screens carry on below the glass, so the bottom fades out the way
+ * a scrolling screen does, under the gesture bar, instead of slicing a row of text in half.
+ */
+export function Screenshot({ src, alt, tone }: { src: string; alt: string; tone: "light" | "dark" }) {
+  const light = tone === "light";
+  return (
+    <>
+      <img src={src} alt={alt} width={393} height={852} className="size-full object-cover object-top" loading="lazy" />
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-0 bottom-0 h-[13%] bg-gradient-to-t ${light ? "from-white via-white/85" : "from-black via-black/80"} to-transparent`}
+      />
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute bottom-[1.6%] left-1/2 h-[4px] w-[34%] -translate-x-1/2 rounded-full ${light ? "bg-ink/75" : "bg-white/55"}`}
+      />
+    </>
+  );
 }

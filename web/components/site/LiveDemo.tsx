@@ -39,7 +39,7 @@ export function LiveDemo({ className = "" }: { className?: string }) {
             />
           ) : (
             <button type="button" onClick={() => setOn(true)} className="group relative size-full text-left">
-              <Screenshot src="/site/calculator.webp" alt="Saakshi’s calculator" />
+              <Screenshot src="/site/calculator.webp" alt="Saakshi’s calculator" tone="dark" />
               <span className="absolute inset-0 flex flex-col items-center justify-end gap-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent pb-14">
                 <span className="flex h-14 items-center gap-2.5 rounded-full bg-rani px-7 text-[16px] font-medium text-white shadow-[0_10px_30px_-8px_rgba(214,36,110,.8)] transition-transform group-hover:scale-[1.03]">
                   <svg width="14" height="14" viewBox="0 0 14 14" className="fill-current">

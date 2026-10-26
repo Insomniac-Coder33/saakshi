@@ -74,6 +74,9 @@
   :lang(bn) { font-family: var(--font-bangla); }
   :lang(hi) { font-family: var(--font-devanagari); }
   button { cursor: pointer; }
+  /* No headline ends on a lone word, and paragraphs avoid one-word last lines. */
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, dd, dt { text-wrap: pretty; }
   :focus-visible { outline: 2px solid var(--color-rani); outline-offset: 2px; }
 }
 

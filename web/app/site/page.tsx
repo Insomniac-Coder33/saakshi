@@ -194,7 +194,11 @@ function Proof() {
                 <i className="size-2.5 rounded-full bg-[#e2c9d4]" />
                 <i className="size-2.5 rounded-full bg-[#e2c9d4]" />
               </div>
-              <img src="/site/verify.webp" alt="The Verify page: the original file untampered, a changed copy with no seal" className="w-full" loading="lazy" />
+              {/* On a phone, the phone-width Verify page, so its results are readable. */}
+              <picture>
+                <source media="(max-width: 639px)" srcSet="/site/verify-phone.webp" />
+                <img src="/site/verify.webp" alt="The Verify page: the original file untampered, a changed copy with no seal" className="w-full" loading="lazy" />
+              </picture>
             </div>
             <p className="mt-3 text-[13px] text-on-dark-muted">A real check from our tests: the original, and a copy with one byte changed.</p>
           </div>
@@ -243,7 +247,7 @@ function UnderTheHood() {
         <Eyebrow>Under the hood</Eyebrow>
         <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">A snatched phone can record more. It can’t read what was recorded.</h2>
       </div>
-      <div className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline md:grid-cols-3">
+      <div className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline ring-1 ring-hairline md:grid-cols-3">
         {cols.map((c, i) => (
           <div key={c.where} className="reveal bg-white p-8">
             <p className="flex items-center gap-3 text-[13px] font-medium uppercase tracking-[0.16em] text-rani">
@@ -275,7 +279,7 @@ function Limits() {
     ["The screen stays on.", "A web app can’t keep recording once the phone locks, so Saakshi holds the screen awake and black. The Android app removes this."],
     ["A seal proves sameness, not truth.", "It shows a file is unchanged since it was captured. It doesn’t prove what the file shows."],
     ["Test network, for now.", "Seals go to Polygon Amoy during the hackathon. Moving to Polygon mainnet is a configuration change."],
-    ["Information, not legal advice.", "Saakshi will explain which laws may apply. A lawyer still decides what to do."],
+    ["Information, not legal advice.", "Saakshi drafts the Section 63 certificate and will explain which laws may apply. She signs it, and a lawyer still decides what to do."],
   ];
   return (
     <section className="border-y border-hairline bg-blush">
@@ -302,7 +306,8 @@ function Built() {
     { d: "19 Oct", t: "The idea, the research and the Round 1 pitch.", done: true },
     { d: "20 Oct", t: "Calculator disguise, silent SOS, encrypted 5-second capture, vault, duress PIN, undo, erase.", done: true },
     { d: "25 Oct", t: "Shortlisted for the final. Evidence sealed on Polygon; the public Verify page; this site.", done: true },
-    { d: "Next", t: "Legal help in Bengali, Hindi and English, built on Adaption; guardian alerts with live location; the Android app.", done: false },
+    { d: "26 Oct", t: "A sealed journal and photo vault, the Section 63 certificate, and Telegram guardian alerts with live location.", done: true },
+    { d: "Next", t: "Legal help in Bengali, Hindi and English, built on Adaption; the Android app.", done: false },
   ];
   return (
     <section className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
@@ -310,9 +315,9 @@ function Built() {
         <Eyebrow>Built during SHAKTI</Eyebrow>
         <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">Everything here started on 19 October.</h2>
       </div>
-      <ol className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline md:grid-cols-4">
+      <ol className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline ring-1 ring-hairline sm:grid-cols-2 lg:grid-cols-5">
         {days.map((x) => (
-          <li key={x.d} className="reveal bg-white p-7">
+          <li key={x.d} className="reveal bg-white p-7 sm:last:col-span-2 lg:last:col-span-1">
             <p className={`flex items-center gap-2 text-[13px] font-medium ${x.done ? "text-verified" : "text-rani"}`}>
               <i className={`size-2 rounded-full ${x.done ? "bg-verified" : "animate-pulse bg-rani"}`} />
               {x.done ? "Done" : "In progress"}

@@ -194,7 +194,7 @@ function Result({ check }: { check: Check }) {
         </span>
       )}
       <div className="min-w-0">
-        <p className="truncate text-[17px] font-medium">{title}</p>
+        <p className="text-[17px] font-medium leading-snug [overflow-wrap:anywhere]">{title}</p>
         {check.name && <p className="mt-1 font-mono text-[13px] text-muted">{shortHash(check.hash)}</p>}
         <div className="mt-2 text-[13px] leading-relaxed text-muted">
           <Meta o={o} />

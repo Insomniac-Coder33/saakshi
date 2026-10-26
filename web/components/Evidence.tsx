@@ -77,7 +77,7 @@ export function JournalList({ lang, privateKey, onWrite, onOpen }: { lang: Langu
               <button type="button" onClick={() => onOpen(item.session)} className="flex w-full items-center gap-4 border-b border-hairline py-4 text-left">
                 <span className="min-w-0 flex-1">
                   <span className="block font-display text-h3 leading-tight">{recordingTitle(item.session.startedAt, LOCALE[lang])}</span>
-                  <span className="mt-1 block truncate text-body-sm text-ink/80">{previews[item.session.id] ?? "…"}</span>
+                  <span className="mt-1 line-clamp-2 text-body-sm leading-snug text-ink/80">{previews[item.session.id] ?? "…"}</span>
                   <span className="mt-1 block text-caption text-muted">
                     <Status item={item} tr={tr} />
                   </span>
