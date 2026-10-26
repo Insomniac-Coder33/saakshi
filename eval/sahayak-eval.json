@@ -1,0 +1,111 @@
+{
+  "about": "Sahayak evaluation set. Each case is a situation a woman might describe, in English, Bengali and Hindi. `expect` lists law ids from web/lib/law.ts; an answer passes if it cites at least one of them. `urgent` cases must set urgent=true.",
+  "cases": [
+    {
+      "id": "dv-dowry",
+      "expect": ["bns85", "dv3", "dv18", "dv12"],
+      "en": "My husband slaps me when he's drunk and his mother keeps saying my father didn't give enough dowry. What can I do?",
+      "bn": "আমার স্বামী মদ খেয়ে আমাকে চড় মারে, আর শাশুড়ি বলে বাবা যথেষ্ট পণ দেয়নি। আমি কী করতে পারি?",
+      "hi": "मेरा पति शराब पीकर मुझे थप्पड़ मारता है और सास कहती है कि मेरे पिता ने पूरा दहेज नहीं दिया। मैं क्या करूँ?"
+    },
+    {
+      "id": "groped-crowd",
+      "expect": ["bns74", "bns75"],
+      "en": "A man groped me in the crowd at a pandal last night. I took a video of his face. Can I complain?",
+      "bn": "কাল রাতে প্যান্ডেলের ভিড়ে একটা লোক আমার গায়ে হাত দিয়েছে। আমি ওর মুখের ভিডিও তুলেছি। আমি কি অভিযোগ করতে পারি?",
+      "hi": "कल रात पंडाल की भीड़ में एक आदमी ने मुझे गलत तरीके से छुआ। मैंने उसके चेहरे का वीडियो बनाया है। क्या मैं शिकायत कर सकती हूँ?"
+    },
+    {
+      "id": "sextortion",
+      "expect": ["bns308", "it67", "itrules", "bns351"],
+      "en": "Someone made fake nude pictures of me from my Instagram photos and says he'll send them to my family unless I pay him.",
+      "bn": "কেউ আমার ইনস্টাগ্রামের ছবি দিয়ে নকল নগ্ন ছবি বানিয়েছে, আর বলছে টাকা না দিলে আমার পরিবারকে পাঠিয়ে দেবে।",
+      "hi": "किसी ने मेरी इंस्टाग्राम तस्वीरों से नकली नग्न तस्वीरें बनाई हैं और कह रहा है कि पैसे नहीं दिए तो मेरे परिवार को भेज देगा।"
+    },
+    {
+      "id": "ex-video",
+      "expect": ["bns77", "it66e", "it67", "itrules"],
+      "en": "My ex-boyfriend secretly recorded us together and has posted the video on a website.",
+      "bn": "আমার প্রাক্তন প্রেমিক লুকিয়ে আমাদের একসঙ্গে থাকার ভিডিও করেছিল, এখন সেটা একটা ওয়েবসাইটে দিয়েছে।",
+      "hi": "मेरे पूर्व प्रेमी ने चुपके से हमारा साथ का वीडियो बनाया था और अब उसे एक वेबसाइट पर डाल दिया है।"
+    },
+    {
+      "id": "boss-comments",
+      "expect": ["posh", "posh12", "bns75"],
+      "en": "My manager keeps commenting on my body and asked me to come to his hotel room on a work trip.",
+      "bn": "আমার ম্যানেজার বারবার আমার শরীর নিয়ে মন্তব্য করে, আর অফিসের ট্যুরে ওর হোটেলের ঘরে যেতে বলেছিল।",
+      "hi": "मेरा मैनेजर बार-बार मेरे शरीर पर टिप्पणी करता है और ऑफ़िस ट्रिप पर उसने मुझे अपने होटल के कमरे में आने को कहा।"
+    },
+    {
+      "id": "stalker",
+      "expect": ["bns78"],
+      "en": "A man from my college follows me home and keeps messaging me from new numbers even though I told him to stop.",
+      "bn": "কলেজের একটা ছেলে আমার পিছু পিছু বাড়ি পর্যন্ত আসে, আর আমি থামতে বলার পরেও নতুন নতুন নম্বর থেকে মেসেজ করে।",
+      "hi": "कॉलेज का एक लड़का मेरा पीछा करते हुए घर तक आता है और मना करने के बाद भी नए-नए नंबरों से मैसेज करता है।"
+    },
+    {
+      "id": "fake-profile",
+      "expect": ["it66c", "itrules"],
+      "en": "Someone made a fake Facebook profile with my photos and is chatting with men pretending to be me.",
+      "bn": "কেউ আমার ছবি দিয়ে একটা ভুয়ো ফেসবুক প্রোফাইল খুলে আমি সেজে ছেলেদের সঙ্গে চ্যাট করছে।",
+      "hi": "किसी ने मेरी तस्वीरों से फ़र्ज़ी फ़ेसबुक प्रोफ़ाइल बनाई है और मेरा नाम लेकर आदमियों से चैट कर रहा है।"
+    },
+    {
+      "id": "police-refused",
+      "expect": ["bnss173", "bnss175"],
+      "en": "I went to the police station but they refused to write my complaint and said to sort it out at home.",
+      "bn": "থানায় গিয়েছিলাম, কিন্তু ওরা আমার অভিযোগ লিখতে চায়নি, বলল বাড়িতে মিটিয়ে নাও।",
+      "hi": "मैं थाने गई थी लेकिन उन्होंने मेरी शिकायत लिखने से मना कर दिया और कहा घर पर सुलझा लो।"
+    },
+    {
+      "id": "street-remarks",
+      "expect": ["bns79", "bns75"],
+      "en": "Boys at the tea stall near my bus stop whistle and make dirty comments every day when I pass.",
+      "bn": "বাস স্ট্যান্ডের পাশে চায়ের দোকানের ছেলেগুলো রোজ আমি গেলে শিস দেয় আর নোংরা কথা বলে।",
+      "hi": "बस स्टॉप के पास चाय की दुकान पर लड़के रोज़ मेरे गुज़रने पर सीटी बजाते हैं और गंदी बातें कहते हैं।"
+    },
+    {
+      "id": "death-threat",
+      "expect": ["bns351", "bns85", "dv18"],
+      "urgent": true,
+      "en": "My husband just said he will kill me tonight and he has locked the door. I'm in the bathroom.",
+      "bn": "আমার স্বামী এইমাত্র বলল আজ রাতে আমাকে মেরে ফেলবে, দরজা বন্ধ করে দিয়েছে। আমি বাথরুমে আছি।",
+      "hi": "मेरे पति ने अभी कहा कि आज रात मुझे मार डालेगा और दरवाज़ा बंद कर दिया है। मैं बाथरूम में हूँ।"
+    },
+    {
+      "id": "minor-tutor",
+      "expect": ["pocso"],
+      "en": "I'm 16. My tuition teacher touches me when we're alone and says not to tell anyone.",
+      "bn": "আমার বয়স ১৬। টিউশনের স্যার একা পেলে আমার গায়ে হাত দেয় আর কাউকে বলতে মানা করে।",
+      "hi": "मेरी उम्र 16 साल है। ट्यूशन वाले सर अकेले में मुझे छूते हैं और किसी को बताने से मना करते हैं।"
+    },
+    {
+      "id": "thrown-out",
+      "expect": ["dv18", "dv3", "dv12"],
+      "en": "My in-laws threw me out of the house with my baby and won't let me take my things.",
+      "bn": "শ্বশুরবাড়ির লোকেরা আমাকে বাচ্চাসহ বাড়ি থেকে বের করে দিয়েছে, আমার জিনিসপত্রও নিতে দিচ্ছে না।",
+      "hi": "ससुराल वालों ने मुझे बच्चे के साथ घर से निकाल दिया है और मेरा सामान भी नहीं लेने दे रहे।"
+    },
+    {
+      "id": "false-promise",
+      "expect": ["bns69"],
+      "en": "He was with me for two years promising to marry me, and now he is marrying someone else. He never meant it.",
+      "bn": "দু বছর ধরে বিয়ে করবে বলে আমার সঙ্গে সম্পর্ক রেখেছিল, এখন অন্য কাউকে বিয়ে করছে। ও কখনো বিয়ে করতে চায়নি।",
+      "hi": "वह दो साल तक शादी का वादा करके मेरे साथ रहा और अब किसी और से शादी कर रहा है। उसका कभी इरादा ही नहीं था।"
+    },
+    {
+      "id": "evidence-court",
+      "expect": ["bsa63"],
+      "en": "Will a court accept the video I recorded on my phone and screenshots of his messages?",
+      "bn": "আমার ফোনে তোলা ভিডিও আর ওর মেসেজের স্ক্রিনশট কি আদালত মেনে নেবে?",
+      "hi": "क्या अदालत मेरे फ़ोन पर बनाया वीडियो और उसके मैसेज के स्क्रीनशॉट मानेगी?"
+    },
+    {
+      "id": "domestic-worker",
+      "expect": ["posh", "bns75", "bns74"],
+      "en": "I work as a maid. The man of the house where I work tries to touch me when his wife is out.",
+      "bn": "আমি লোকের বাড়িতে কাজ করি। বাড়ির কর্তা বউ না থাকলে আমার গায়ে হাত দেওয়ার চেষ্টা করে।",
+      "hi": "मैं घरों में काम करती हूँ। जिस घर में काम करती हूँ, वहाँ का मालिक पत्नी के न होने पर मुझे छूने की कोशिश करता है।"
+    }
+  ]
+}

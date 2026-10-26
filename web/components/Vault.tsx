@@ -8,6 +8,7 @@ import { listRecordings, recordingTitle, type RecordingSummary } from "@/lib/rec
 import { onSynced } from "@/lib/sync";
 import { Chevron, EvidenceItem, JournalCompose, JournalList, PhotoCompose, PhotoGrid } from "./Evidence";
 import { Recording } from "./Recording";
+import { Sahayak } from "./Sahayak";
 import { Settings } from "./Settings";
 import { Button, LockIcon, RoundButton, Screen, Wordmark } from "./ui";
 
@@ -25,7 +26,7 @@ export interface VaultProps {
 export const LOCALE: Record<Language, string> = { en: "en-IN", bn: "bn-IN", hi: "hi-IN" };
 
 type Tab = "recordings" | "journal" | "photos";
-type View = "home" | "settings" | "write" | { id: string } | { photo: File; url: string } | { item: LocalSession };
+type View = "home" | "settings" | "write" | "sahayak" | { id: string } | { photo: File; url: string } | { item: LocalSession };
 const TABS: { id: Tab; label: StringKey }[] = [
   { id: "recordings", label: "recordings" },
   { id: "journal", label: "journal" },
@@ -56,6 +57,7 @@ export function Vault(props: VaultProps) {
   };
   if (view === "settings") return <Settings {...props} onBack={() => setView("home")} />;
   if (view === "write") return <JournalCompose setup={setup} onDone={home} />;
+  if (view === "sahayak") return <Sahayak setup={setup} onBack={home} />;
   if (typeof view === "object" && "photo" in view) return <PhotoCompose setup={setup} file={view.photo} url={view.url} onDone={home} />;
   if (typeof view === "object" && "item" in view) return <EvidenceItem setup={setup} session={view.item} privateKey={privateKey} onBack={home} />;
   if (typeof view === "object") {
@@ -110,7 +112,25 @@ export function Vault(props: VaultProps) {
         )}
       </section>
 
-      <div role="tablist" className="mt-10 grid grid-cols-3 rounded-full bg-blush p-1" lang={lang}>
+      <button
+        type="button"
+        onClick={() => setView("sahayak")}
+        className="mt-8 flex w-full items-center gap-4 rounded-[20px] border border-hairline p-4 text-left active:bg-blush"
+        lang={lang}
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-alert-bg text-rani">
+          <svg width="20" height="20" viewBox="0 0 20 20" className="fill-none stroke-current [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:1.7]">
+            <path d="M10 3v14M5 17h10M3 7h14M5.5 7 3 12a2.5 2.5 0 0 0 5 0L5.5 7ZM14.5 7 12 12a2.5 2.5 0 0 0 5 0l-2.5-5Z" />
+          </svg>
+        </span>
+        <span className="flex-1">
+          <span className="block text-body font-medium">{tr("sahayakCard")}</span>
+          <span className="mt-0.5 block text-caption leading-snug text-muted">{tr("sahayakCardBody")}</span>
+        </span>
+        <Chevron />
+      </button>
+
+      <div role="tablist" className="mt-8 grid grid-cols-3 rounded-full bg-blush p-1" lang={lang}>
         {TABS.map((x) => (
           <button
             key={x.id}
