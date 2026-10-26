@@ -13,6 +13,7 @@ export interface PieceInfo {
   size: number;
   storagePath: string;
   capturedAt: string;
+  receivedAt: string | null; // the server's clock, once uploaded
   local: Blob | null; // ciphertext still waiting in the outbox
   seal: SealInfo | null;
 }
@@ -21,18 +22,22 @@ export interface SealInfo {
   confirmed: boolean; // false while the transaction is still on its way
   tx: string | null;
   at: string | null; // the block's timestamp once confirmed
+  root: string | null;
+  block: number | null;
 }
 
 interface SealRow {
   status: string;
   tx_hash: string | null;
   anchored_at: string | null;
+  root?: string;
+  block_number?: number | null;
 }
 
 // A seal still being built has no transaction yet, so it doesn't count.
 function sealOf(row: SealRow | null): SealInfo | null {
   if (!row || (row.status !== "sent" && row.status !== "confirmed")) return null;
-  return { confirmed: row.status === "confirmed", tx: row.tx_hash, at: row.anchored_at };
+  return { confirmed: row.status === "confirmed", tx: row.tx_hash, at: row.anchored_at, root: row.root ?? null, block: row.block_number ?? null };
 }
 
 export interface RecordingSummary {
@@ -57,7 +62,7 @@ export async function listRecordings(): Promise<RecordingSummary[]> {
     // Offline: show local counts only.
   }
   return sessions
-    .filter((s) => s.status !== "undone")
+    .filter((s) => s.kind === "sos" && s.status !== "undone")
     .map((s) => {
       const pending = queued.filter((q) => q.sessionId === s.id).length;
       return { session: s, pieces: (counts.get(s.id) ?? 0) + pending, pending, sealed: sealed.get(s.id) ?? 0 };
@@ -69,9 +74,9 @@ export async function listPieces(sessionId: string): Promise<PieceInfo[]> {
   const queued = (await outbox()).filter((q) => q.sessionId === sessionId);
   const { data, error } = await supabase()
     .from("pieces")
-    .select("kind, seq, segment, sha256, size, storage_path, captured_at, seals(status, tx_hash, anchored_at)")
+    .select("kind, seq, segment, sha256, size, storage_path, captured_at, received_at, seals(status, tx_hash, anchored_at, root, block_number)")
     .eq("session_id", sessionId)
-    .overrideTypes<{ kind: PieceInfo["kind"]; seq: number; segment: number; sha256: string; size: number; storage_path: string; captured_at: string; seals: SealRow | null }[]>();
+    .overrideTypes<{ kind: PieceInfo["kind"]; seq: number; segment: number; sha256: string; size: number; storage_path: string; captured_at: string; received_at: string; seals: SealRow | null }[]>();
   const remote: PieceInfo[] = error
     ? []
     : (data ?? []).map((r) => ({
@@ -82,6 +87,7 @@ export async function listPieces(sessionId: string): Promise<PieceInfo[]> {
         size: r.size,
         storagePath: r.storage_path,
         capturedAt: r.captured_at,
+        receivedAt: r.received_at,
         local: null,
         seal: sealOf(r.seals),
       }));
@@ -96,6 +102,7 @@ export async function listPieces(sessionId: string): Promise<PieceInfo[]> {
       size: q.size,
       storagePath: q.storagePath,
       capturedAt: q.capturedAt,
+      receivedAt: null,
       local: q.body,
       seal: null,
     });

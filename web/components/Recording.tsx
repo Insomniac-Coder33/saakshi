@@ -2,9 +2,7 @@
 
 // One recording: decrypted and played back on her phone, with its fingerprints.
 import fixWebmDuration from "fix-webm-duration";
-import QRCode from "qrcode";
 import { useEffect, useState } from "react";
-import { txUrl } from "@/lib/chain";
 import { digits, t, type StringKey } from "@/lib/i18n";
 import type { Language } from "@/lib/local";
 import {
@@ -13,22 +11,26 @@ import {
   listPieces,
   recordingTitle,
   registerFile,
-  shortHash,
   type Decrypted,
   type PieceInfo,
   type RecordingSummary,
 } from "@/lib/recordings";
 import { PIECE_MS } from "@/lib/capture";
+import { verifyUrlFor } from "@/lib/site";
+import { Certificate, type CertItem } from "./Certificate";
+import { downloadBlob, Fact, fileStamp, ProofPanel } from "./Proof";
 import { BackIcon, Button, RoundButton, Screen, Wordmark } from "./ui";
 import { LOCALE } from "./Vault";
 
 export function Recording({
   lang,
+  userId,
   summary,
   privateKey,
   onBack,
 }: {
   lang: Language;
+  userId: string;
   summary: RecordingSummary;
   privateKey: CryptoKey;
   onBack: () => void;
@@ -42,8 +44,7 @@ export function Recording({
   const [failed, setFailed] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [hashes, setHashes] = useState<string[]>([]); // each part's file fingerprint, as downloaded
-  const [qr, setQr] = useState<{ url: string; svg: string } | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [certificate, setCertificate] = useState(false);
 
   useEffect(() => {
     let live = true;
@@ -119,39 +120,32 @@ export function Recording({
   const partSealed = partUploaded && partPieces.every((p) => p.seal?.confirmed);
   const lastSeal = partSealed ? partPieces.map((p) => p.seal!).sort((a, b) => (a.at ?? "").localeCompare(b.at ?? "")).at(-1)! : null;
   const hash = hashes[part];
-  const verifyUrl = hash && partUploaded ? `${process.env.NEXT_PUBLIC_VERIFY_ORIGIN ?? location.origin}/verify?h=${hash}` : null;
+  const verifyUrl = hash && partUploaded ? verifyUrlFor(hash) : null;
 
-  useEffect(() => {
-    if (!verifyUrl) return;
-    QRCode.toString(verifyUrl, { type: "svg", margin: 0, errorCorrectionLevel: "M", color: { dark: "#1d1419", light: "#0000" } }).then(
-      (svg) => setQr({ url: verifyUrl, svg }),
-      () => {},
-    );
-  }, [verifyUrl]);
+  const ext = session.mime?.includes("mp4") ? "mp4" : "webm";
+  const fileName = (i: number) => `recording-${fileStamp(session.startedAt)}${urls.length > 1 ? `-${i + 1}` : ""}.${ext}`;
 
   function download() {
-    if (!plain) return;
-    const d = new Date(session.startedAt);
-    const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}-${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}`;
-    const ext = session.mime?.includes("mp4") ? "mp4" : "webm";
-    // A plain name, so the file in her Downloads doesn't say what it is.
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(plain.media[part]);
-    a.download = `recording-${stamp}${urls.length > 1 ? `-${part + 1}` : ""}.${ext}`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
+    if (plain) downloadBlob(plain.media[part], fileName(part));
   }
 
-  async function share() {
-    if (!verifyUrl) return;
-    try {
-      if (navigator.share) return await navigator.share({ url: verifyUrl });
-      await navigator.clipboard.writeText(verifyUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // She closed the share sheet.
-    }
+  if (certificate && plain) {
+    // One entry per part whose pieces are all on the server, so each has a verify link.
+    const items: CertItem[] = segmentIds.flatMap((seg, i) => {
+      const ps = media.filter((p) => p.segment === seg);
+      if (!hashes[i] || !ps.length || ps.some((p) => p.local)) return [];
+      return [
+        {
+          label: segmentIds.length > 1 ? `Recording, part ${i + 1}` : "Recording",
+          fileName: fileName(i),
+          sha256: hashes[i],
+          bytes: plain.media[i].size,
+          pieces: ps,
+          verifyUrl: verifyUrlFor(hashes[i]),
+        },
+      ];
+    });
+    return <Certificate lang={lang} userId={userId} items={items} onBack={() => setCertificate(false)} />;
   }
 
   return (
@@ -211,50 +205,16 @@ export function Recording({
       {summary.pending > 0 && <p className="mt-3 text-caption text-muted" lang={lang}>{tr("notUploaded")}</p>}
 
       {urls.length > 0 && (
-        <section className="mt-5" lang={lang}>
-          <div className="flex flex-col items-center rounded-sheet border border-hairline p-5">
-            {qr && qr.url === verifyUrl ? (
-              <div className="size-[164px] [&>svg]:size-full" role="img" aria-label="QR" dangerouslySetInnerHTML={{ __html: qr.svg }} />
-            ) : (
-              <div className="size-[164px] animate-pulse rounded-card bg-blush" />
-            )}
-            <p className="mt-3.5 max-w-[260px] text-center text-caption leading-[1.45] text-muted">{verifyUrl ? tr("qrNote") : tr("qrWaits")}</p>
-          </div>
-          <span
-            className={`mt-4 inline-flex h-8 items-center gap-2 rounded-full px-3.5 text-[14px] font-medium ${partSealed ? "bg-verified-bg text-verified" : "bg-blush text-muted"}`}
-          >
-            {partSealed ? (
-              <svg width="14" height="14" viewBox="0 0 14 14" className="fill-none stroke-current [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2]">
-                <path d="M2.5 7.5 5.5 10.5 11.5 3.5" />
-              </svg>
-            ) : (
-              <i className="size-2 animate-pulse rounded-full bg-rani" />
-            )}
-            {partSealed ? tr("untampered") : `${tr("sealing")}…`}
-          </span>
-          <dl className="mt-2">
-            {lastSeal?.at && (
-              <Fact k={tr("sealedAt")} v={new Date(lastSeal.at).toLocaleString(LOCALE[lang], { dateStyle: "medium", timeStyle: "short" })} />
-            )}
-            {hash && <Fact k={tr("fileFingerprint")} v={shortHash(hash)} mono />}
-            {lastSeal?.tx && (
-              <Fact
-                k={tr("anchoredOn")}
-                v={
-                  <a className="text-rani underline underline-offset-2" href={txUrl(lastSeal.tx)} target="_blank" rel="noreferrer">
-                    Polygon
-                  </a>
-                }
-              />
-            )}
-          </dl>
-          <div className="mt-5 flex flex-col gap-2.5">
-            <Button onClick={download}>{tr("downloadOriginal")}</Button>
-            <Button variant="ghost" onClick={share} disabled={!verifyUrl}>
-              {copied ? tr("linkCopied") : tr("shareVerify")}
-            </Button>
-          </div>
-        </section>
+        <ProofPanel
+          lang={lang}
+          verifyUrl={verifyUrl}
+          sealed={partSealed}
+          lastSeal={lastSeal}
+          hash={hash}
+          qrNote="qrNote"
+          onDownload={download}
+          onCertificate={() => setCertificate(true)}
+        />
       )}
 
       <dl className="mt-4" lang={lang}>
@@ -305,14 +265,5 @@ export function Recording({
         )}
       </div>
     </Screen>
-  );
-}
-
-function Fact({ k, v, mono }: { k: string; v: React.ReactNode; mono?: boolean }) {
-  return (
-    <div className="flex justify-between gap-4 border-b border-hairline py-[11px] text-body-sm">
-      <dt className="text-muted">{k}</dt>
-      <dd className={`text-right ${mono ? "font-mono text-caption" : ""}`}>{v}</dd>
-    </div>
   );
 }

@@ -5,6 +5,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Contract, JsonRpcProvider, Wallet } from "ethers";
 import { adminClient } from "@/lib/admin";
+import { watchSilentPhones } from "@/lib/alerts";
 import { ANCHOR_ABI, ANCHOR_ADDRESS, CHAIN_ID, PUBLIC_RPCS } from "@/lib/chain";
 import { buildTree, leafOf } from "@/lib/merkle";
 
@@ -21,6 +22,8 @@ function provider() {
 }
 
 export async function POST() {
+  // The same once-a-minute cron also watches for an SOS whose phone has gone quiet.
+  if (process.env.TELEGRAM_BOT_TOKEN) await watchSilentPhones(adminClient()).catch((e) => console.error("[alert] watch", e));
   if (!process.env.RELAYER_PRIVATE_KEY) return Response.json({ error: "sealer not configured" }, { status: 503 });
   const db = adminClient();
   const chain = provider();

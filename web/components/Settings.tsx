@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LANGUAGES, t, type StringKey } from "@/lib/i18n";
 import { changeDuressPin, changePin, checkPin, eraseEverything, updatePreferences } from "@/lib/setup";
+import { Guardians } from "./Guardians";
 import { BackIcon, Button, PinInput, RoundButton, Screen } from "./ui";
 import type { VaultProps } from "./Vault";
 
@@ -85,6 +86,8 @@ export function Settings({ setup, privateKey, onSetupChange, onErased, onBack }:
           ))}
         </div>
       </section>
+
+      <Guardians lang={lang} />
 
       <section className="mt-8 border-t border-hairline" lang={lang}>
         {(["pin", "duress"] as const).map((p) => (

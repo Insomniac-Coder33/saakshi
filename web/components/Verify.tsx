@@ -128,8 +128,8 @@ export function Verify() {
           <img src="/brand/wordmark-on-light.svg" alt="Saakshi" className="h-[26px]" />
           <h1 className="mt-[30px] font-display text-[44px] leading-none md:text-[60px]">Verify a file</h1>
           <p className="mt-4 text-[16px] leading-[1.55] text-muted">
-            Drop any recording from Saakshi. Its fingerprint is calculated in your browser and checked against its seal on
-            Polygon. The file itself never leaves your device.
+            Drop a recording, photo or journal entry from Saakshi. Its fingerprint is calculated in your browser and checked
+            against its seal on Polygon. The file itself never leaves your device.
           </p>
           <label
             onDragOver={(e) => {
@@ -219,7 +219,7 @@ function Meta({ o }: { o: Outcome }) {
     case "checking":
       return <>Checking the fingerprint and its seal on {CHAIN_NAME}…</>;
     case "none":
-      return <>This file does not match any sealed fingerprint. If it is a copy of a Saakshi recording, it has been changed.</>;
+      return <>This file does not match any sealed fingerprint. If it is a copy of a file from Saakshi, it has been changed.</>;
     case "changed":
       return <>This file does not match the pieces that were sealed. It has been changed since it was captured.</>;
     case "error":
@@ -227,12 +227,12 @@ function Meta({ o }: { o: Outcome }) {
     default:
       return (
         <>
-          Recorded {when(o.recordedAt)} by the phone’s clock.{" "}
+          Captured {when(o.recordedAt)} by the phone’s clock.{" "}
           {o.kind === "sealed" ? (
             <>
-              All {o.pieces} pieces sealed on {CHAIN_NAME}
+              {o.pieces === 1 ? "Sealed" : <>All {o.pieces} pieces sealed</>} on {CHAIN_NAME}
               {o.sealedBy && <> by {when(o.sealedBy)}</>}
-              {o.maxDelayS !== null && <>, each within {o.maxDelayS} s of being recorded</>}.
+              {o.maxDelayS !== null && <>, {o.pieces === 1 ? "" : "each "}within {o.maxDelayS} s of capture</>}.
             </>
           ) : (
             <>
@@ -258,7 +258,10 @@ function HowItWorks() {
     <details className="mt-8 border-t border-hairline pt-5 text-[14px] leading-relaxed text-muted">
       <summary className="cursor-pointer font-medium text-ink">How this check works</summary>
       <ol className="mt-3 list-decimal space-y-2 pl-5">
-        <li>While she recorded, her phone took a SHA-256 fingerprint of every 5-second piece before encrypting it.</li>
+        <li>
+          While she recorded, her phone took a SHA-256 fingerprint of every 5-second piece before encrypting it. A photo or journal
+          entry is fingerprinted whole, the moment she adds it.
+        </li>
         <li>
           Each fingerprint was salted and gathered into a Merkle tree, and the tree’s root was written to the{" "}
           <a href={`${EXPLORER}/address/${ANCHOR_ADDRESS}`} target="_blank" rel="noreferrer" className="text-rani underline underline-offset-2">

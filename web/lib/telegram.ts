@@ -1,0 +1,110 @@
+// Server only. The Telegram bot that carries guardian alerts, and what it says, in her language.
+// Guardians are adults she chose, so the bot speaks to them formally (আপনি, आप).
+import { createHash } from "node:crypto";
+import type { Language } from "./local";
+
+export const BOT_USERNAME = "Saakshi_Guardian_bot";
+
+export function telegramReady(): boolean {
+  return !!process.env.TELEGRAM_BOT_TOKEN;
+}
+
+/** Telegram echoes this on every webhook call, so only Telegram can reach /api/telegram. */
+export function webhookSecret(): string {
+  return createHash("sha256").update(`saakshi-webhook:${process.env.TELEGRAM_BOT_TOKEN}`).digest("hex").slice(0, 48);
+}
+
+export class TelegramError extends Error {
+  constructor(
+    public method: string,
+    public description: string,
+  ) {
+    super(`${method}: ${description}`);
+  }
+}
+
+export async function tg<T = unknown>(method: string, body: Record<string, unknown>): Promise<T> {
+  const res = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${method}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const json = (await res.json()) as { ok: boolean; result: T; description?: string };
+  if (!json.ok) throw new TelegramError(method, json.description ?? `HTTP ${res.status}`);
+  return json.result;
+}
+
+export const send = (chatId: number, text: string) => tg<{ message_id: number }>("sendMessage", { chat_id: chatId, text });
+
+/** 9:47 pm, on Indian time. */
+export function istClock(d = new Date(), lang: Language = "en"): string {
+  return d.toLocaleTimeString(lang === "en" ? "en-IN" : `${lang}-IN`, { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" });
+}
+
+type Vars = { name: string; time: string };
+type Message = "linked" | "linkedAnon" | "start" | "noFix" | "duress" | "silent" | "end" | "test" | "stopped" | "badLink" | "onlyAlerts";
+
+const en: Record<Message, (v: Vars) => string> = {
+  linked: ({ name }) =>
+    `You’re now ${name}’s guardian on Saakshi.\n\nIf she starts a silent SOS, you’ll get a message here with her live location. Keep this chat private: don’t mention it in front of anyone she might be afraid of.\n\nSend /stop at any time to stop being her guardian.`,
+  linkedAnon: () =>
+    `You’re now a guardian on Saakshi for the person who sent you this link.\n\nIf she starts a silent SOS, you’ll get a message here with her live location. Keep this chat private: don’t mention it in front of anyone she might be afraid of.\n\nSend /stop at any time to stop being her guardian.`,
+  start: ({ name, time }) =>
+    `🚨 SOS from ${name}\n\n${name} started a silent SOS at ${time}. Her phone is recording video, sound and location, and every 5 seconds is sealed as evidence.\n\nHer live location is below. If you think she is in danger, call 112 and share it.\n\nThink before calling her phone: someone else may see it.`,
+  noFix: () => `Her location isn’t available yet. It will appear here as soon as her phone finds it.`,
+  duress: ({ name, time }) =>
+    `⚠️ ${name} used her duress PIN at ${time}.\n\nSomeone may have forced her to stop the SOS. To them it looks stopped. It isn’t: her phone is still recording, and her location above is still live.\n\nDon’t call or message her phone. If you think she is in danger, call 112 and share her location.`,
+  silent: ({ name, time }) =>
+    `📵 ${name}’s phone stopped sending at ${time}.\n\nIt may have been switched off, taken or broken. Everything up to that moment is saved and sealed. Her last known location is the map above.\n\nIf you can’t reach her safely, call 112.`,
+  end: ({ name, time }) => `✅ ${name} ended the SOS at ${time}. The recording is saved and sealed.`,
+  test: ({ name }) => `This is a test from Saakshi. ${name} is checking that alerts reach you. Nothing has happened.`,
+  stopped: () => `You’re no longer a guardian. You won’t get any more alerts.`,
+  badLink: () => `This invite link has already been used or has expired. Ask her to send you a new one.`,
+  onlyAlerts: () => `This chat only sends alerts. Nothing you write here reaches her.`,
+};
+
+const bn: Record<Message, (v: Vars) => string> = {
+  linked: ({ name }) =>
+    `আপনি এখন সাক্ষী-তে ${name}-এর কাছের মানুষ।\n\nউনি চুপচাপ এসওএস শুরু করলে এখানে ওঁর লাইভ লোকেশনসহ মেসেজ পাবেন। এই চ্যাটটা গোপন রাখুন: যাকে উনি ভয় পান, তার সামনে এর কথা বলবেন না।\n\nযেকোনো সময় /stop পাঠিয়ে সরে যেতে পারেন।`,
+  linkedAnon: () =>
+    `যিনি আপনাকে এই লিংক পাঠিয়েছেন, আপনি এখন সাক্ষী-তে তাঁর কাছের মানুষ।\n\nউনি চুপচাপ এসওএস শুরু করলে এখানে ওঁর লাইভ লোকেশনসহ মেসেজ পাবেন। এই চ্যাটটা গোপন রাখুন: যাকে উনি ভয় পান, তার সামনে এর কথা বলবেন না।\n\nযেকোনো সময় /stop পাঠিয়ে সরে যেতে পারেন।`,
+  start: ({ name, time }) =>
+    `🚨 ${name}-এর এসওএস\n\n${name} ${time}-এ চুপচাপ এসওএস শুরু করেছেন। ওঁর ফোন ভিডিও, শব্দ আর লোকেশন রেকর্ড করছে, আর প্রতি ৫ সেকেন্ড প্রমাণ হিসেবে সিল হচ্ছে।\n\nওঁর লাইভ লোকেশন নিচে আছে। বিপদ মনে হলে ১১২-তে ফোন করে লোকেশনটা জানান।\n\nওঁর ফোনে কল করার আগে ভাবুন: অন্য কেউ দেখে ফেলতে পারে।`,
+  noFix: () => `ওঁর লোকেশন এখনো পাওয়া যায়নি। ফোন খুঁজে পেলেই এখানে দেখাবে।`,
+  duress: ({ name, time }) =>
+    `⚠️ ${name} ${time}-এ বিপদের পিন দিয়েছেন।\n\nহয়তো কেউ ওঁকে জোর করে এসওএস বন্ধ করিয়েছে। তার চোখে বন্ধ মনে হচ্ছে, আসলে নয়: ফোন এখনো রেকর্ড করছে, আর ওপরের লোকেশন এখনো লাইভ।\n\nওঁর ফোনে কল বা মেসেজ করবেন না। বিপদ মনে হলে ১১২-তে ফোন করে লোকেশনটা জানান।`,
+  silent: ({ name, time }) =>
+    `📵 ${time} থেকে ${name}-এর ফোন থেকে আর কিছু আসছে না।\n\nফোনটা হয়তো বন্ধ, কেড়ে নেওয়া বা ভাঙা। তার আগে পর্যন্ত সবকিছু সেভ আর সিল হয়ে আছে। ওপরের ম্যাপে ওঁর শেষ জানা লোকেশন।\n\nনিরাপদে যোগাযোগ করতে না পারলে ১১২-তে ফোন করুন।`,
+  end: ({ name, time }) => `✅ ${name} ${time}-এ এসওএস শেষ করেছেন। রেকর্ডিং সেভ আর সিল হয়ে আছে।`,
+  test: ({ name }) => `এটা সাক্ষী-র একটা পরীক্ষা। ${name} দেখছেন সতর্কবার্তা আপনার কাছে পৌঁছায় কি না। কিছু ঘটেনি।`,
+  stopped: () => `আপনি আর কাছের মানুষ নন। আর কোনো সতর্কবার্তা পাবেন না।`,
+  badLink: () => `এই লিংকটা আগেই ব্যবহার হয়েছে বা মেয়াদ শেষ। ওঁকে নতুন একটা পাঠাতে বলুন।`,
+  onlyAlerts: () => `এই চ্যাট শুধু সতর্কবার্তা পাঠায়। এখানে লেখা কিছু ওঁর কাছে পৌঁছায় না।`,
+};
+
+const hi: Record<Message, (v: Vars) => string> = {
+  linked: ({ name }) =>
+    `अब आप साक्षी पर ${name} के अपने हैं।\n\nअगर वे चुपचाप एसओएस शुरू करेंगी, तो आपको यहाँ उनकी लाइव लोकेशन के साथ मैसेज मिलेगा। यह चैट गुप्त रखें: जिससे वे डरती हों, उसके सामने इसका ज़िक्र न करें।\n\nकभी भी /stop भेजकर हट सकते हैं।`,
+  linkedAnon: () =>
+    `जिन्होंने आपको यह लिंक भेजा है, अब आप साक्षी पर उनके अपने हैं।\n\nअगर वे चुपचाप एसओएस शुरू करेंगी, तो आपको यहाँ उनकी लाइव लोकेशन के साथ मैसेज मिलेगा। यह चैट गुप्त रखें: जिससे वे डरती हों, उसके सामने इसका ज़िक्र न करें।\n\nकभी भी /stop भेजकर हट सकते हैं।`,
+  start: ({ name, time }) =>
+    `🚨 ${name} का एसओएस\n\n${name} ने ${time} पर चुपचाप एसओएस शुरू किया है। उनका फ़ोन वीडियो, आवाज़ और लोकेशन रिकॉर्ड कर रहा है, और हर 5 सेकंड सबूत के तौर पर सील हो रहा है।\n\nउनकी लाइव लोकेशन नीचे है। ख़तरा लगे तो 112 पर फ़ोन करके लोकेशन बताएँ।\n\nउनके फ़ोन पर कॉल करने से पहले सोचें: कोई और देख सकता है।`,
+  noFix: () => `उनकी लोकेशन अभी नहीं मिली है। फ़ोन को मिलते ही यहाँ दिखेगी।`,
+  duress: ({ name, time }) =>
+    `⚠️ ${name} ने ${time} पर ख़तरे का पिन डाला है।\n\nशायद किसी ने उन्हें ज़बरदस्ती एसओएस बंद करवाया है। उसे लगेगा कि बंद हो गया। ऐसा नहीं है: फ़ोन अब भी रिकॉर्ड कर रहा है, और ऊपर की लोकेशन अब भी लाइव है।\n\nउनके फ़ोन पर कॉल या मैसेज न करें। ख़तरा लगे तो 112 पर फ़ोन करके लोकेशन बताएँ।`,
+  silent: ({ name, time }) =>
+    `📵 ${time} से ${name} के फ़ोन से कुछ नहीं आ रहा।\n\nफ़ोन शायद बंद हो गया, छीन लिया गया या टूट गया। उस पल तक का सब कुछ सेव और सील है। ऊपर के नक़्शे पर उनकी आख़िरी लोकेशन है।\n\nसुरक्षित तरीके से संपर्क न हो पाए तो 112 पर फ़ोन करें।`,
+  end: ({ name, time }) => `✅ ${name} ने ${time} पर एसओएस ख़त्म किया। रिकॉर्डिंग सेव और सील है।`,
+  test: ({ name }) => `यह साक्षी का एक टेस्ट है। ${name} देख रही हैं कि अलर्ट आप तक पहुँचते हैं या नहीं। कुछ नहीं हुआ है।`,
+  stopped: () => `अब आप उनके अपने नहीं हैं। आगे कोई अलर्ट नहीं मिलेगा।`,
+  badLink: () => `यह लिंक पहले ही इस्तेमाल हो चुका है या पुराना हो गया है। उनसे नया लिंक भेजने को कहें।`,
+  onlyAlerts: () => `यह चैट सिर्फ़ अलर्ट भेजती है। यहाँ लिखी कोई बात उन तक नहीं पहुँचती।`,
+};
+
+const MESSAGES: Record<Language, Record<Message, (v: Vars) => string>> = { en, bn, hi };
+const SOMEONE: Record<Language, string> = { en: "Your contact", bn: "আপনার পরিচিত", hi: "आपकी परिचित" };
+
+export function message(lang: Language, key: Message, name: string | null, at = new Date()): string {
+  const l = MESSAGES[lang] ? lang : "en";
+  return MESSAGES[l][key]({ name: name || SOMEONE[l], time: istClock(at, l) });
+}

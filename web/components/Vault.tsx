@@ -1,11 +1,12 @@
 "use client";
 
-// Inside Saakshi, after her PIN: recordings, a manual SOS and settings.
+// Inside Saakshi, after her PIN: a manual SOS, her evidence (recordings, journal, photos) and settings.
 import { useCallback, useEffect, useState } from "react";
 import { digits, t, type StringKey } from "@/lib/i18n";
-import type { DeviceSetup, Language } from "@/lib/local";
+import type { DeviceSetup, Language, LocalSession } from "@/lib/local";
 import { listRecordings, recordingTitle, type RecordingSummary } from "@/lib/recordings";
 import { onSynced } from "@/lib/sync";
+import { Chevron, EvidenceItem, JournalCompose, JournalList, PhotoCompose, PhotoGrid } from "./Evidence";
 import { Recording } from "./Recording";
 import { Settings } from "./Settings";
 import { Button, LockIcon, RoundButton, Screen, Wordmark } from "./ui";
@@ -23,11 +24,20 @@ export interface VaultProps {
 
 export const LOCALE: Record<Language, string> = { en: "en-IN", bn: "bn-IN", hi: "hi-IN" };
 
+type Tab = "recordings" | "journal" | "photos";
+type View = "home" | "settings" | "write" | { id: string } | { photo: File; url: string } | { item: LocalSession };
+const TABS: { id: Tab; label: StringKey }[] = [
+  { id: "recordings", label: "recordings" },
+  { id: "journal", label: "journal" },
+  { id: "photos", label: "photos" },
+];
+
 export function Vault(props: VaultProps) {
   const { setup, privateKey, recording, onLock, onStartSos, onStopCapture } = props;
   const lang = setup.language;
   const tr = (k: StringKey, v?: Record<string, string | number>) => t(lang, k, v);
-  const [view, setView] = useState<"home" | "settings" | { id: string }>("home");
+  const [view, setView] = useState<View>("home");
+  const [tab, setTab] = useState<Tab>("recordings");
   const [items, setItems] = useState<RecordingSummary[] | null>(null);
 
   const refresh = useCallback(() => {
@@ -39,13 +49,22 @@ export function Vault(props: VaultProps) {
     return onSynced(refresh);
   }, [refresh]);
 
+  const home = () => {
+    if (typeof view === "object" && "url" in view) URL.revokeObjectURL(view.url);
+    setView("home");
+    refresh();
+  };
   if (view === "settings") return <Settings {...props} onBack={() => setView("home")} />;
+  if (view === "write") return <JournalCompose setup={setup} onDone={home} />;
+  if (typeof view === "object" && "photo" in view) return <PhotoCompose setup={setup} file={view.photo} url={view.url} onDone={home} />;
+  if (typeof view === "object" && "item" in view) return <EvidenceItem setup={setup} session={view.item} privateKey={privateKey} onBack={home} />;
   if (typeof view === "object") {
     const item = items?.find((i) => i.session.id === view.id);
     if (item)
       return (
         <Recording
           lang={lang}
+          userId={setup.userId}
           summary={item}
           privateKey={privateKey}
           onBack={() => {
@@ -91,9 +110,27 @@ export function Vault(props: VaultProps) {
         )}
       </section>
 
-      <section className="mt-10" lang={lang}>
-        <p className="label">{tr("recordings")}</p>
-        {items === null ? (
+      <div role="tablist" className="mt-10 grid grid-cols-3 rounded-full bg-blush p-1" lang={lang}>
+        {TABS.map((x) => (
+          <button
+            key={x.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === x.id}
+            onClick={() => setTab(x.id)}
+            className={`h-11 rounded-full text-body-sm font-medium transition-colors ${tab === x.id ? "bg-white text-ink shadow-card" : "text-muted"}`}
+          >
+            {tr(x.label)}
+          </button>
+        ))}
+      </div>
+
+      <section className="mt-5" lang={lang}>
+        {tab === "journal" ? (
+          <JournalList lang={lang} privateKey={privateKey} onWrite={() => setView("write")} onOpen={(s) => setView({ item: s })} />
+        ) : tab === "photos" ? (
+          <PhotoGrid lang={lang} privateKey={privateKey} onAdd={(f) => setView({ photo: f, url: URL.createObjectURL(f) })} onOpen={(s) => setView({ item: s })} />
+        ) : items === null ? (
           <div className="mt-4 h-20 animate-pulse rounded-card bg-blush" />
         ) : items.length === 0 ? (
           <p className="mt-3 border-t border-hairline pt-4 text-body-sm leading-relaxed text-muted">{tr("emptyRecordings")}</p>
@@ -119,9 +156,7 @@ export function Vault(props: VaultProps) {
                       {item.session.duress && <span className="text-rani"> · {tr("duressFlag")}</span>}
                     </span>
                   </span>
-                  <svg width="16" height="16" viewBox="0 0 16 16" className="fill-none stroke-muted [stroke-width:1.8]">
-                    <path d="m6 3 5 5-5 5" />
-                  </svg>
+                  <Chevron />
                 </button>
               </li>
             ))}
