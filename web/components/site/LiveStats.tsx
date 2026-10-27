@@ -7,6 +7,7 @@ import { ANCHOR_ADDRESS, EXPLORER, txUrl } from "@/lib/chain";
 interface Stats {
   seals: number;
   piecesSealed: number;
+  medianSealSeconds: number | null;
   latest: { tx: string; block: number; at: string } | null;
 }
 
@@ -18,23 +19,27 @@ export function LiveStats() {
       .then(setStats, () => {});
   }, []);
 
-  const ago = stats?.latest?.at ? since(new Date(stats.latest.at)) : null;
+  const wait = stats?.medianSealSeconds != null ? duration(stats.medianSealSeconds) : null;
+  const last = stats?.latest?.at
+    ? new Date(stats.latest.at).toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })
+    : null;
   return (
     <div className="grid gap-px overflow-hidden rounded-[24px] bg-plum-line sm:grid-cols-3">
       <Stat value={stats ? stats.piecesSealed.toLocaleString("en-IN") : "·"} label="evidence pieces sealed on Polygon" />
       <Stat value={stats ? stats.seals.toLocaleString("en-IN") : "·"} label="Merkle roots anchored on-chain" />
+      {/* The wait needs pieces that are still stored; erased accounts take theirs with them. Until then, the latest seal's date. */}
       <Stat
-        value={ago ?? "·"}
+        value={wait ?? last ?? "·"}
         label={
           stats?.latest ? (
             <>
-              since the last seal,{" "}
+              {wait ? `typical wait from upload to seal. Latest seal ${last}, ` : "latest seal, "}
               <a href={txUrl(stats.latest.tx)} target="_blank" rel="noreferrer" className="text-rani-bright underline underline-offset-2">
                 block {stats.latest.block}
               </a>
             </>
           ) : (
-            "since the last seal"
+            "latest seal"
           )
         }
       />
@@ -58,9 +63,6 @@ function Stat({ value, label }: { value: string; label: React.ReactNode }) {
   );
 }
 
-function since(d: Date): string {
-  const m = Math.max(0, Math.round((Date.now() - d.getTime()) / 60000));
-  if (m < 60) return `${m} min`;
-  const h = Math.round(m / 60);
-  return h < 48 ? `${h} h` : `${Math.round(h / 24)} days`;
+function duration(s: number): string {
+  return s < 90 ? `${s} s` : `${Math.round(s / 60)} min`;
 }

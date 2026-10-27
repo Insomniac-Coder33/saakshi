@@ -37,6 +37,7 @@ export default async function Site() {
         </div>
       </section>
       <Proof />
+      <Beyond />
       <UnderTheHood />
       <Limits />
       <Built />
@@ -60,6 +61,7 @@ function Nav() {
         <div className="hidden items-center gap-8 text-[14px] text-on-dark md:flex">
           <a href="#story" className="hover:text-white">How it works</a>
           <a href="#proof" className="hover:text-white">Proof</a>
+          <a href="#more" className="hover:text-white">Features</a>
           <a href="#hood" className="hover:text-white">Under the hood</a>
           <a href="/verify" className="hover:text-white">Verify a file</a>
         </div>
@@ -76,8 +78,9 @@ function Hero() {
     <section id="top" className="grain overflow-hidden bg-plum-night text-white">
       <div aria-hidden className="pointer-events-none absolute -right-40 top-10 size-[720px] rounded-full bg-[radial-gradient(closest-side,rgba(214,36,110,.32),transparent)]" />
       <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.12),transparent)]" />
-      <div className="relative mx-auto grid max-w-[1200px] items-center gap-14 px-6 pb-24 pt-36 md:px-10 lg:grid-cols-[1fr_320px] lg:gap-20 lg:pb-28 lg:pt-32">
-        <div className="animate-rise">
+      {/* On wide screens the copy sits in row 1 beside the phone and is centred on it, not on phone + steps. */}
+      <div className="relative mx-auto grid max-w-[1200px] gap-y-8 px-6 pb-24 pt-36 md:px-10 lg:grid-cols-[1fr_320px] lg:gap-x-20 lg:pb-28 lg:pt-32">
+        <div className="animate-rise lg:self-center">
           <Eyebrow dark>SHAKTI Hackathon 2026 · Dharma &amp; Trust</Eyebrow>
           <h1 className="mt-6 font-display text-[56px] leading-[0.98] tracking-[-0.01em] sm:text-[76px] lg:text-[92px]">
             A witness that <em className="text-rani-bright">never looks away.</em>
@@ -101,9 +104,11 @@ function Hero() {
           </ul>
         </div>
 
-        <div id="try" className="scroll-mt-24">
+        <div id="try" className="mt-6 scroll-mt-24 lg:mt-0">
           <LiveDemo className="mx-auto w-[300px] lg:w-[320px]" />
-          <ol className="mx-auto mt-8 max-w-[340px] space-y-2.5 text-[14px] leading-snug text-on-dark">
+        </div>
+        <div className="lg:col-start-2">
+          <ol className="mx-auto max-w-[340px] space-y-2.5 text-[14px] leading-snug text-on-dark">
             <Step n={1}>It’s a working calculator. Try a sum.</Step>
             <Step n={2}>
               Type <Key>{DEMO_PIN}</Key> then <Key>=</Key> to open Saakshi.
@@ -211,6 +216,48 @@ function Proof() {
   );
 }
 
+function Beyond() {
+  const items = [
+    {
+      title: "Sahayak, her rights in her language",
+      body: "Ask in Bengali, Hindi, English or a mix of them. Answers cite only a fixed list of 27 sections and 8 helplines, under the new BNS, BNSS, DV, POSH, POCSO and IT laws, and Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee. It named a correct law for all 45 of our test questions.",
+    },
+    {
+      title: "Guardians who know at once",
+      body: "Trusted people link through Telegram. When she starts an SOS they get her live location after a 10-second undo, at once if the duress PIN is used, and a warning if her phone goes silent.",
+    },
+    {
+      title: "A journal and photos, sealed",
+      body: "Abuse is often a pattern, not one night. Dated diary entries and photos of injuries or messages are encrypted and sealed on Polygon like recordings.",
+    },
+    {
+      title: "A certificate for court",
+      body: "One tap prints the Section 63 certificate that the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and a QR code to verify.",
+    },
+  ];
+  return (
+    <section id="more" className="border-b border-hairline bg-blush">
+      <div className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+        <div className="reveal max-w-[44rem]">
+          <Eyebrow>More than a recorder</Eyebrow>
+          <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">
+            From the night itself to the <em className="text-rani">complaint.</em>
+          </h2>
+        </div>
+        <div className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-blush-line ring-1 ring-blush-line sm:grid-cols-2">
+          {items.map((x, i) => (
+            <div key={x.title} className="reveal bg-white p-8">
+              <span className="flex size-7 items-center justify-center rounded-full bg-alert-bg text-[12px] font-medium text-rani">{i + 1}</span>
+              <h3 className="mt-5 font-display text-[30px] leading-tight">{x.title}</h3>
+              <p className="mt-3 text-[15px] leading-[1.6] text-muted">{x.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function UnderTheHood() {
   const cols = [
     {
@@ -279,7 +326,7 @@ function Limits() {
     ["The screen stays on.", "A web app can’t keep recording once the phone locks, so Saakshi holds the screen awake and black. The Android app removes this."],
     ["A seal proves sameness, not truth.", "It shows a file is unchanged since it was captured. It doesn’t prove what the file shows."],
     ["Test network, for now.", "Seals go to Polygon Amoy during the hackathon. Moving to Polygon mainnet is a configuration change."],
-    ["Information, not legal advice.", "Saakshi drafts the Section 63 certificate and will explain which laws may apply. She signs it, and a lawyer still decides what to do."],
+    ["Information, not legal advice.", "Sahayak explains which laws may apply and drafts the complaint; Saakshi drafts the Section 63 certificate. She signs them, and the police, a lawyer or a court decide what happens."],
   ];
   return (
     <section className="border-y border-hairline bg-blush">
@@ -307,7 +354,8 @@ function Built() {
     { d: "20 Oct", t: "Calculator disguise, silent SOS, encrypted 5-second capture, vault, duress PIN, undo, erase.", done: true },
     { d: "25 Oct", t: "Shortlisted for the final. Evidence sealed on Polygon; the public Verify page; this site.", done: true },
     { d: "26 Oct", t: "A sealed journal and photo vault, the Section 63 certificate, and Telegram guardian alerts with live location.", done: true },
-    { d: "Next", t: "Legal help in Bengali, Hindi and English, built on Adaption; the Android app.", done: false },
+    { d: "28 Oct", t: "Sahayak: legal help and complaint drafts in Bengali, Hindi and English, tested on 45 questions.", done: true },
+    { d: "Next", t: "The Android app, so recording carries on with the screen locked.", done: false },
   ];
   return (
     <section className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
@@ -315,9 +363,9 @@ function Built() {
         <Eyebrow>Built during SHAKTI</Eyebrow>
         <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">Everything here started on 19 October.</h2>
       </div>
-      <ol className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline ring-1 ring-hairline sm:grid-cols-2 lg:grid-cols-5">
+      <ol className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline ring-1 ring-hairline sm:grid-cols-2 lg:grid-cols-3">
         {days.map((x) => (
-          <li key={x.d} className="reveal bg-white p-7 sm:last:col-span-2 lg:last:col-span-1">
+          <li key={x.d} className="reveal bg-white p-7">
             <p className={`flex items-center gap-2 text-[13px] font-medium ${x.done ? "text-verified" : "text-rani"}`}>
               <i className={`size-2 rounded-full ${x.done ? "bg-verified" : "animate-pulse bg-rani"}`} />
               {x.done ? "Done" : "In progress"}
