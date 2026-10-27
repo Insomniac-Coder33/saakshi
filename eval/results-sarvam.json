@@ -1,0 +1,1074 @@
+{
+  "summary": {
+    "models": {
+      "sarvam-105b": 45
+    },
+    "ranAt": "2026-10-27T23:14:36.971Z",
+    "questions": 45,
+    "pass": "44/45",
+    "passByLanguage": {
+      "en": "15/15",
+      "bn": "15/15",
+      "hi": "14/15"
+    },
+    "correctLawByLanguage": {
+      "en": "15/15",
+      "bn": "15/15",
+      "hi": "14/15"
+    },
+    "urgentFlagged": "3/3",
+    "medianMs": 1339
+  },
+  "results": [
+    {
+      "id": "dv-dowry",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns115",
+        "dv3",
+        "dv12",
+        "dv18"
+      ],
+      "flagged": false,
+      "ms": 1630,
+      "answer": "আপনার স্বামী মদ খেয়ে মারধর করলে সেটা অপরাধ। শাশুড়ির পণ চাওয়ার কথাও অপরাধ। আপনি নিজের সুরক্ষার জন্য আইনি সাহায্য নিতে পারেন।",
+      "steps": [
+        "প্রথমে নিজেকে নিরাপদ জায়গায় সরিয়ে নিন।",
+        "পুলিশকে জানান এবং FIR দায়ের করুন।",
+        "স্থানীয় Protection Officer-এর কাছে Domestic Violence Act-এর অধীনে অভিযোগ করুন।",
+        "বিনামূল্যে আইনি সাহায্যের জন্য 15100 নম্বরে কল করুন।"
+      ]
+    },
+    {
+      "id": "dv-dowry",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "dv3",
+        "dv12",
+        "dv18",
+        "bns85"
+      ],
+      "flagged": false,
+      "ms": 1700,
+      "answer": "यह घरेलू हिंसा है। कानून आपको सुरक्षा और मदद दे सकता है। आप पुलिस में शिकायत कर सकती हैं या मजिस्ट्रेट से सुरक्षा आदेश ले सकती हैं।",
+      "steps": [
+        "सबसे पहले किसी सुरक्षित जगह पर जाएँ।",
+        "181 पर कॉल करें या पुलिस को 112 पर फोन करें।",
+        "एक महिला पुलिस अधिकारी से अपनी शिकायत दर्ज कराएँ।",
+        "मजिस्ट्रेट से सुरक्षा आदेश और रहने का अधिकार लें।",
+        "मुफ्त कानूनी मदद के लिए 15100 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "dv-dowry",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "dv3",
+        "dv12",
+        "dv18",
+        "bns85"
+      ],
+      "flagged": false,
+      "ms": 1805,
+      "answer": "This is domestic violence and dowry harassment. The law protects you from both. You can get a protection order, stay in your home, and claim money for your expenses. You can file a police complaint for the slaps and the dowry threats. You can also apply for relief under the Domestic Violence Act. You do not have to stay silent. Help is available.",
+      "steps": [
+        "Go to a safe place if you are in danger right now.",
+        "Call 112 if you need immediate police help.",
+        "Tell a trusted adult, friend, or neighbour what is happening.",
+        "Contact the Women Helpline at 181 for shelter and guidance."
+      ]
+    },
+    {
+      "id": "groped-crowd",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns74",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 1272,
+      "answer": "हाँ, आप बिल्कुल शिकायत कर सकती हैं। भीड़ में गलत तरीके से छूना कानूनन अपराध है। आपके पास वीडियो सबूत है, जो बहुत मददगार है।",
+      "steps": [
+        "सबसे पहले अपने फोन में उस वीडियो को सुरक्षित रखें और उसका बैकअप लें।",
+        "आप पुलिस में FIR दर्ज करा सकती हैं।",
+        "आप Saakshi ऐप में सबूतों को सील भी कर सकती हैं।",
+        "अगर आप चाहें तो महिला हेल्पलाइन 181 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "groped-crowd",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns74",
+        "bns351"
+      ],
+      "flagged": false,
+      "ms": 1391,
+      "answer": "হ্যাঁ, আপনি অবশ্যই অভিযোগ করতে পারেন। এটা BNS 74 (আউটরেজ মডেস্টি) বা BNS 351 (থ্রেট) অনুযায়ী অপরাধ। আপনার ভিডিওটা খুব দরকারী প্রমাণ। Saakshi-তে ভিডিওটা আগে সিল করে রাখুন, যাতে কোর্টে কাজ করে।",
+      "steps": [
+        "Saakshi অ্যাপে ভিডিওটা আপলোড করে সিল করে রাখুন, এতে তারিখ আর সময় ঠিক থাকে।",
+        "ওই ভিডিওটা নিয়ে কাছের কোনো থানায় গিয়ে একটা FIR দিন, চাইলে e-FIR-ও করতে পারেন।",
+        "পুলিশ যদি FIR না নেয়, তবে লিখিত অভিযোগ সুপারিনটেনডেন্ট অফ পুলিশ (SP)-কে পাঠান।",
+        "সাহায্যের জন্য 181 নম্বরে ফোন করতে পারেন।"
+      ]
+    },
+    {
+      "id": "groped-crowd",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns74",
+        "bnss173",
+        "bsa63"
+      ],
+      "flagged": false,
+      "ms": 1547,
+      "answer": "Yes, you can complain. What he did is assault to outrage your modesty under BNS 74. The video is strong evidence. You can report it to the police.",
+      "steps": [
+        "Go to the nearest police station and show them the video. Ask to file an FIR. Since this is a sexual offence, a woman officer should record your statement.",
+        "If the police refuse to take your complaint, write it down and send it to the Superintendent of Police. You can also approach a Magistrate.",
+        "Keep the video safe. You can use the Saakshi app to seal it with a Section 63 certificate so it can be used in court."
+      ]
+    },
+    {
+      "id": "sextortion",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns308",
+        "it66c",
+        "it66e",
+        "it67"
+      ],
+      "flagged": true,
+      "ms": 1493,
+      "answer": "This is illegal. He is blackmailing you, which is a crime. He has also made and shared fake pictures of you without your consent. You do not have to pay him.",
+      "steps": [
+        "Save the messages and the fake pictures on your phone. Do not delete them.",
+        "Block him on Instagram and do not reply. He may be trying to scare you.",
+        "Call 1930 to report the cyber extortion and fake pictures. You can also report him at cybercrime.gov.in."
+      ]
+    },
+    {
+      "id": "sextortion",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "it66c",
+        "it67",
+        "bnss173",
+        "bns308"
+      ],
+      "flagged": true,
+      "ms": 1714,
+      "answer": "यह बहुत गलत है। उसने आपकी तस्वीरें चुराईं और अब ब्लैकमेल कर रहा है। यह अपराध है। आप घबराइए मत, कानून आपके साथ है।",
+      "steps": [
+        "सबसे पहले किसी सुरक्षित जगह पर जाएं और तुरंत 112 पर कॉल करें।",
+        "1930 पर कॉल करके साइबर क्राइम की रिपोर्ट दर्ज करें।",
+        "इंस्टाग्राम पर उसकी प्रोफाइल की रिपोर्ट करें और उसे तुरंत ब्लॉक कर दें।",
+        "अपने परिवार को सच बताएं ताकि वे आपकी मदद कर सकें।",
+        "अगर आप चाहें तो पुलिस में FIR दर्ज कराएं।"
+      ]
+    },
+    {
+      "id": "sextortion",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns77",
+        "bns308",
+        "it67",
+        "itrules"
+      ],
+      "flagged": true,
+      "ms": 1890,
+      "answer": "এটা খুব ভয়ের ব্যাপার, কিন্তু আপনি একা নন। আপনি ভয়ের কিছু নেই, এটা একটা অপরাধ। আপনি টাকা দেবেন না। আপনার ছবি দিয়ে নকল নগ্ন ছবি বানানো (voyeurism) এবং টাকা চাওয়ার জন্য ভয় দেখানো (sextortion) দুটোই বেআইনি।",
+      "steps": [
+        "প্রথমে আপনি নিরাপদ জায়গায় যান এবং সাথে সাথে 112 নম্বরে কল করুন।",
+        "ওই ছবি বা মেসেজগুলোর স্ক্রিনশট নিন, যাতে প্রমাণ থাকে।",
+        "Saakshi অ্যাপে সাইলেন্ট এসওএস (SOS) চালু করুন, এতে প্রমাণগুলো সিল হয়ে যাবে।",
+        "1930 নম্বরে কল করে সাইবার অপরাধের অভিযোগ জানান।",
+        "181 নম্বরে কল করে Women Helpline-এর সাহায্য নিন।"
+      ]
+    },
+    {
+      "id": "ex-video",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns77",
+        "it66e",
+        "itrules",
+        "bns351"
+      ],
+      "flagged": false,
+      "ms": 1297,
+      "answer": "এটা খুব অন্যায় হয়েছে। এটা বেআইনি এবং আপনি একা নন। সে আপনার গোপনীয়তা নষ্ট করেছে এবং আপনাকে ব্ল্যাকমেইল করতে পারে। আইন অনুযায়ী, এই ভিডিও শেয়ার করা অপরাধ। আপনি Saakshi অ্যাপে ভিডিওর একটা সিল করা কপি রাখতে পারেন, যাতে কোর্টে প্রমাণ হিসেবে ব্যবহার করা যায়।",
+      "steps": [
+        "প্রথমে ভিডিওর স্ক্রিনশট এবং ওয়েবসাইটের লিংক সেভ করুন।",
+        "Saakshi অ্যাপে ভিডিওটি সিল করে রাখুন, যাতে কোর্টে ব্যবহার করা যায়।",
+        "১৯৩০ নম্বরে কল করে সাইবার ক্রাইমের অভিযোগ জানান।",
+        "১৮১ নম্বরে কল করে মহিলাদের হেল্পলাইনে সাহায্য নিন।"
+      ]
+    },
+    {
+      "id": "ex-video",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bnss173",
+        "it66c",
+        "it67",
+        "dv3"
+      ],
+      "flagged": false,
+      "ms": 1711,
+      "answer": "This is a serious violation. He broke the law by recording you without consent, and sharing it is also illegal. You have options to get the video removed and to hold him accountable.",
+      "steps": [
+        "Use Saakshi to silently record and seal the video and the website link with a date and Section 63 certificate so they can be used as evidence.",
+        "Report the video to the website using their grievance channel to get it taken down within hours under the IT Rules.",
+        "File a complaint at cybercrime.gov.in or call 1930 to report the non-consensual sharing.",
+        "File a police complaint for voyeurism and publishing obscene material under the IT Act.",
+        "Contact a lawyer to discuss a defamation case and seeking protection orders."
+      ]
+    },
+    {
+      "id": "ex-video",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "bns77",
+        "bns79",
+        "it66e"
+      ],
+      "flagged": false,
+      "ms": 1893,
+      "answer": "यह बहुत गलत हुआ है। उसने बिना आपकी सहमति के वीडियो बनाकर और फैलाकर कानून तोड़ा है। यह BNS 75, 77, 79 और IT Act 66E के तहत अपराध है। पुलिस तुरंत वीडियो हटवा सकती है।",
+      "steps": [
+        "सबसे पहले 1930 पर कॉल करें और वेबसाइट का लिंक बताएं ताकि उसे तुरंत हटाया जा सके।",
+        "112 पर कॉल करें या पास के पुलिस स्टेशन जाकर FIR दर्ज कराएं, यह BNS 77 और IT Act 66E के तहत आता है।",
+        "वेबसाइट पर मौजूद शिकायत विकल्प से भी वीडियो हटाने की रिपोर्ट करें।",
+        "Saakshi ऐप पर इस वीडियो को सील कर लें, ताकि कोर्ट में यह सबूत के तौर पर इस्तेमाल हो सके।"
+      ]
+    },
+    {
+      "id": "boss-comments",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "posh",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 1008,
+      "answer": "এটা যৌন হয়রানি। অফিসের ট্যুরে ওর ঘরে যেতে বলা এবং শরীর নিয়ে মন্তব্য করা আইনত অপরাধ। আপনি অফিসিয়াল চ্যানেলে অভিযোগ করতে পারেন।",
+      "steps": [
+        "ঘটনার তারিখ, সময় এবং বিবরণ লিখে রাখুন।",
+        "অফিসের ইন্টারনাল কমিটির কাছে লিখিত অভিযোগ দিন।",
+        "চাইলে পুলিশের কাছেও অভিযোগ করতে পারেন।",
+        "প্রমাণ হিসেবে মেসেজ বা ইমেইল সেভ করে রাখুন।"
+      ]
+    },
+    {
+      "id": "boss-comments",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "posh",
+        "bns351",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 1145,
+      "answer": "What he did is sexual harassment. It is illegal. You can complain at work and to the police. You do not have to go alone. Saakshi can record and seal evidence for you.",
+      "steps": [
+        "Tell your company's Internal Committee or a trusted senior.",
+        "Say no to the hotel room and do not go.",
+        "If he threatens you or you feel unsafe, call 112.",
+        "You can also report to the police or the cyber crime helpline if he messages you.",
+        "Reach out to a free legal aid service for help."
+      ]
+    },
+    {
+      "id": "stalker",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns78",
+        "bns75",
+        "bns351"
+      ],
+      "flagged": true,
+      "ms": 1352,
+      "answer": "This is stalking and harassment. He is breaking the law by following you and messaging you after you said stop. You can report this to the police. You can also get help from women’s helplines. You can use Saakshi to save his messages and photos with a date and time. This can be used as proof.",
+      "steps": [
+        "Go to a safe place right now.",
+        "Call 112 for police help.",
+        "Save his messages and block the numbers.",
+        "Report him at a police station or call 181.",
+        "Tell a trusted friend or family member."
+      ]
+    },
+    {
+      "id": "stalker",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns78",
+        "bns79",
+        "bnss173",
+        "dv3"
+      ],
+      "flagged": false,
+      "ms": 1515,
+      "answer": "এটা stalking আর harassment। ছেলেটা তোমাকে বিরক্ত করছে। আইন অনুযায়ী সে এই কাজ করলে শাস্তি পেতে পারে। তুমি ভয় পেয়ো না, তুমি একা নও।",
+      "steps": [
+        "সব মেসেজের স্ক্রিনশট আর নম্বরগুলো সেভ করে রাখো।",
+        "পুলিশকে জানিয়ে Zero FIR করো, যেখানেই যাও না কেন।",
+        "অনলাইনে ছবি বা মেসেজ দিলে ১৯৩০ নম্বরে কল করো।",
+        "কলেজের ইন্টারনাল কমিটিতেও অভিযোগ করতে পারো।",
+        "নিজের সুরক্ষার জন্য Saakshi অ্যাপ ব্যবহার করো, এটা তোমার প্রমাণগুলো সেভ করে রাখবে।"
+      ]
+    },
+    {
+      "id": "boss-comments",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "posh",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 2054,
+      "answer": "यह यौन उत्पीड़न है। कानून आपको ऐसे व्यवहार से बचाता है। आप इसकी शिकायत कर सकती हैं।",
+      "steps": [
+        "ऑफिस में हुई हर घटना को Saakshi ऐप में चुपचाप रिकॉर्ड करें।",
+        "अपने HR या कंपनी की Internal Committee को लिखित शिकायत दें।",
+        "अगर मैनेजर मना करे, तो पुलिस में FIR दर्ज कराएं।",
+        "मुफ्त कानूनी मदद के लिए 15100 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "fake-profile",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "it66c",
+        "it67",
+        "itrules",
+        "bns356"
+      ],
+      "flagged": false,
+      "ms": 1274,
+      "answer": "This is a crime. The fake profile and chats are against the law. You can report it to the police and the platform. Do not engage with the men on the fake profile. This is not your fault. The law allows you to get the profile removed. You can also get help from free legal aid.",
+      "steps": [
+        "Block the fake profile on Facebook and report it to the platform using its grievance channel.",
+        "Keep a sealed copy of the profile and chats with the date using Saakshi.",
+        "File a police complaint at your local police station or online at cybercrime.gov.in.",
+        "Call the cyber crime helpline at 1930 for guidance.",
+        "Call free legal aid at 15100 for help with your rights."
+      ]
+    },
+    {
+      "id": "fake-profile",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "it66c",
+        "it67",
+        "itrules",
+        "bsa63"
+      ],
+      "flagged": false,
+      "ms": 1285,
+      "answer": "এটা সাইবার অপরাধ। কেউ আপনার ছবি দিয়ে ভুয়ো প্রোফাইল খুলে অন্য ছেলেদের সাথে চ্যাট করাটা বেআইনি। আপনি Saakshi অ্যাপে এই পোস্টের স্ক্রিনশট নিয়ে সিল করে রাখতে পারেন। পরে আদালত এই প্রমাণ হিসেবে মেনে নেবে। এটা IT Act-এর নিয়ম ভাঙা।",
+      "steps": [
+        "Saakshi-তে ওই ভুয়ো প্রোফাইলের স্ক্রিনশট নিয়ে সিল করুন।",
+        "সাইবার ক্রাইম হেল্পলাইনে ১৯৩০ (1930) নম্বরে কল করে অভিযোগ জানান।",
+        "সাইবার ক্রাইম ওয়েবসাইটে গিয়ে রিপোর্ট করুন।",
+        "ওই প্রোফাইলটি Facebook-এ 'Report' করে বন্ধ করার অনুরোধ করুন।",
+        "চাইলে একজন আইনজীবীর পরামর্শ নিতে পারেন।"
+      ]
+    },
+    {
+      "id": "fake-profile",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "it66c",
+        "it66e",
+        "itrules"
+      ],
+      "flagged": false,
+      "ms": 1272,
+      "answer": "यह एक अपराध है। किसी की पहचान चुराकर फ़र्ज़ी प्रोफ़ाइल बनाना और दूसरों से चैट करना IT Act के तहत दंडनीय है। आप Saakshi का उपयोग करके सबूत सुरक्षित कर सकती हैं।",
+      "steps": [
+        "Saakshi में चुपचाप SOS रिकॉर्ड करें और फ़ोटो सुरक्षित करें।",
+        "फ़ेसबुक पर उस प्रोफ़ाइल की रिपोर्ट करें और उसे ब्लॉक करें।",
+        "h1930 पर कॉल करके साइबर अपराध की शिकायत दर्ज कराएं।",
+        "h181 पर कॉल करके महिला हेल्पलाइन से सलाह लें।",
+        "अगर कोई धमकी मिले तो तुरंत 112 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "police-refused",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bnss173",
+        "bnss175",
+        "dv12"
+      ],
+      "flagged": false,
+      "ms": 1249,
+      "answer": "That is wrong. The police must register your complaint. If they refuse, you have other options. You can send your complaint in writing to the Superintendent of Police. You can also go directly to a Magistrate to ask them to order the police to investigate. You can also approach a Protection Officer or a registered NGO for free help.",
+      "steps": [
+        "Send your written complaint to the Superintendent of Police if the station refused.",
+        "Go to a Magistrate with your complaint to ask for an investigation order.",
+        "Contact a Protection Officer or a local NGO for free legal and shelter help."
+      ]
+    },
+    {
+      "id": "police-refused",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bnss173",
+        "bnss175"
+      ],
+      "flagged": false,
+      "ms": 1143,
+      "answer": "এটা সম্পূর্ণ ভুল। পুলিশকে অবশ্যই আপনার অভিযোগ লিখতে হবে। আপনি যদি থানায় না যান, তবে 112 নম্বরে কল করে সরাসরি পুলিশের সাহায্য চাইতে পারেন।",
+      "steps": [
+        "আপনি অন্য কোনো থানায় গিয়েও অভিযোগ জানাতে পারেন, একে জিরো এফআইআর বলা হয়।",
+        "অভিযোগ না নিলে আপনি সরাসরি 112 নম্বরে কল করে পুলিশের সাহায্য নিন।",
+        "পুলিশ যদি সাহায্য না করে, তবে জেলার পুলিশ সুপার (SP) বা ম্যাজিস্ট্রেটের কাছে লিখিত অভিযোগ দিন।",
+        "আপনি চাইলে বিনামূল্যে আইনি সাহায্যের জন্য 15100 নম্বরে কল করতে পারেন।"
+      ]
+    },
+    {
+      "id": "police-refused",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bnss173",
+        "dv12"
+      ],
+      "flagged": false,
+      "ms": 1263,
+      "answer": "यह गलत है। पुलिस को आपकी शिकायत दर्ज करनी ही होगी। आप किसी भी थाने में जाकर जीरो एफआईआर (Zero FIR) दे सकती हैं।",
+      "steps": [
+        "किसी भी दूसरे थाने में जाकर अपनी शिकायत दर्ज करवाएं, इसे जीरो एफआईआर कहा जाता है।",
+        "अगर कोई पुलिस अधिकारी आपकी शिकायत लिखने से मना करे तो आप सीधे एसपी (SP) को लिखित शिकायत भेज सकती हैं।",
+        "अगर आप घरेलू हिंसा का सामना कर रही हैं तो आप महिला हेल्पलाइन 181 पर कॉल करके मदद मांग सकती हैं।"
+      ]
+    },
+    {
+      "id": "street-remarks",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 1171,
+      "answer": "What they are doing is sexual harassment. It is illegal. You can report it. The police must listen.",
+      "steps": [
+        "Tell them firmly to stop and walk away.",
+        "Record the incident with your phone if you can.",
+        "File a complaint at the police station under BNS Section 75 (sexual harassment).",
+        "You can also report this to the Cyber Crime Helpline if they post online.",
+        "Tell a trusted person about this."
+      ]
+    },
+    {
+      "id": "street-remarks",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "bns79",
+        "bnss173",
+        "bsa63"
+      ],
+      "flagged": false,
+      "ms": 1286,
+      "answer": "এটা সম্পূর্ণ বেআইনি। এই ধরনের নোংরা কথা বলা বা শিস দেওয়া মহিলাদের সম্মানহানি করে। এটা আইনের চোখে শাস্তিযোগ্য অপরাধ। আপনি ভয় পাবেন না, এটা আপনার দোষ নয়। আপনি চাইলে পুলিশকে জানাতে পারেন।",
+      "steps": [
+        "আপনি যখন বাস স্ট্যান্ডের পাশ দিয়ে যাবেন, তখন একা না যাওয়ার চেষ্টা করুন।",
+        "ঘটনাগুলো মনে রাখার জন্য Saakshi অ্যাপে ভয়েস রেকর্ড বা ছবি সেভ করে রাখুন।",
+        "আপনি চাইলে 181 নম্বরে কল করে মহিলাদের হেল্পলাইনে সাহায্য চাইতে পারেন।",
+        "বাস স্ট্যান্ডের আশেপাশে পুলিশ বা অন্য কারও সামনে এই নোংরা কথাগুলো বলুন।"
+      ]
+    },
+    {
+      "id": "street-remarks",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "bns78"
+      ],
+      "flagged": false,
+      "ms": 1314,
+      "answer": "यह यौन उत्पीड़न (sexual harassment) है। कानून के तहत यह गलत है। आप पुलिस में शिकायत कर सकती हैं।",
+      "steps": [
+        "Saakshi में चुपचाप रिकॉर्डिंग चालू करें ताकि सबूत सुरक्षित रहें।",
+        "चाय की दुकान के मालिक से कहें कि वह लड़कों को रोकें।",
+        "पास के पुलिस स्टेशन में जाकर शिकायत दर्ज कराएं।",
+        "महिला हेल्पलाइन 181 पर कॉल करके मदद लें।",
+        "अगर वे ऑनलाइन तस्वीरें फैलाएं तो 1930 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "death-threat",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bnss173",
+        "bns351",
+        "dv12",
+        "dv18"
+      ],
+      "flagged": true,
+      "ms": 1273,
+      "answer": "This is an emergency. Get out of the bathroom and go somewhere safe right now, like a neighbor's house. Call 112 immediately and tell them your husband threatened to kill you and locked the door. Keep your phone with you. Saakshi can silently record audio evidence and share your live location with a guardian.",
+      "steps": [
+        "Leave the bathroom and go to a safe place, like a neighbor's home.",
+        "Call 112 right now and tell them you are in immediate danger.",
+        "Keep your phone with you and stay in a safe room with a lock if you cannot leave.",
+        "Use the Saakshi SOS to silently record evidence and send your live location to a trusted guardian.",
+        "If he breaks in or you are hurt, call 112 again and ask for police and ambulance help."
+      ]
+    },
+    {
+      "id": "death-threat",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns351",
+        "dv3",
+        "bnss173"
+      ],
+      "flagged": true,
+      "ms": 1375,
+      "answer": "আপনি এখন বিপদে আছেন। আইন অনুযায়ী আপনার স্বামী আপনাকে মেরে ফেলার হুমকি দিয়েছে, যা গুরুতর অপরাধ। আপনি একা নন, আমরা আপনাকে সাহায্য করছি।",
+      "steps": [
+        "বাথরুম থেকে বেরিয়ে কোনো নিরাপদ জায়গায় যান, যেমন কোনো প্রতিবেশী বা আত্মীয়ের বাড়িতে।",
+        "তাড়াতাড়ি 112 নম্বরে কল করুন এবং পুলিশকে জানান যে আপনার স্বামী আপনাকে মেরে ফেলার হুমকি দিয়েছে।",
+        "আপনার বিশ্বস্ত কোনো আত্মীয় বা বন্ধুকে ফোন করে আপনার লোকেশন জানিয়ে রাখুন।",
+        "আপনি চাইলে Saakshi অ্যাপের SOS দিয়ে নীরবে প্রমাণ রেকর্ড করে রাখতে পারেন।"
+      ]
+    },
+    {
+      "id": "death-threat",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns351",
+        "bns356"
+      ],
+      "flagged": true,
+      "ms": 1506,
+      "answer": "आप इस वक्त बहुत खतरे में हैं। कानून आपको सुरक्षा देता है। BNS 351 के तहत जान से मारने की धमकी देना अपराध है। BNS 356 के तहत बंद करके रखना भी गैरकानूनी है। अभी सबसे जरूरी आपकी जान बचाना है।",
+      "steps": [
+        "तुरंत बाथरूम से बाहर निकलकर घर के किसी दूसरे कमरे में जाएं जहां बाहर निकलने का रास्ता हो।",
+        "दरवाज़ा खुला रखें ताकि अगर कुछ हो तो आप तुरंत भाग सकें।",
+        "अपने फोन से चुपचाप 112 पर कॉल करें और उन्हें बताएं कि आप अंदर बंद हैं और जान का खतरा है।",
+        "अगर आपके फोन में Saakshi ऐप है, तो चुपचाप SOS दबाकर सबूत रिकॉर्ड कर लें।",
+        "अगर आप कर सकें, तो किसी रिश्तेदार या दोस्त को WhatsApp पर मैसेज या कॉल करें कि आप खतरे में हैं।"
+      ]
+    },
+    {
+      "id": "minor-tutor",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "bns64",
+        "posh",
+        "pocso"
+      ],
+      "flagged": true,
+      "ms": 1515,
+      "answer": "This is wrong and against the law. He is committing sexual harassment and assault. You are under 18, so this is also a serious child sexual offence. You do not have to stay silent. Please tell a trusted adult right away, like a parent, guardian or school teacher. You can also call Childline for help. We are here for you.",
+      "steps": [
+        "Tell a trusted adult you feel safe with, like a parent, aunt, or school teacher.",
+        "Call Childline 1098 for free, confidential help and advice.",
+        "Use the Saakshi app to record a silent SOS and seal the evidence.",
+        "If you feel in immediate danger, call 112 right away."
+      ]
+    },
+    {
+      "id": "minor-tutor",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns74",
+        "bns75",
+        "pocso"
+      ],
+      "flagged": true,
+      "ms": 1915,
+      "answer": "তুমি একা নও, আর এটা তোমার দোষ নয়। তোমার সাথে যা হচ্ছে তা বেআইনি। তোমার স্যার তোমার গায়ে জোর করে হাত দিচ্ছেন, এটা আইনের চোখে অপরাধ। তুমি এখনই একজন বিশ্বস্ত বড়োকে (যেমন বাবা-মা, দিদি বা অন্য কেউ) সব খুলে বলো। তোমার বয়স ১৬, তাই POCSO আইন অনুযায়ী তোমার বিশেষ সুরক্ষা আছে। তুমি 1098 নম্বরে Childline-এ ফোন করে সাহায্য চাইতে পারো। তোমার কাছে যদি কোনো প্রমাণ থাকে, Saakshi অ্যাপে সেভ করে রাখো, যাতে পরে পুলিশকে দিতে পারো।",
+      "steps": [
+        "আগে নিজের নিরাপত্তার কথা ভাবো এবং এমন কোথাও যাও যেখানে তুমি একা নও।",
+        "112 নম্বরে কল করে পুলিশকে জানাও অথবা 1098 নম্বরে Childline-এ ফোন করো।",
+        "তোমার কোনো বিশ্বস্ত বড়োকে (যেমন বাবা-মা, দিদি বা অন্য কেউ) সব খুলে বলো।",
+        "Saakshi অ্যাপে তোমার অভিজ্ঞতার কথা লিখে রাখো এবং দরকার হলে ছবি বা অডিও রেকর্ড করো।",
+        "1098 নম্বরে কল করে একজন কাউন্সেলরের সাথে কথা বলো, তারা তোমাকে সাহায্য করবে।"
+      ]
+    },
+    {
+      "id": "thrown-out",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "dv3",
+        "dv12",
+        "dv18",
+        "bnss173"
+      ],
+      "flagged": true,
+      "ms": 1178,
+      "answer": "What happened is wrong. You have the right to live in the shared household and keep your things. The law can help you get back in and protect you and your baby. We can help you record this and keep your things safe.",
+      "steps": [
+        "Go to a safe place with your baby and call 112 if you are in immediate danger.",
+        "File a Zero FIR at any police station and ask them to record your complaint.",
+        "Contact a Protection Officer or the police to get a residence order to let you back in."
+      ]
+    },
+    {
+      "id": "minor-tutor",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": false,
+      "law": false,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns64",
+        "bns74",
+        "bns75",
+        "bns351"
+      ],
+      "flagged": true,
+      "ms": 2276,
+      "answer": "आपकी बात सुनकर मुझे बहुत दुख हुआ। ट्यूशन वाले सर का यह व्यवहार गलत है और यह अपराध है। आप अकेली नहीं हैं। आप तुरंत किसी भरोसेमंद बड़े को बताएं, जैसे आपके माता-पिता या कोई और। अगर आप डरती हैं, तो आप Childline 1098 पर भी बात कर सकती हैं।",
+      "steps": [
+        "अभी तुरंत किसी सुरक्षित जगह पर जाएं और अपने माता-पिता या किसी भरोसेमंद बड़े को बताएं।",
+        "Childline 1098 पर कॉल करें, वे आपकी मदद करेंगे और आपकी बात गुप्त रखेंगे।",
+        "अगर आप चाहें तो Saakshi ऐप पर एक सुरक्षित रिकॉर्ड बना सकती हैं, जो सबूत के तौर पर काम आएगा।",
+        "अगर वह आपको धमकाते हैं या नुकसान पहुंचाने की कोशिश करते हैं, तो तुरंत 112 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "thrown-out",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "dv3",
+        "dv12",
+        "dv18",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 1339,
+      "answer": "এটি গার্হস্থ্য হিংসা। আপনি এবং আপনার সন্তানকে আইনিভাবে রক্ষা করার অধিকার আছে। আপনার শ্বশুরবাড়ির লোকেরা আপনাকে জোর করে বাড়ি থেকে বের করে দেওয়া বা জিনিসপত্র আটকে রাখা আইনত অপরাধ।",
+      "steps": [
+        "প্রথমে আপনি ও আপনার সন্তানকে একটি নিরাপদ জায়গায় নিয়ে যান।",
+        "আপনি ১৮১ (181) নম্বরে ফোন করে মহিলা হেল্পলাইন বা ওয়ান স্টপ সেন্টারের সাহায্য নিতে পারেন।",
+        "আপনি আপনার এলাকার প্রোটেকশন অফিসারের কাছে গিয়ে একটি ডোমেস্টিক ইনসিডেন্ট রিপোর্ট জমা দিতে পারেন।",
+        "আপনি চাইলে স্থানীয় ম্যাজিস্ট্রেটের কাছে গিয়ে একটি প্রোটেকশন অর্ডার চাইতে পারেন।",
+        "আপনি চাইলে বিনামূল্যে আইনি সাহায্যের জন্য ১৫১০০ (15100) নম্বরে ফোন করতে পারেন।"
+      ]
+    },
+    {
+      "id": "thrown-out",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "dv3",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 1264,
+      "answer": "यह घरेलू हिंसा है। कानून आपको इस घर में रहने का हक देता है। आप पुलिस या मजिस्ट्रेट से मदद मांग सकती हैं।",
+      "steps": [
+        "सबसे पहले किसी सुरक्षित जगह पर जाएं।",
+        "181 पर कॉल करके महिला हेल्पलाइन से मदद लें।",
+        "पुलिस में शिकायत दर्ज करें ताकि वे आपका सामान वापस दिलाएं।",
+        "मजिस्ट्रेट के पास जाएं ताकि आपको रहने की जगह मिले।",
+        "मुफ्त कानूनी मदद के लिए 15100 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "false-promise",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns69"
+      ],
+      "flagged": false,
+      "ms": 1279,
+      "answer": "I am sorry you are hurting. If he promised marriage and did not mean it, that can be a crime under the law. It is called sex by deceit. The law allows you to report this and ask for action. You can also get free legal help.",
+      "steps": [
+        "Keep any proof like messages or photos safe.",
+        "Go to the police or a lawyer to file a complaint.",
+        "Ask for a free legal aid lawyer by calling 15100.",
+        "You can also reach out to the women helpline at 181 for support."
+      ]
+    },
+    {
+      "id": "false-promise",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns69"
+      ],
+      "flagged": false,
+      "ms": 1444,
+      "answer": "এটা ঠিক নয়। সে যদি বিয়ের মিথ্যা প্রতিশ্রুতি দিয়ে তোমার সাথে সম্পর্ক রেখে থাকে, তবে এটা আইনের চোখে অপরাধ। তুমি চাইলে পুলিশের কাছে অভিযোগ করতে পারো। Saakshi অ্যাপে তোমার মেসেজ আর ছবিগুলো রেকর্ড করে সিল করে রাখা যায়, যা পরে কোর্টে কাজে লাগবে।",
+      "steps": [
+        "নিজের মেসেজ আর ছবিগুলো Saakshi-তে রেকর্ড করে সেভ করো, এতে সেগুলোর তারিখ আর সময় সিল হয়ে থাকবে।",
+        "তুমি চাইলে পুলিশের কাছে একটা অভিযোগ (FIR) করতে পারো।",
+        "একজন মহিলা পুলিশ অফিসারের কাছে নিজের কথাগুলো জানাও।",
+        "ফ্রি আইনি সাহায্যের জন্য 15100 নম্বরে কল করতে পারো।"
+      ]
+    },
+    {
+      "id": "stalker",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns78",
+        "bnss173",
+        "bns351"
+      ],
+      "flagged": false,
+      "ms": 14293,
+      "answer": "यह पीछा करना और बार-बार मैसेज करना गैरकानूनी है। कानून के मुताबिक आप उसे साफ मना कर सकती हैं और उसे रोकने का पूरा अधिकार है।",
+      "steps": [
+        "तुरंत 112 पर कॉल करके पुलिस को बुलाएं या किसी सुरक्षित जगह पर जाएं।",
+        "सभी मैसेज और नंबर सेव कर लें, और Saakshi पर उन्हें सील कर लें ताकि सबूत बन सकें।",
+        "पुलिस में जीरो एफआईआर (Zero FIR) दर्ज कराएं, आप किसी भी थाने में शिकायत दे सकती हैं।",
+        "अगर वह धमकी देता है तो 1930 पर कॉल करके साइबर क्राइम की शिकायत करें।",
+        "किसी भरोसेमंद दोस्त या परिवार के सदस्य को यह सब बताएं और उनकी मदद लें।"
+      ]
+    },
+    {
+      "id": "false-promise",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns69",
+        "bnss173",
+        "dv3"
+      ],
+      "flagged": false,
+      "ms": 1154,
+      "answer": "यह धोखे से किया गया यौन संबंध है। अगर उसका शादी का वादा झूठा था, तो यह एक अपराध है। कानून के अनुसार, बिना सच्चे इरादे के शादी का वादा करके संबंध बनाना गैर-कानूनी है। आप पुलिस में शिकायत कर सकती हैं या मुफ्त कानूनी सलाह ले सकती हैं।",
+      "steps": [
+        "किसी सुरक्षित जगह पर जाएं और 112 पर कॉल करें।",
+        "सबूतों के लिए चुपचाप रिकॉर्डिंग करें और तस्वीरें लें।",
+        "पुलिस में शिकायत दर्ज करें या महिला हेल्पलाइन 181 पर कॉल करें।",
+        "मुफ्त कानूनी मदद के लिए 15100 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "evidence-court",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bsa63"
+      ],
+      "flagged": false,
+      "ms": 1161,
+      "answer": "Yes. Under the Bharatiya Sakshya Adhiniyam, 2023, electronic evidence like your video and screenshots is admissible in court. But it must be presented with a Section 63 certificate. This certificate details the device used and confirms the file has not been altered. Saakshi can help prepare this certificate for anything you seal in the app.",
+      "steps": [
+        "Seal your video and screenshots in Saakshi as soon as possible.",
+        "Keep the original files safe and do not delete them.",
+        "When you file a complaint, ask the police or a lawyer to use the Section 63 certificate for your evidence.",
+        "If the content is online, also report it to the cybercrime portal."
+      ]
+    },
+    {
+      "id": "evidence-court",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bsa63"
+      ],
+      "flagged": false,
+      "ms": 1265,
+      "answer": "হ্যাঁ, আদালত মেনে নেবে। আপনার ফোন থেকে তোলা ভিডিও আর মেসেজের স্ক্রিনশট আদালতে প্রমাণ হিসেবে দেওয়া যায়।",
+      "steps": [
+        "আপনার ভিডিও আর স্ক্রিনশটগুলো Saakshi অ্যাপে সেভ করে রাখুন।",
+        "অ্যাপে এগুলো সিল করে রাখুন যাতে এগুলোর তারিখ আর সময় ঠিক থাকে।",
+        "একটি সেকশন ৬৩ (Section 63) সার্টিফিকেট তৈরি করুন, যা এগুলোকে আদালতে ব্যবহারযোগ্য করে তুলবে।",
+        "আপনি চাইলে 181 নম্বরে ফোন করে মহিলাদের হেল্পলাইনেও কথা বলতে পারেন।"
+      ]
+    },
+    {
+      "id": "evidence-court",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bsa63"
+      ],
+      "flagged": false,
+      "ms": 1621,
+      "answer": "हाँ, अदालत आपके फ़ोन के वीडियो और स्क्रीनशॉट को सबूत मान सकती है। कानून के मुताबिक, इलेक्ट्रॉनिक रिकॉर्ड को सबूत के रूप में पेश किया जा सकता है। इसके लिए एक विशेष प्रमाण पत्र की ज़रूरत होती है, जिसमें डिवाइस और फ़ाइल की जानकारी होती है।",
+      "steps": [
+        "अपने फ़ोन के वीडियो और स्क्रीनशॉट को सुरक्षित रखें और उन्हें डिलीट न करें।",
+        "इन सबूतों को किसी सुरक्षित जगह पर सेव करें ताकि वे बदल न सकें।",
+        "अगर आप चाहें, तो 'साक्षी' ऐप के ज़रिए इन सबूतों को सील करवा सकती हैं, जिससे अदालत में उन्हें मान्यता मिलती है।",
+        "अगर मामला गंभीर है या आपको तुरंत मदद चाहिए, तो 112 पर कॉल करें।"
+      ]
+    },
+    {
+      "id": "domestic-worker",
+      "lang": "en",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns74",
+        "bnss173"
+      ],
+      "flagged": true,
+      "ms": 1290,
+      "answer": "This is assault to outrage your modesty. It is a crime and you have the right to safety and respect. You do not have to stay silent.",
+      "steps": [
+        "Move to a safe place right now. Call 112 if he is threatening you or has a weapon.",
+        "Tell a trusted person what is happening.",
+        "File a police complaint. A woman officer will record your statement for free.",
+        "Keep any evidence safe if you can, like photos or messages.",
+        "You can also call 181 for a women's helpline."
+      ]
+    },
+    {
+      "id": "domestic-worker",
+      "lang": "bn",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns74",
+        "bns75",
+        "dv3",
+        "bnss173"
+      ],
+      "flagged": false,
+      "ms": 1645,
+      "answer": "এটা সম্পূর্ণ ভুল এবং বেআইনি। আপনার গায়ে জোর করে হাত তোলা বা স্পর্শ করার চেষ্টা করা অপরাধ। আপনি চাইলে এর বিরুদ্ধে ব্যবস্থা নিতে পারেন।",
+      "steps": [
+        "নিজের নিরাপত্তার জন্য বাড়ির বাইরে কোথাও নিরাপদ জায়গায় চলে যান।",
+        "আপনি চাইলে 112-তে কল করে পুলিশকে জানাতে পারেন, অথবা 181-তে কল করে মহিলাদের হেল্পলাইনে সাহায্য চাইতে পারেন।",
+        "আপনি চাইলে পুলিশের কাছে অভিযোগ জানাতে পারেন। আপনি যদি যৌন হয়রানির শিকার হন, তবে একজন মহিলা পুলিশ অফিসারের কাছে আপনার কথা বলা হবে।",
+        "আপনি চাইলে 15100 নম্বরে কল করে বিনামূল্যে আইনি সাহায্যও পেতে পারেন।"
+      ]
+    },
+    {
+      "id": "domestic-worker",
+      "lang": "hi",
+      "model": "sarvam-105b",
+      "pass": true,
+      "law": true,
+      "urgent": true,
+      "language": true,
+      "laws": [
+        "bns75",
+        "bnss173"
+      ],
+      "flagged": true,
+      "ms": 1102,
+      "answer": "यह गलत और गैरकानूनी है। मालिक का ऐसा करना BNS 75 के तहत यौन उत्पीड़न है। आप डरें नहीं, कानून आपकी मदद करेगा।",
+      "steps": [
+        "सबसे पहले खुद को सुरक्षित जगह पर ले जाएं।",
+        "तुरंत 112 पर कॉल करके पुलिस को बुलाएं।",
+        "अगर आप चाहें, तो Saakshi ऐप का SOS बटन दबाकर सबूत सुरक्षित कर सकती हैं।",
+        "किसी भरोसेमंद व्यक्ति या 181 पर कॉल करके मदद लें।",
+        "किसी महिला पुलिस अधिकारी को पूरी बात बताएं।"
+      ]
+    }
+  ]
+}

@@ -1,17 +1,29 @@
-// Server only. Sahayak, the legal helper: Gemini, held to the laws and helplines in lib/law.ts.
+// Server only. Sahayak, the legal helper: Gemini or Sarvam, held to the laws and helplines in lib/law.ts.
 // The response schema only accepts ids from that list, so it can't cite a section we haven't checked;
 // the cards she reads show our text for each id, not the model's.
 import { HELPLINE_IDS, knowledgeText, LAW_IDS } from "./law";
 import type { Language } from "./local";
 
+type Provider = "gemini" | "sarvam";
+
 // Tried in order. A model that is busy, over quota or slow hands over to the next, so a woman asking
 // for help never waits on one overloaded model. (gemini-2.5 is closed to new keys.)
-const MODELS: { id: string; timeoutMs: number }[] = [
-  { id: "gemini-3.5-flash", timeoutMs: 20_000 },
-  { id: "gemini-3.6-flash", timeoutMs: 15_000 },
-  { id: "gemini-3.8-flash", timeoutMs: 10_000 },
-  { id: "gemini-3.5-flash-lite", timeoutMs: 10_000 },
+// SAHAYAK_MODELS (comma-separated ids) picks and orders them without a deploy.
+const ALL_MODELS: { id: string; provider: Provider; timeoutMs: number }[] = [
+  { id: "gemini-3.5-flash", provider: "gemini", timeoutMs: 20_000 },
+  { id: "gemini-3.6-flash", provider: "gemini", timeoutMs: 15_000 },
+  { id: "gemini-3.8-flash", provider: "gemini", timeoutMs: 10_000 },
+  { id: "gemini-3.5-flash-lite", provider: "gemini", timeoutMs: 10_000 },
+  // Sarvam's Indian-language model; paid per token, so it waits behind Gemini's free quota.
+  { id: "sarvam-105b", provider: "sarvam", timeoutMs: 25_000 },
 ];
+const KEY: Record<Provider, string | undefined> = { gemini: process.env.GEMINI_API_KEY, sarvam: process.env.SARVAM_API_KEY };
+
+function models() {
+  const order = process.env.SAHAYAK_MODELS?.split(",").map((s) => s.trim()).filter(Boolean);
+  const list = order ? order.flatMap((id) => ALL_MODELS.filter((m) => m.id === id)) : ALL_MODELS;
+  return list.filter((m) => KEY[m.provider]);
+}
 const LANGUAGE: Record<Language, string> = { en: "English", bn: "Bengali (বাংলা)", hi: "Hindi (हिन्दी)" };
 
 export interface Turn {
@@ -44,14 +56,15 @@ export interface Draft {
 }
 
 export function sahayakReady(): boolean {
-  return !!process.env.GEMINI_API_KEY;
+  return models().length > 0;
 }
 
-async function gemini<T>(system: string, contents: { role: string; parts: { text: string }[] }[], schema: object, temperature: number): Promise<T & { model: string }> {
-  let last: unknown;
-  for (const m of MODELS) {
+async function generate<T>(system: string, turns: Turn[], schema: object, temperature: number): Promise<T & { model: string }> {
+  let last: unknown = new Error("no model configured");
+  for (const m of models()) {
     try {
-      return { ...(await once<T>(m.id, m.timeoutMs, system, contents, schema, temperature)), model: m.id };
+      const out = m.provider === "gemini" ? gemini<T>(m.id, m.timeoutMs, system, turns, schema, temperature) : sarvam<T>(m.id, m.timeoutMs, system, turns, schema, temperature);
+      return { ...(await out), model: m.id };
     } catch (e) {
       last = e;
       console.error(`[sahayak] ${m.id}:`, e instanceof Error ? e.message.slice(0, 120) : e);
@@ -60,7 +73,8 @@ async function gemini<T>(system: string, contents: { role: string; parts: { text
   throw last;
 }
 
-async function once<T>(model: string, timeoutMs: number, system: string, contents: { role: string; parts: { text: string }[] }[], schema: object, temperature: number): Promise<T> {
+async function gemini<T>(model: string, timeoutMs: number, system: string, turns: Turn[], schema: object, temperature: number): Promise<T> {
+  const contents = turns.map((t) => ({ role: t.role, parts: [{ text: t.text }] }));
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: "POST",
     signal: AbortSignal.timeout(timeoutMs),
@@ -85,6 +99,43 @@ async function once<T>(model: string, timeoutMs: number, system: string, content
   const text = body.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
   if (!text) throw new Error("empty answer");
   return JSON.parse(text) as T;
+}
+
+// Sarvam speaks the OpenAI chat format. Its reasoning mode spends the whole token budget before
+// answering, so it's off; the schema and the KNOWLEDGE do the grounding.
+async function sarvam<T>(model: string, timeoutMs: number, system: string, turns: Turn[], schema: object, temperature: number): Promise<T> {
+  const res = await fetch("https://api.sarvam.ai/v1/chat/completions", {
+    method: "POST",
+    signal: AbortSignal.timeout(timeoutMs),
+    headers: { "content-type": "application/json", "api-subscription-key": process.env.SARVAM_API_KEY! },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: "system", content: system }, ...turns.map((t) => ({ role: t.role === "model" ? "assistant" : "user", content: t.text }))],
+      temperature,
+      max_tokens: 2048,
+      reasoning_effort: null,
+      response_format: { type: "json_schema", json_schema: { name: "reply", strict: true, schema: jsonSchema(schema) } },
+    }),
+  });
+  const body = (await res.json()) as { choices?: { message?: { content?: string | null } }[]; error?: { message: string } };
+  if (!res.ok) throw new Error(body.error?.message ?? `Sarvam HTTP ${res.status}`);
+  const text = body.choices?.[0]?.message?.content ?? "";
+  if (!text) throw new Error("empty answer");
+  return JSON.parse(text) as T;
+}
+
+// Gemini's schema dialect (OBJECT, propertyOrdering) to standard JSON Schema.
+function jsonSchema(s: object): object {
+  const { type, properties, items, propertyOrdering: _order, ...rest } = s as Record<string, unknown>;
+  void _order;
+  return {
+    ...rest,
+    ...(type ? { type: String(type).toLowerCase() } : {}),
+    ...(items ? { items: jsonSchema(items as object) } : {}),
+    ...(properties
+      ? { properties: Object.fromEntries(Object.entries(properties).map(([k, v]) => [k, jsonSchema(v as object)])), additionalProperties: false }
+      : {}),
+  };
 }
 
 const ANSWER_SCHEMA = {
@@ -121,11 +172,13 @@ ${knowledgeText()}`;
 }
 
 export function ask(lang: Language, minor: boolean, turns: Turn[]): Promise<Answer> {
-  const contents = turns.slice(-8).map((t) => ({ role: t.role, parts: [{ text: t.text.slice(0, 4000) }] }));
-  return gemini<Answer>(systemPrompt(lang, minor), contents, ANSWER_SCHEMA, 0.3).then((a) => ({
+  const recent = turns.slice(-8).map((t) => ({ role: t.role, text: t.text.slice(0, 4000) }));
+  return generate<Answer>(systemPrompt(lang, minor), recent, ANSWER_SCHEMA, 0.3).then((a) => ({
     ...a,
-    laws: [...new Set(a.laws)].slice(0, 4),
-    helplines: [...new Set(a.helplines)].slice(0, 3),
+    // The schema already limits these to our ids; filter again in case a provider is lax about enums.
+    // A girl who has told Saakshi she is under 18 always sees POCSO and Childline, whatever the model chose.
+    laws: [...new Set([...(minor ? ["pocso"] : []), ...a.laws])].filter((id) => LAW_IDS.includes(id)).slice(0, 4),
+    helplines: [...new Set([...(minor ? ["h1098"] : []), ...a.helplines])].filter((id) => HELPLINE_IDS.includes(id)).slice(0, 3),
     steps: a.steps.slice(0, 5),
   }));
 }
@@ -176,5 +229,5 @@ ${knowledgeText()}`;
     .filter((t) => t.role === "user")
     .map((t) => t.text.slice(0, 4000))
     .join("\n\n");
-  return gemini<Draft>(system, [{ role: "user", parts: [{ text: `What she told Sahayak:\n\n${story}` }] }], DRAFT_SCHEMA, 0.2);
+  return generate<Draft>(system, [{ role: "user", text: `What she told Sahayak:\n\n${story}` }], DRAFT_SCHEMA, 0.2);
 }
