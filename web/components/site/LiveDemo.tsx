@@ -59,11 +59,8 @@ export function LiveDemo({ caption }: { caption?: ReactNode }) {
   }, []);
 
   // On a phone, or wherever the phone on the page is too small to read, starting goes straight to full size.
-  const start = useCallback(() => {
-    const glass = box.current?.clientWidth ?? W;
-    if (matchMedia("(max-width: 639px)").matches || glass / W < MIN_SCALE) enlarge();
-    else setOn(true);
-  }, [enlarge]);
+  const wantsBig = useCallback(() => matchMedia("(max-width: 639px)").matches || (box.current?.clientWidth ?? W) / W < MIN_SCALE, []);
+  const start = useCallback(() => (wantsBig() ? enlarge() : setOn(true)), [wantsBig, enlarge]);
 
   useEffect(() => {
     const d = frame.current;
@@ -88,16 +85,17 @@ export function LiveDemo({ caption }: { caption?: ReactNode }) {
 
   // The page's "Try it live" links (#try) start the app as well as scrolling to it: that click is the asking.
   // The scroll happens here rather than by following the link, which would pull focus out of the full-size view.
+  // It jumps when the app opens full size, since the page is covered and a glide would be cut short.
   useEffect(() => {
     const click = (e: MouseEvent) => {
       if (!(e.target instanceof Element && e.target.closest('a[href="#try"]'))) return;
       e.preventDefault();
-      document.getElementById("try")?.scrollIntoView();
+      document.getElementById("try")?.scrollIntoView({ behavior: wantsBig() ? "instant" : "auto" });
       start();
     };
     document.addEventListener("click", click);
     return () => document.removeEventListener("click", click);
-  }, [start]);
+  }, [wantsBig, start]);
 
   return (
     <dialog

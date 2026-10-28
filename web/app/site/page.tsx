@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import QRCode from "qrcode";
 import type { ReactNode } from "react";
 import { Chalchitra } from "@/components/site/Chalchitra";
+import { Header } from "@/components/site/Header";
 import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
 import { Story } from "@/components/site/Story";
@@ -28,7 +29,7 @@ export default async function Site() {
 
   return (
     <div className="bg-white text-ink">
-      <Nav />
+      <Header />
       <Hero />
       <Problem />
       <section id="story" className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
@@ -53,33 +54,11 @@ function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
   return <p className={`label ${dark ? "text-rani-bright!" : ""}`}>{children}</p>;
 }
 
-function Nav() {
-  return (
-    <header className="absolute inset-x-0 top-0 z-20">
-      <nav className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-6 md:px-10">
-        <a href="#top" aria-label="Saakshi">
-          <img src="/brand/wordmark-on-dark.svg" alt="Saakshi" className="h-[26px]" />
-        </a>
-        <div className="hidden items-center gap-8 text-[14px] text-on-dark lg:flex">
-          <a href="#story" className="hover:text-white">How it works</a>
-          <a href="#proof" className="hover:text-white">Proof</a>
-          <a href="#more" className="hover:text-white">Features</a>
-          <a href="#hood" className="hover:text-white">Under the hood</a>
-          <a href="/verify" className="hover:text-white">Verify a file</a>
-        </div>
-        <a href="#try" className="flex h-11 items-center rounded-full border border-white/20 px-5 text-[14px] font-medium text-white hover:bg-white/10">
-          Try it live
-        </a>
-      </nav>
-    </header>
-  );
-}
-
 // From laptops and landscape tablets up: copy | steps | phone in its arch, one row, with the steps strung on
 // the arch's left leg. Below that: copy, phone, steps, in reading order.
 function Hero() {
   return (
-    <section id="top" className="grain overflow-hidden bg-plum-night text-white">
+    <section id="top" data-tone="dark" className="grain overflow-hidden bg-plum-night text-white">
       <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.10),transparent)]" />
       {/* --w, the arch's width, is set by whichever runs out first: the screen's height (the whole phone fits)
           or its width (the copy keeps about 400px). */}
@@ -116,7 +95,7 @@ function Hero() {
         <div className="contents lg:-mr-[calc(var(--w)*0.1237)] lg:flex lg:gap-6">
           <div
             id="try"
-            className="mx-auto mt-14 w-full max-w-[372px] scroll-mt-20 max-sm:-mx-2 max-sm:w-[calc(100%_+_16px)] lg:order-2 lg:mx-0 lg:mt-0 lg:w-(--w) lg:max-w-none lg:flex-none"
+            className="mx-auto mt-14 w-full max-w-[372px] max-sm:-mx-2 max-sm:w-[calc(100%_+_16px)] lg:order-2 lg:mx-0 lg:mt-0 lg:w-(--w) lg:max-w-none lg:flex-none"
           >
             <Chalchitra>
               <LiveDemo
@@ -199,7 +178,7 @@ function Problem() {
 
 function Proof() {
   return (
-    <section id="proof" className="grain bg-plum text-white">
+    <section id="proof" data-tone="dark" className="grain bg-plum text-white">
       <div className="relative mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
         <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
           <div className="reveal">
@@ -402,7 +381,7 @@ function Built() {
 
 function Install({ qr }: { qr: string }) {
   return (
-    <section className="grain bg-plum-night text-white">
+    <section data-tone="dark" className="grain bg-plum-night text-white">
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1fr_auto] lg:gap-20">
         <div className="reveal">
           <Eyebrow dark>Put it on a phone</Eyebrow>
@@ -424,7 +403,7 @@ function Install({ qr }: { qr: string }) {
 
 function Footer() {
   return (
-    <footer className="bg-plum-night text-on-dark-muted">
+    <footer data-tone="dark" className="bg-plum-night text-on-dark-muted">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-6 border-t border-white/10 px-6 py-12 text-[14px] md:flex-row md:items-center md:justify-between md:px-10">
         <div className="flex items-center gap-4">
           <img src="/brand/seal-pink.svg" alt="" className="size-10" />

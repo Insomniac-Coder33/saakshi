@@ -113,8 +113,28 @@
   }
 }
 
-/* The live demo's full-size view: the page behind it holds still. */
+/* The live demo's full-size view and the section sheet: the page behind them holds still. */
 :root:has(dialog:modal) { overflow: hidden; }
+
+/* Showcase only (the app has no #top): links land below the fixed header, and glide there when motion is welcome. */
+html:has(#top) { scroll-padding-top: 72px; }
+@media (prefers-reduced-motion: no-preference) {
+  html:has(#top) { scroll-behavior: smooth; }
+}
+
+/* The header's thread grows from the left as the page is read, where scroll-driven animation runs;
+   elsewhere it simply isn't drawn. */
+@keyframes thread {
+  to { transform: scaleX(1); }
+}
+@utility thread {
+  transform: scaleX(0);
+  transform-origin: left;
+  @supports (animation-timeline: scroll()) {
+    animation: thread linear both;
+    animation-timeline: scroll(root);
+  }
+}
 
 /* Lifts into place as it scrolls into view, where the browser supports scroll-driven animation.
    Motion only, never opacity: if the timeline doesn't run, the content must still be visible. */
