@@ -116,32 +116,6 @@
 /* The live demo's full-size view and the section sheet: the page behind them holds still. */
 :root:has(dialog:modal) { overflow: hidden; }
 
-/* Showcase header: frosted plum glass. A faint glow behind the mark, light along the top edge, and a hairline
-   rim that catches rani light at both ends (drawn as a masked ring, so it follows the rounded shape). */
-@utility glass {
-  position: relative;
-  background:
-    radial-gradient(90px 70px at 30px 50%, rgba(255, 111, 165, 0.16), transparent 70%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  backdrop-filter: blur(20px) saturate(150%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 24px 48px -28px rgba(0, 0, 0, 0.9);
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(100deg, rgba(255, 111, 165, 0.6), rgba(255, 255, 255, 0.12) 22%, rgba(255, 255, 255, 0.05) 70%, rgba(255, 111, 165, 0.35));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-    pointer-events: none;
-  }
-}
-
 /* Lifts into place as it scrolls into view, where the browser supports scroll-driven animation.
    Motion only, never opacity: if the timeline doesn't run, the content must still be visible. */
 @keyframes lift {

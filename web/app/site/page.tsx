@@ -62,7 +62,7 @@ function Hero() {
       <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.10),transparent)]" />
       {/* --w, the arch's width, is set by whichever runs out first: the screen's height (the whole phone fits)
           or its width (the copy keeps about 400px). */}
-      <div className="relative mx-auto grid max-w-[1200px] px-6 pb-16 pt-32 md:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-x-10 lg:pb-10 lg:pt-[72px] lg:[--w:clamp(280px,min(calc((100svh_-_88px)*0.494),calc((min(100vw,1200px)_-_720px)*1.1412)),372px)] xl:gap-x-12">
+      <div className="relative mx-auto grid max-w-[1200px] px-6 pb-16 pt-32 md:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-x-10 lg:pb-10 lg:pt-[116px] lg:[--w:clamp(260px,min(calc((100svh_-_132px)*0.494),calc((min(100vw,1200px)_-_720px)*1.1412)),372px)] xl:gap-x-12">
         {/* The padding centres the copy on the phone rather than on phone and arch together. The headline
             scales with its column, which narrows as the arch takes its share. */}
         <div className="animate-rise @container lg:self-center lg:pt-[calc(var(--w)*0.2)]">
