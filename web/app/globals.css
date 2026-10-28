@@ -49,6 +49,8 @@
 
   --animate-breathe: breathe 3.2s var(--ease-calm) infinite;
   --animate-rise: rise 0.28s var(--ease-calm) both;
+  --animate-glow: glow 9s ease-in-out infinite;
+  --animate-open-eye: open-eye 1.2s var(--ease-calm) 0.4s both;
   @keyframes breathe {
     0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.06); opacity: 0.7; }
@@ -56,6 +58,14 @@
   @keyframes rise {
     from { transform: translateY(8px); opacity: 0; }
     to { transform: none; opacity: 1; }
+  }
+  @keyframes glow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.07); }
+  }
+  @keyframes open-eye {
+    from { transform: scaleY(0.05); }
+    to { transform: none; }
   }
 }
 
@@ -117,6 +127,11 @@
   }
 }
 
+/* One instant run, so endless animations settle on their last frame instead of flickering. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

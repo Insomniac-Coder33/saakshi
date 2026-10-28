@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import QRCode from "qrcode";
 import type { ReactNode } from "react";
+import { Chalchitra } from "@/components/site/Chalchitra";
 import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
 import { Story } from "@/components/site/Story";
@@ -58,7 +59,7 @@ function Nav() {
         <a href="#top" aria-label="Saakshi">
           <img src="/brand/wordmark-on-dark.svg" alt="Saakshi" className="h-[26px]" />
         </a>
-        <div className="hidden items-center gap-8 text-[14px] text-on-dark md:flex">
+        <div className="hidden items-center gap-8 text-[14px] text-on-dark lg:flex">
           <a href="#story" className="hover:text-white">How it works</a>
           <a href="#proof" className="hover:text-white">Proof</a>
           <a href="#more" className="hover:text-white">Features</a>
@@ -73,51 +74,75 @@ function Nav() {
   );
 }
 
+// Wide screens: copy | steps | phone in its arch, one row, with the steps strung on the arch's left leg.
+// Medium: the steps move under the copy. Phones: copy, phone, steps, in reading order.
 function Hero() {
   return (
     <section id="top" className="grain overflow-hidden bg-plum-night text-white">
-      <div aria-hidden className="pointer-events-none absolute -right-40 top-10 size-[720px] rounded-full bg-[radial-gradient(closest-side,rgba(214,36,110,.32),transparent)]" />
-      <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.12),transparent)]" />
-      {/* On wide screens the copy sits in row 1 beside the phone and is centred on it, not on phone + steps. */}
-      <div className="relative mx-auto grid max-w-[1200px] gap-y-8 px-6 pb-24 pt-36 md:px-10 lg:grid-cols-[1fr_320px] lg:gap-x-20 lg:pb-28 lg:pt-32">
-        <div className="animate-rise lg:self-center">
+      <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.10),transparent)]" />
+      <div className="relative mx-auto grid max-w-[1200px] px-6 pb-16 pt-32 md:px-10 lg:grid-cols-[minmax(0,1fr)_372px] lg:grid-rows-[1fr_auto] lg:gap-x-12 lg:pb-10 lg:pt-[72px] xl:grid-cols-[minmax(0,1fr)_auto] xl:grid-rows-1 xl:[--w:clamp(300px,calc((100svh_-_88px)*0.494),372px)]">
+        {/* On wide screens the padding centres the copy on the phone rather than on phone and arch together. */}
+        <div className="animate-rise lg:col-start-1 lg:row-start-1 lg:self-end xl:self-center xl:pt-[calc(var(--w)*0.2)]">
           <Eyebrow dark>SHAKTI Hackathon 2026 · Dharma &amp; Trust</Eyebrow>
-          <h1 className="mt-6 font-display text-[56px] leading-[0.98] tracking-[-0.01em] sm:text-[76px] lg:text-[92px]">
+          <h1 className="mt-6 font-display text-[54px] leading-[0.98] tracking-[-0.01em] sm:text-[76px] lg:text-[84px] xl:text-[88px]">
             A witness that <em className="text-rani-bright">never looks away.</em>
           </h1>
-          <p className="mt-8 max-w-[36rem] text-[19px] leading-[1.6] text-on-dark">
+          <p className="mt-7 max-w-[33rem] text-[18px] leading-[1.65] text-on-dark">
             Saakshi lives inside an ordinary calculator. When something happens, it silently records, encrypts every five seconds on
             her phone, and seals the evidence on a public blockchain, so it can’t be deleted, doubted or denied.
           </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <a href="#try" className="flex h-14 items-center rounded-full bg-rani px-7 text-[16px] font-medium text-white hover:bg-rani-deep">
+          <div className="mt-9 flex flex-wrap gap-3">
+            <a href="#try" className="flex h-14 items-center rounded-full bg-rani px-6 text-[16px] font-medium text-white hover:bg-rani-deep sm:px-7">
               Try the live app
             </a>
-            <a href="/verify" className="flex h-14 items-center rounded-full border border-white/20 px-7 text-[16px] font-medium text-white hover:bg-white/10">
+            <a href="/verify" className="flex h-14 items-center rounded-full border border-white/20 px-6 text-[16px] font-medium text-white hover:bg-white/10 sm:px-7">
               Verify a file
             </a>
           </div>
-          <ul className="mt-12 grid max-w-[36rem] gap-x-8 gap-y-3 text-[14px] text-on-dark-muted sm:grid-cols-3">
-            <li className="border-t border-white/10 pt-3">Bengali · Hindi · English</li>
-            <li className="border-t border-white/10 pt-3">No wallet, no gas, no login</li>
-            <li className="border-t border-white/10 pt-3">Any Android phone, today</li>
+          <ul className="mt-9 flex flex-wrap gap-x-5 gap-y-2.5 text-[14px] text-on-dark">
+            <Fact>Bengali · Hindi · English</Fact>
+            <Fact>No wallet, no gas, no login</Fact>
+            <Fact>Any Android phone</Fact>
           </ul>
         </div>
 
-        <div id="try" className="mt-6 scroll-mt-24 lg:mt-0">
-          <LiveDemo className="mx-auto w-[300px] lg:w-[320px]" />
-        </div>
-        <div className="lg:col-start-2">
-          <ol className="mx-auto max-w-[340px] space-y-2.5 text-[14px] leading-snug text-on-dark">
-            <Step n={1}>It’s a working calculator. Try a sum.</Step>
-            <Step n={2}>
-              Type <Key>{DEMO_PIN}</Key> then <Key>=</Key> to open Saakshi.
-            </Step>
-            <Step n={3}>From the calculator, tap the display three times for a silent SOS. Your browser will ask for the camera: it’s real.</Step>
-            <Step n={4}>
-              Hold to stop, then <Key>{DEMO_PIN}</Key> <Key>=</Key> again and open the recording to watch it get sealed. Duress PIN:{" "}
-              <Key>{DEMO_DURESS_PIN}</Key>.
-            </Step>
+        {/* Wide screens: steps and arch as one unit, the arch as wide as --w (set on the grid) so the whole phone fits a
+            short screen, its legs running on into the margin so the phone itself lines up with the nav. Below that,
+            this wrapper steps aside (display: contents) and the grid places the arch and the steps on their own. */}
+        <div className="contents xl:col-start-2 xl:row-start-1 xl:-mr-[calc(var(--w)*0.1237)] xl:flex xl:gap-6">
+          <div
+            id="try"
+            className="mx-auto mt-14 w-full max-w-[372px] scroll-mt-20 max-sm:-mx-2 max-sm:w-[calc(100%_+_16px)] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 xl:order-2 xl:mx-0 xl:w-(--w) xl:max-w-none xl:flex-none"
+          >
+            <Chalchitra>
+              <LiveDemo />
+            </Chalchitra>
+          </div>
+
+          {/* On wide screens the list fills the phone's height, so each number sits on the arch's leg beside it. */}
+          <ol
+            aria-label="Try the live app"
+            className="mx-auto mt-2 w-full max-w-[30rem] space-y-5 text-[14px] leading-[1.5] text-on-dark-muted lg:col-start-1 lg:row-start-2 lg:mx-0 lg:mt-12 lg:self-start xl:order-1 xl:mt-0 xl:flex xl:w-[176px] xl:max-w-none xl:flex-none xl:flex-col xl:justify-center xl:space-y-7 xl:self-stretch xl:pb-[calc(var(--w)*0.16)] xl:pt-[calc(var(--w)*0.403)] xl:text-right xl:text-[13.5px]"
+          >
+            <TryStep n={1}>It’s a working calculator. Try a sum.</TryStep>
+            <TryStep n={2}>
+              Type{" "}
+              <span className="whitespace-nowrap">
+                <Key>{DEMO_PIN}</Key> then <Key>=</Key>
+              </span>{" "}
+              to open Saakshi.
+            </TryStep>
+            <TryStep n={3}>From the calculator, tap the display three times for a silent SOS. Allow the camera: it’s real.</TryStep>
+            <TryStep n={4}>
+              Hold to stop, then{" "}
+              <span className="whitespace-nowrap">
+                <Key>{DEMO_PIN}</Key> <Key>=</Key> again
+              </span>{" "}
+              and open the recording to watch it get sealed.
+              <span className="mt-2 block">
+                Duress PIN <Key>{DEMO_DURESS_PIN}</Key>
+              </span>
+            </TryStep>
           </ol>
         </div>
       </div>
@@ -125,10 +150,41 @@ function Hero() {
   );
 }
 
+// A bindi for a bullet: the dot of the wordmark's i.
+function Fact({ children }: { children: ReactNode }) {
+  return (
+    <li className="flex items-center gap-2.5">
+      <i aria-hidden className="size-[5px] rounded-full bg-rani-bright" />
+      {children}
+    </li>
+  );
+}
+
+// A numbered bead on a thread. On wide screens the thread is the arch's left leg, so the bead moves to the right.
+function TryStep({ n, children }: { n: number; children: ReactNode }) {
+  return (
+    <li className="relative pl-10 xl:text-balance before:absolute before:-bottom-5 before:left-3 before:top-7 before:w-px before:bg-white/12 last:before:hidden xl:pl-0 xl:before:hidden">
+      <Bead n={n} className="absolute left-0 top-[-2px] xl:left-auto xl:right-[-36px]" />
+      {children}
+    </li>
+  );
+}
+
+function Bead({ n, className = "" }: { n: number; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`flex size-6 items-center justify-center rounded-full bg-plum-night font-display text-[15px] italic leading-none text-rani-bright ring-1 ring-rani-bright/45 ${className}`}
+    >
+      {n}
+    </span>
+  );
+}
+
 function Step({ n, children }: { n: number; children: ReactNode }) {
   return (
     <li className="flex gap-3">
-      <span className="flex size-6 flex-none items-center justify-center rounded-full border border-white/15 text-[12px] text-on-dark-muted">{n}</span>
+      <Bead n={n} className="mt-px flex-none" />
       <span>{children}</span>
     </li>
   );

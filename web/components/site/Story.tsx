@@ -8,7 +8,7 @@ import { Phone, Screenshot } from "./Phone";
 // Technical names stay on one line.
 const Term = ({ children }: { children: ReactNode }) => <span className="whitespace-nowrap">{children}</span>;
 
-const STEPS: { time: string; title: string; body: ReactNode; shot: string; alt: string; tone: "light" | "dark" }[] = [
+const STEPS: { time: string; title: string; body: ReactNode; shot: string; alt: string; tone: "light" | "dark"; fade?: boolean }[] = [
   {
     time: "9:41 pm",
     title: "It looks like a calculator. It is one.",
@@ -16,6 +16,7 @@ const STEPS: { time: string; title: string; body: ReactNode; shot: string; alt: 
     shot: "/site/calculator.webp",
     alt: "The calculator",
     tone: "dark",
+    fade: false,
   },
   {
     time: "9:47 pm",
@@ -89,7 +90,7 @@ export function Story() {
             </h3>
             <p className="mt-5 max-w-[34rem] text-[18px] leading-[1.6] text-muted">{s.body}</p>
             <Phone className="mx-auto mt-10 w-[260px] lg:hidden">
-              <Screenshot src={s.shot} alt={s.alt} tone={s.tone} />
+              <Screenshot src={s.shot} alt={s.alt} tone={s.tone} fade={s.fade} />
             </Phone>
           </li>
         ))}
@@ -99,7 +100,7 @@ export function Story() {
           <Phone className="w-[340px]">
             {STEPS.map((s, i) => (
               <div key={s.shot} className={`absolute inset-0 transition-opacity duration-700 ${active === i ? "opacity-100" : "opacity-0"}`}>
-                <Screenshot src={s.shot} alt={s.alt} tone={s.tone} />
+                <Screenshot src={s.shot} alt={s.alt} tone={s.tone} fade={s.fade} />
               </div>
             ))}
           </Phone>

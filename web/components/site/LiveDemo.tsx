@@ -13,15 +13,29 @@ const H = 852;
 export function LiveDemo({ className = "" }: { className?: string }) {
   const [on, setOn] = useState(false);
   const [run, setRun] = useState(0);
-  const [scale, setScale] = useState(0.7);
+  // The app is laid out 393 wide and scaled to the glass; its height is whatever fills the glass at that scale,
+  // which runs a little taller than 852 because the bezel takes the same off both sides.
+  const [fit, setFit] = useState({ scale: 0.7, height: H });
   const box = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = box.current;
     if (!el) return;
-    const ro = new ResizeObserver(([e]) => setScale(e.contentRect.width / W));
+    const ro = new ResizeObserver(([e]) => {
+      const scale = e.contentRect.width / W;
+      setFit({ scale, height: Math.round(e.contentRect.height / scale) });
+    });
     ro.observe(el);
     return () => ro.disconnect();
+  }, []);
+
+  // The page's "Try it live" links (#try) start the app as well as scrolling to it: that click is the asking.
+  useEffect(() => {
+    const start = (e: MouseEvent) => {
+      if (e.target instanceof Element && e.target.closest('a[href="#try"]')) setOn(true);
+    };
+    document.addEventListener("click", start);
+    return () => document.removeEventListener("click", start);
   }, []);
 
   return (
@@ -34,20 +48,21 @@ export function LiveDemo({ className = "" }: { className?: string }) {
               title="Saakshi, live"
               src={`${APP_ORIGIN}/?demo`}
               allow="camera; microphone; geolocation; screen-wake-lock; clipboard-write"
-              style={{ width: W, height: H, transform: `scale(${scale})`, transformOrigin: "0 0" }}
+              style={{ width: W, height: fit.height, transform: `scale(${fit.scale})`, transformOrigin: "0 0" }}
               className="border-0 bg-calc"
             />
           ) : (
+            // The start button sits in the calculator's empty top, so every key below stays whole.
             <button type="button" onClick={() => setOn(true)} className="group relative size-full text-left">
-              <Screenshot src="/site/calculator.webp" alt="Saakshi’s calculator" tone="dark" />
-              <span className="absolute inset-0 flex flex-col items-center justify-end gap-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent pb-14">
-                <span className="flex h-14 items-center gap-2.5 rounded-full bg-rani px-7 text-[16px] font-medium text-white shadow-[0_10px_30px_-8px_rgba(214,36,110,.8)] transition-transform group-hover:scale-[1.03]">
-                  <svg width="14" height="14" viewBox="0 0 14 14" className="fill-current">
+              <Screenshot src="/site/calculator.webp" alt="Saakshi’s calculator" tone="dark" fade={false} eager />
+              <span className="absolute inset-x-0 top-[8%] flex flex-col items-center gap-2.5">
+                <span className="flex h-12 items-center gap-2.5 rounded-full bg-rani px-6 text-[15px] font-medium text-white shadow-[0_10px_30px_-8px_rgba(214,36,110,.8)] transition-transform group-hover:scale-[1.03]">
+                  <svg width="13" height="13" viewBox="0 0 14 14" className="fill-current">
                     <path d="M3 1.8v10.4L12 7z" />
                   </svg>
                   Start the live app
                 </span>
-                <span className="text-[13px] text-white/70">Runs right here. No install.</span>
+                <span className="text-[12px] text-white/60">Runs right here. No install.</span>
               </span>
             </button>
           )}

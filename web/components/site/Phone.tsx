@@ -15,17 +15,32 @@ export function Phone({ children, className = "" }: { children: ReactNode; class
 
 /**
  * A real screenshot on the phone. Long screens carry on below the glass, so the bottom fades out the way
- * a scrolling screen does, under the gesture bar, instead of slicing a row of text in half.
+ * a scrolling screen does, under the gesture bar, instead of slicing a row of text in half. Screens that
+ * end on the glass, like the calculator, pass `fade={false}` so their last row stays whole.
  */
-export function Screenshot({ src, alt, tone }: { src: string; alt: string; tone: "light" | "dark" }) {
+export function Screenshot({
+  src,
+  alt,
+  tone,
+  fade = true,
+  eager = false,
+}: {
+  src: string;
+  alt: string;
+  tone: "light" | "dark";
+  fade?: boolean;
+  eager?: boolean;
+}) {
   const light = tone === "light";
   return (
     <>
-      <img src={src} alt={alt} width={393} height={852} className="size-full object-cover object-top" loading="lazy" />
-      <span
-        aria-hidden
-        className={`pointer-events-none absolute inset-x-0 bottom-0 h-[13%] bg-gradient-to-t ${light ? "from-white via-white/85" : "from-black via-black/80"} to-transparent`}
-      />
+      <img src={src} alt={alt} width={393} height={852} className="size-full object-cover object-top" loading={eager ? "eager" : "lazy"} />
+      {fade && (
+        <span
+          aria-hidden
+          className={`pointer-events-none absolute inset-x-0 bottom-0 h-[13%] bg-gradient-to-t ${light ? "from-white via-white/85" : "from-black via-black/80"} to-transparent`}
+        />
+      )}
       <span
         aria-hidden
         className={`pointer-events-none absolute bottom-[1.6%] left-1/2 h-[4px] w-[34%] -translate-x-1/2 rounded-full ${light ? "bg-ink/75" : "bg-white/55"}`}
