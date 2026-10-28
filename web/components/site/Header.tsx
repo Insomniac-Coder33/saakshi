@@ -1,8 +1,8 @@
 "use client";
 
-// The showcase header. Clear over the hero; once she scrolls, a slim frosted bar that stays, taking the tone of
-// whichever section passes under it, with a rani thread along its edge that grows as she reads and a bindi under
-// the section she's in. Below 1024px the links move into a full-screen sheet.
+// The showcase header: a frosted capsule that floats over the page and stays. Over the hero it is glass on the
+// dark; further down it takes the tone of whichever section passes behind it. A rani thread along its lower edge
+// grows as she reads, and a bindi marks the section she's in. Below 1024px the links move into a full-screen sheet.
 import { useEffect, useRef, useState } from "react";
 
 const LINKS = [
@@ -17,17 +17,19 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(true);
   const [here, setHere] = useState<string | null>(null);
+  const bar = useRef<HTMLElement>(null);
   const sheet = useRef<HTMLDialogElement>(null);
   const close = () => sheet.current?.close();
-  const light = scrolled && !dark;
+  const light = !dark;
 
-  // Once a frame while scrolling: has she left the top, and is the section just under the bar dark or light?
+  // Once a frame while scrolling: has she left the top, and is the section behind the capsule dark or light?
   useEffect(() => {
     let frame = 0;
     const update = () => {
       frame = 0;
       setScrolled(window.scrollY > 16);
-      setDark(!!document.elementFromPoint(window.innerWidth / 2, 73)?.closest('[data-tone="dark"]'));
+      const behind = document.elementsFromPoint(window.innerWidth / 2, 40).find((el) => !bar.current?.contains(el));
+      setDark(!!behind?.closest('[data-tone="dark"]'));
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -65,15 +67,22 @@ export function Header() {
 
   return (
     <>
-      <header
-        className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${!scrolled ? "" : light ? "bg-white/80 shadow-[0_1px_0_rgba(29,20,25,.06)] backdrop-blur-xl" : "bg-plum-night/85 backdrop-blur-xl"}`}
-      >
-        <nav className="mx-auto flex h-[72px] max-w-[1200px] items-center justify-between gap-6 px-6 md:px-10">
+      {/* The wrapper lets clicks through around the capsule; the capsule's padding lines the wordmark up with the copy. */}
+      <header ref={bar} className="pointer-events-none fixed inset-x-0 top-0 z-40 pt-3">
+        <nav
+          className={`pointer-events-auto relative mx-auto flex h-14 max-w-[1160px] items-center justify-between gap-6 rounded-full border pl-3 pr-1.5 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-300 max-md:mx-3 md:mx-5 md:pl-5 min-[75rem]:mx-auto ${
+            light
+              ? "border-ink/[.08] bg-white/80 shadow-[0_14px_34px_-20px_rgba(29,20,25,.45)]"
+              : scrolled
+                ? "border-white/10 bg-plum-night/75 shadow-[0_14px_34px_-18px_rgba(0,0,0,.8)]"
+                : "border-white/10 bg-white/[.04]"
+          }`}
+        >
           <a href="#top" aria-label="Saakshi, back to the top" className="flex-none">
-            <img src="/brand/wordmark-on-dark.svg" alt="" className={`h-[26px] ${light ? "hidden" : ""}`} />
-            <img src="/brand/wordmark-on-light.svg" alt="" className={`h-[26px] ${light ? "" : "hidden"}`} />
+            <img src="/brand/wordmark-on-dark.svg" alt="" className={`h-6 ${light ? "hidden" : ""}`} />
+            <img src="/brand/wordmark-on-light.svg" alt="" className={`h-6 ${light ? "" : "hidden"}`} />
           </a>
-          <ul className={`hidden items-center gap-8 text-[14px] transition-colors lg:flex ${light ? "text-muted" : "text-on-dark"}`}>
+          <ul className={`hidden items-center gap-7 text-[14px] transition-colors lg:flex ${light ? "text-muted" : "text-on-dark"}`}>
             {LINKS.map((l) => (
               <li key={l.href}>
                 <a
@@ -91,10 +100,10 @@ export function Header() {
               </li>
             ))}
           </ul>
-          <div className="flex flex-none items-center gap-1.5">
+          <div className="flex flex-none items-center gap-1">
             <a
               href="#try"
-              className={`flex h-11 items-center rounded-full border px-5 text-[14px] font-medium text-white transition-colors ${scrolled ? "border-rani bg-rani hover:border-rani-deep hover:bg-rani-deep" : "border-white/20 hover:bg-white/10"}`}
+              className={`flex h-11 items-center rounded-full px-5 text-[14px] font-medium text-white transition-colors ${scrolled ? "bg-rani hover:bg-rani-deep" : "bg-white/10 hover:bg-white/[.16]"}`}
             >
               Try it live
             </a>
@@ -103,19 +112,20 @@ export function Header() {
               onClick={() => sheet.current?.showModal()}
               aria-label="Sections"
               aria-haspopup="dialog"
-              className={`-mr-2 flex size-11 items-center justify-center rounded-full lg:hidden ${light ? "text-ink hover:bg-ink/5" : "text-white hover:bg-white/10"}`}
+              className={`flex size-11 items-center justify-center rounded-full lg:hidden ${light ? "text-ink hover:bg-ink/5" : "text-white hover:bg-white/10"}`}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden className="fill-none stroke-current [stroke-linecap:round] [stroke-width:1.6]">
                 <path d="M3 6.5h12M3 11.5h12" />
               </svg>
             </button>
           </div>
+          {/* The thread: a hairline along the capsule's lower edge that grows as she reads, like the thread the steps
+              are strung on. It stops short of the rounded ends. */}
+          <span
+            aria-hidden
+            className={`thread pointer-events-none absolute inset-x-8 -bottom-px h-px ${light ? "bg-rani" : "bg-rani-bright/90 shadow-[0_0_8px_rgba(255,111,165,.55)]"}`}
+          />
         </nav>
-        {/* The thread: a hairline that grows along the bar as she reads, like the thread the steps are strung on. */}
-        <span
-          aria-hidden
-          className={`thread pointer-events-none absolute inset-x-0 bottom-0 h-px ${light ? "bg-rani" : "bg-rani-bright/90 shadow-[0_0_8px_rgba(255,111,165,.55)]"}`}
-        />
       </header>
 
       <dialog ref={sheet} aria-label="Sections" className="m-0 size-full max-h-none max-w-none border-0 bg-plum-night p-0 text-white">

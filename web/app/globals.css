@@ -117,7 +117,7 @@
 :root:has(dialog:modal) { overflow: hidden; }
 
 /* Showcase only (the app has no #top): links land below the fixed header, and glide there when motion is welcome. */
-html:has(#top) { scroll-padding-top: 72px; }
+html:has(#top) { scroll-padding-top: 84px; }
 @media (prefers-reduced-motion: no-preference) {
   html:has(#top) { scroll-behavior: smooth; }
 }
