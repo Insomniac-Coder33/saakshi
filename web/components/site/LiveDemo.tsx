@@ -85,17 +85,16 @@ export function LiveDemo({ caption }: { caption?: ReactNode }) {
 
   // The page's "Try it live" links (#try) start the app as well as scrolling to it: that click is the asking.
   // The scroll happens here rather than by following the link, which would pull focus out of the full-size view.
-  // It jumps when the app opens full size, since the page is covered and a glide would be cut short.
   useEffect(() => {
     const click = (e: MouseEvent) => {
       if (!(e.target instanceof Element && e.target.closest('a[href="#try"]'))) return;
       e.preventDefault();
-      document.getElementById("try")?.scrollIntoView({ behavior: wantsBig() ? "instant" : "auto" });
+      document.getElementById("try")?.scrollIntoView();
       start();
     };
     document.addEventListener("click", click);
     return () => document.removeEventListener("click", click);
-  }, [wantsBig, start]);
+  }, [start]);
 
   return (
     <dialog

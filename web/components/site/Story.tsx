@@ -96,8 +96,8 @@ export function Story() {
         ))}
       </ol>
       <div className="hidden lg:block">
-        {/* Centred on the screen, but never under the fixed header; on shorter screens the phone shrinks to fit. */}
-        <div className="sticky top-[max(84px,calc(50svh_-_370px))]">
+        {/* Centred on the screen; on shorter screens the phone shrinks to fit. */}
+        <div className="sticky top-[max(32px,calc(50svh_-_370px))]">
           <Phone className="w-[min(340px,calc((100svh_-_130px)*0.4613))]">
             {STEPS.map((s, i) => (
               <div key={s.shot} className={`absolute inset-0 transition-opacity duration-700 ${active === i ? "opacity-100" : "opacity-0"}`}>

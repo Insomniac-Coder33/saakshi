@@ -58,7 +58,7 @@ function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
 // the arch's left leg. Below that: copy, phone, steps, in reading order.
 function Hero() {
   return (
-    <section id="top" data-tone="dark" className="grain overflow-hidden bg-plum-night text-white">
+    <section id="top" className="grain overflow-hidden bg-plum-night text-white">
       <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.10),transparent)]" />
       {/* --w, the arch's width, is set by whichever runs out first: the screen's height (the whole phone fits)
           or its width (the copy keeps about 400px). */}
@@ -178,7 +178,7 @@ function Problem() {
 
 function Proof() {
   return (
-    <section id="proof" data-tone="dark" className="grain bg-plum text-white">
+    <section id="proof" className="grain bg-plum text-white">
       <div className="relative mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
         <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
           <div className="reveal">
@@ -381,7 +381,7 @@ function Built() {
 
 function Install({ qr }: { qr: string }) {
   return (
-    <section data-tone="dark" className="grain bg-plum-night text-white">
+    <section className="grain bg-plum-night text-white">
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1fr_auto] lg:gap-20">
         <div className="reveal">
           <Eyebrow dark>Put it on a phone</Eyebrow>
@@ -403,7 +403,7 @@ function Install({ qr }: { qr: string }) {
 
 function Footer() {
   return (
-    <footer data-tone="dark" className="bg-plum-night text-on-dark-muted">
+    <footer className="bg-plum-night text-on-dark-muted">
       <div className="mx-auto flex max-w-[1200px] flex-col gap-6 border-t border-white/10 px-6 py-12 text-[14px] md:flex-row md:items-center md:justify-between md:px-10">
         <div className="flex items-center gap-4">
           <img src="/brand/seal-pink.svg" alt="" className="size-10" />
