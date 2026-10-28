@@ -44,7 +44,7 @@ const STEPS: { time: string; title: string; body: ReactNode; shot: string; alt: 
     title: "If he makes her stop, she can pretend.",
     body: "A second, duress PIN makes it look as if recording stopped. It didn’t. It carries on, and the recording is flagged so she knows which night it was.",
     shot: "/site/duress.webp",
-    alt: "Recordings, one stopped with the duress PIN",
+    alt: "The vault: two sealed recordings, one stopped with the duress PIN",
     tone: "light",
   },
   {

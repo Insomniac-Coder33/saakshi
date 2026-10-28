@@ -113,6 +113,9 @@
   }
 }
 
+/* The live demo's full-size view: the page behind it holds still. */
+:root:has(dialog:modal) { overflow: hidden; }
+
 /* Lifts into place as it scrolls into view, where the browser supports scroll-driven animation.
    Motion only, never opacity: if the timeline doesn't run, the content must still be visible. */
 @keyframes lift {

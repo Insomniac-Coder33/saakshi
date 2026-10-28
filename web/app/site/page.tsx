@@ -7,8 +7,9 @@ import { Chalchitra } from "@/components/site/Chalchitra";
 import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
 import { Story } from "@/components/site/Story";
+import { Bead, TrySteps } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER } from "@/lib/chain";
-import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
+import { APP_ORIGIN } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Saakshi · A witness that never looks away",
@@ -74,17 +75,20 @@ function Nav() {
   );
 }
 
-// Wide screens: copy | steps | phone in its arch, one row, with the steps strung on the arch's left leg.
-// Medium: the steps move under the copy. Phones: copy, phone, steps, in reading order.
+// From laptops and landscape tablets up: copy | steps | phone in its arch, one row, with the steps strung on
+// the arch's left leg. Below that: copy, phone, steps, in reading order.
 function Hero() {
   return (
     <section id="top" className="grain overflow-hidden bg-plum-night text-white">
       <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.10),transparent)]" />
-      <div className="relative mx-auto grid max-w-[1200px] px-6 pb-16 pt-32 md:px-10 lg:grid-cols-[minmax(0,1fr)_372px] lg:grid-rows-[1fr_auto] lg:gap-x-12 lg:pb-10 lg:pt-[72px] xl:grid-cols-[minmax(0,1fr)_auto] xl:grid-rows-1 xl:[--w:clamp(300px,calc((100svh_-_88px)*0.494),372px)]">
-        {/* On wide screens the padding centres the copy on the phone rather than on phone and arch together. */}
-        <div className="animate-rise lg:col-start-1 lg:row-start-1 lg:self-end xl:self-center xl:pt-[calc(var(--w)*0.2)]">
+      {/* --w, the arch's width, is set by whichever runs out first: the screen's height (the whole phone fits)
+          or its width (the copy keeps about 400px). */}
+      <div className="relative mx-auto grid max-w-[1200px] px-6 pb-16 pt-32 md:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-x-10 lg:pb-10 lg:pt-[72px] lg:[--w:clamp(280px,min(calc((100svh_-_88px)*0.494),calc((min(100vw,1200px)_-_720px)*1.1412)),372px)] xl:gap-x-12">
+        {/* The padding centres the copy on the phone rather than on phone and arch together. The headline
+            scales with its column, which narrows as the arch takes its share. */}
+        <div className="animate-rise @container lg:self-center lg:pt-[calc(var(--w)*0.2)]">
           <Eyebrow dark>SHAKTI Hackathon 2026 · Dharma &amp; Trust</Eyebrow>
-          <h1 className="mt-6 font-display text-[54px] leading-[0.98] tracking-[-0.01em] sm:text-[76px] lg:text-[84px] xl:text-[88px]">
+          <h1 className="mt-6 font-display text-[54px] leading-[0.98] tracking-[-0.01em] sm:text-[76px] lg:text-[length:clamp(56px,min(16cqi,10.5svh),88px)]">
             A witness that <em className="text-rani-bright">never looks away.</em>
           </h1>
           <p className="mt-7 max-w-[33rem] text-[18px] leading-[1.65] text-on-dark">
@@ -109,41 +113,27 @@ function Hero() {
         {/* Wide screens: steps and arch as one unit, the arch as wide as --w (set on the grid) so the whole phone fits a
             short screen, its legs running on into the margin so the phone itself lines up with the nav. Below that,
             this wrapper steps aside (display: contents) and the grid places the arch and the steps on their own. */}
-        <div className="contents xl:col-start-2 xl:row-start-1 xl:-mr-[calc(var(--w)*0.1237)] xl:flex xl:gap-6">
+        <div className="contents lg:-mr-[calc(var(--w)*0.1237)] lg:flex lg:gap-6">
           <div
             id="try"
-            className="mx-auto mt-14 w-full max-w-[372px] scroll-mt-20 max-sm:-mx-2 max-sm:w-[calc(100%_+_16px)] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 xl:order-2 xl:mx-0 xl:w-(--w) xl:max-w-none xl:flex-none"
+            className="mx-auto mt-14 w-full max-w-[372px] scroll-mt-20 max-sm:-mx-2 max-sm:w-[calc(100%_+_16px)] lg:order-2 lg:mx-0 lg:mt-0 lg:w-(--w) lg:max-w-none lg:flex-none"
           >
             <Chalchitra>
-              <LiveDemo />
+              <LiveDemo
+                caption={
+                  <p className="mt-3.5 text-balance text-center font-display text-[15.5px] italic leading-[1.3] text-on-dark-muted">
+                    Framed like Durga in Kumartuli, where her eyes are painted in last: <span className="text-on-dark">chokkhu daan</span>.
+                  </p>
+                }
+              />
             </Chalchitra>
           </div>
 
-          {/* On wide screens the list fills the phone's height, so each number sits on the arch's leg beside it. */}
-          <ol
-            aria-label="Try the live app"
-            className="mx-auto mt-2 w-full max-w-[30rem] space-y-5 text-[14px] leading-[1.5] text-on-dark-muted lg:col-start-1 lg:row-start-2 lg:mx-0 lg:mt-12 lg:self-start xl:order-1 xl:mt-0 xl:flex xl:w-[176px] xl:max-w-none xl:flex-none xl:flex-col xl:justify-center xl:space-y-7 xl:self-stretch xl:pb-[calc(var(--w)*0.16)] xl:pt-[calc(var(--w)*0.403)] xl:text-right xl:text-[13.5px]"
-          >
-            <TryStep n={1}>It’s a working calculator. Try a sum.</TryStep>
-            <TryStep n={2}>
-              Type{" "}
-              <span className="whitespace-nowrap">
-                <Key>{DEMO_PIN}</Key> then <Key>=</Key>
-              </span>{" "}
-              to open Saakshi.
-            </TryStep>
-            <TryStep n={3}>From the calculator, tap the display three times for a silent SOS. Allow the camera: it’s real.</TryStep>
-            <TryStep n={4}>
-              Hold to stop, then{" "}
-              <span className="whitespace-nowrap">
-                <Key>{DEMO_PIN}</Key> <Key>=</Key> again
-              </span>{" "}
-              and open the recording to watch it get sealed.
-              <span className="mt-2 block">
-                Duress PIN <Key>{DEMO_DURESS_PIN}</Key>
-              </span>
-            </TryStep>
-          </ol>
+          {/* Beside the arch the list fills the phone's height, so each number sits on the arch's leg beside it. */}
+          <TrySteps
+            onArch
+            className="mx-auto mt-2 w-full max-w-[30rem] space-y-5 text-[14px] leading-[1.5] text-on-dark-muted lg:order-1 lg:mx-0 lg:mt-0 lg:flex lg:w-[176px] lg:max-w-none lg:flex-none lg:flex-col lg:justify-center lg:space-y-7 lg:self-stretch lg:pb-[calc(var(--w)*0.16)] lg:pt-[calc(var(--w)*0.403)] lg:text-right lg:text-[13.5px]"
+          />
         </div>
       </div>
     </section>
@@ -160,27 +150,6 @@ function Fact({ children }: { children: ReactNode }) {
   );
 }
 
-// A numbered bead on a thread. On wide screens the thread is the arch's left leg, so the bead moves to the right.
-function TryStep({ n, children }: { n: number; children: ReactNode }) {
-  return (
-    <li className="relative pl-10 xl:text-balance before:absolute before:-bottom-5 before:left-3 before:top-7 before:w-px before:bg-white/12 last:before:hidden xl:pl-0 xl:before:hidden">
-      <Bead n={n} className="absolute left-0 top-[-2px] xl:left-auto xl:right-[-36px]" />
-      {children}
-    </li>
-  );
-}
-
-function Bead({ n, className = "" }: { n: number; className?: string }) {
-  return (
-    <span
-      aria-hidden
-      className={`flex size-6 items-center justify-center rounded-full bg-plum-night font-display text-[15px] italic leading-none text-rani-bright ring-1 ring-rani-bright/45 ${className}`}
-    >
-      {n}
-    </span>
-  );
-}
-
 function Step({ n, children }: { n: number; children: ReactNode }) {
   return (
     <li className="flex gap-3">
@@ -188,10 +157,6 @@ function Step({ n, children }: { n: number; children: ReactNode }) {
       <span>{children}</span>
     </li>
   );
-}
-
-function Key({ children }: { children: ReactNode }) {
-  return <kbd className="rounded-md border border-white/15 bg-white/[.06] px-1.5 py-0.5 font-mono text-[13px] text-white">{children}</kbd>;
 }
 
 function Problem() {
