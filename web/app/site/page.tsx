@@ -328,7 +328,7 @@ function UnderTheHood() {
 
 function Limits() {
   const items = [
-    ["The screen stays on.", "A web app can’t keep recording once the phone locks, so Saakshi holds the screen awake and black. The Android app removes this."],
+    ["The screen stays on.", "A web app can’t keep recording once the phone locks, so Saakshi holds the screen awake and black. A native Android app, our next step, would remove this."],
     ["A seal proves sameness, not truth.", "It shows a file is unchanged since it was captured. It doesn’t prove what the file shows."],
     ["Test network, for now.", "Seals go to Polygon Amoy during the hackathon. Moving to Polygon mainnet is a configuration change."],
     ["Information, not legal advice.", "Sahayak explains which laws may apply and drafts the complaint; Saakshi drafts the Section 63 certificate. She signs them, and the police, a lawyer or a court decide what happens."],
@@ -372,8 +372,8 @@ function Built() {
         {days.map((x) => (
           <li key={x.d} className="reveal bg-white p-7">
             <p className={`flex items-center gap-2 text-[13px] font-medium ${x.done ? "text-verified" : "text-rani"}`}>
-              <i className={`size-2 rounded-full ${x.done ? "bg-verified" : "animate-pulse bg-rani"}`} />
-              {x.done ? "Done" : "In progress"}
+              <i className={`size-2 rounded-full ${x.done ? "bg-verified" : "bg-rani"}`} />
+              {x.done ? "Done" : "Planned"}
             </p>
             <p className="mt-4 font-display text-[34px] leading-none">{x.d}</p>
             <p className="mt-4 text-[15px] leading-[1.55] text-muted">{x.t}</p>
