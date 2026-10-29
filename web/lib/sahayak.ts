@@ -1,23 +1,32 @@
-// Server only. Sahayak, the legal helper: Gemini or Sarvam, held to the laws and helplines in lib/law.ts.
+// Server only. Sahayak, the legal helper: Gemma on Adaption, Gemini or Sarvam, held to the laws and helplines in lib/law.ts.
 // The response schema only accepts ids from that list, so it can't cite a section we haven't checked;
 // the cards she reads show our text for each id, not the model's.
 import { HELPLINE_IDS, knowledgeText, LAW_IDS } from "./law";
 import type { Language } from "./local";
 
-type Provider = "gemini" | "sarvam";
+type Provider = "adaption" | "gemini" | "sarvam";
 
 // Tried in order. A model that is busy, over quota or slow hands over to the next, so a woman asking
 // for help never waits on one overloaded model. (gemini-2.5 is closed to new keys.)
 // SAHAYAK_MODELS (comma-separated ids) picks and orders them without a deploy.
 const ALL_MODELS: { id: string; provider: Provider; timeoutMs: number }[] = [
+  // Gemma 4 on Adaption, SHAKTI's technology partner. It answers in a second or two; the short timeout
+  // also catches the rare reply that pads its JSON with blank lines until it runs out of tokens.
+  { id: "gemma-4-31b-it", provider: "adaption", timeoutMs: 12_000 },
+  // Sarvam's Indian-language model answers in a second or two, so it comes before Gemini, whose free tier
+  // is often busy and can take its whole timeout to say so.
+  { id: "sarvam-105b", provider: "sarvam", timeoutMs: 25_000 },
   { id: "gemini-3.5-flash", provider: "gemini", timeoutMs: 20_000 },
   { id: "gemini-3.6-flash", provider: "gemini", timeoutMs: 15_000 },
   { id: "gemini-3.8-flash", provider: "gemini", timeoutMs: 10_000 },
   { id: "gemini-3.5-flash-lite", provider: "gemini", timeoutMs: 10_000 },
-  // Sarvam's Indian-language model; paid per token, so it waits behind Gemini's free quota.
-  { id: "sarvam-105b", provider: "sarvam", timeoutMs: 25_000 },
 ];
-const KEY: Record<Provider, string | undefined> = { gemini: process.env.GEMINI_API_KEY, sarvam: process.env.SARVAM_API_KEY };
+const KEY: Record<Provider, string | undefined> = {
+  adaption: process.env.ADAPTION_API_KEY,
+  gemini: process.env.GEMINI_API_KEY,
+  sarvam: process.env.SARVAM_API_KEY,
+};
+const CALL = { adaption, gemini, sarvam };
 
 function models() {
   const order = process.env.SAHAYAK_MODELS?.split(",").map((s) => s.trim()).filter(Boolean);
@@ -63,14 +72,45 @@ async function generate<T>(system: string, turns: Turn[], schema: object, temper
   let last: unknown = new Error("no model configured");
   for (const m of models()) {
     try {
-      const out = m.provider === "gemini" ? gemini<T>(m.id, m.timeoutMs, system, turns, schema, temperature) : sarvam<T>(m.id, m.timeoutMs, system, turns, schema, temperature);
-      return { ...(await out), model: m.id };
+      const out = await CALL[m.provider]<T>(m.id, m.timeoutMs, system, turns, schema, temperature);
+      return { ...out, model: m.id };
     } catch (e) {
       last = e;
       console.error(`[sahayak] ${m.id}:`, e instanceof Error ? e.message.slice(0, 120) : e);
     }
   }
   throw last;
+}
+
+// Adaption speaks the OpenAI Responses format.
+async function adaption<T>(model: string, timeoutMs: number, system: string, turns: Turn[], schema: object, temperature: number): Promise<T> {
+  const res = await fetch("https://api.prod.adaptionlabs.ai/api/v1/responses", {
+    method: "POST",
+    signal: AbortSignal.timeout(timeoutMs),
+    headers: { "content-type": "application/json", authorization: `Bearer ${process.env.ADAPTION_API_KEY}` },
+    body: JSON.stringify({
+      model,
+      instructions: system,
+      input: turns.map((t) => ({ role: t.role === "model" ? "assistant" : "user", content: t.text })),
+      temperature,
+      max_output_tokens: 2048,
+      text: { format: { type: "json_schema", name: "reply", strict: true, schema: jsonSchema(schema) } },
+    }),
+  });
+  const body = (await res.json()) as {
+    status?: string;
+    output?: { content?: { type: string; text?: string }[] }[];
+    error?: { message: string } | null;
+  };
+  if (!res.ok) throw new Error(body.error?.message ?? `Adaption HTTP ${res.status}`);
+  if (body.status !== "completed") throw new Error(`answer ${body.status ?? "missing"}`);
+  const text = (body.output ?? [])
+    .flatMap((o) => o.content ?? [])
+    .filter((c) => c.type === "output_text")
+    .map((c) => c.text ?? "")
+    .join("");
+  if (!text) throw new Error("empty answer");
+  return JSON.parse(text) as T;
 }
 
 async function gemini<T>(model: string, timeoutMs: number, system: string, turns: Turn[], schema: object, temperature: number): Promise<T> {
