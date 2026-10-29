@@ -9,6 +9,8 @@ export const ANCHOR_ABI = ["function anchor(bytes32 root, uint32 leaves)", "even
 export const ANCHORED_TOPIC = "0x5598f81654a551570e944f92d10bea632541f1202d606a899598d9bbc4eb22ad";
 export const PUBLIC_RPCS = ["https://polygon-amoy-bor-rpc.publicnode.com", "https://polygon-amoy.drpc.org", "https://rpc-amoy.polygon.technology"];
 export const EXPLORER = "https://amoy.polygonscan.com";
+// The contract's source code, verified on Sourcify as an exact match of the deployed bytecode.
+export const SOURCE_URL = `https://repo.sourcify.dev/${CHAIN_ID}/${ANCHOR_ADDRESS}`;
 
 export const txUrl = (hash: string) => `${EXPLORER}/tx/${hash}`;
 

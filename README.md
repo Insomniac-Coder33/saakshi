@@ -9,7 +9,7 @@ Built solo by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Block
 | **Try it** | [web-alpha-orcin-85.vercel.app/?demo](https://web-alpha-orcin-85.vercel.app/?demo): a demo setup with PIN **1931** (then `=`) and duress PIN **0000**. Tap the calculator display three times to start an SOS. |
 | **About it** | [saakshi-witness.vercel.app](https://saakshi-witness.vercel.app), with the app running live inside a phone |
 | **Verify a file** | [saakshi-witness.vercel.app/verify](https://saakshi-witness.vercel.app/verify) |
-| **Contract** | `EvidenceAnchor` on Polygon Amoy, [`0x39eA5AB65824af57297cE863CB54B1A84E3C4719`](https://amoy.polygonscan.com/address/0x39eA5AB65824af57297cE863CB54B1A84E3C4719) |
+| **Contract** | `EvidenceAnchor` on Polygon Amoy, [`0x39eA5AB65824af57297cE863CB54B1A84E3C4719`](https://amoy.polygonscan.com/address/0x39eA5AB65824af57297cE863CB54B1A84E3C4719). Source code [verified on Sourcify](https://repo.sourcify.dev/80002/0x39eA5AB65824af57297cE863CB54B1A84E3C4719) as an exact match. |
 
 ## What works today
 

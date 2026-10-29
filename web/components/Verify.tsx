@@ -5,7 +5,7 @@
 // pieces it was sealed as, and every piece's Merkle proof and Polygon transaction is checked against
 // the chain directly. Our server only says where to look; it is never trusted for the answer.
 import { useCallback, useEffect, useState } from "react";
-import { ANCHOR_ADDRESS, CHAIN_NAME, EXPLORER, findAnchor, txUrl, type OnChainSeal } from "@/lib/chain";
+import { ANCHOR_ADDRESS, CHAIN_NAME, EXPLORER, findAnchor, SOURCE_URL, txUrl, type OnChainSeal } from "@/lib/chain";
 import { leafOf, rootFromProof, sha256Of } from "@/lib/merkle";
 import { shortHash } from "@/lib/recordings";
 
@@ -267,7 +267,11 @@ function HowItWorks() {
           <a href={`${EXPLORER}/address/${ANCHOR_ADDRESS}`} target="_blank" rel="noreferrer" className="text-rani underline underline-offset-2">
             EvidenceAnchor contract
           </a>{" "}
-          on {CHAIN_NAME}, Polygon’s public test network.
+          on {CHAIN_NAME}, Polygon’s public test network. Its source code is{" "}
+          <a href={SOURCE_URL} target="_blank" rel="noreferrer" className="text-rani underline underline-offset-2">
+            public and verified
+          </a>
+          .
         </li>
         <li>This page splits your file back into those pieces, re-hashes each one, and checks its proof against the root.</li>
         <li>It then reads the transaction from the blockchain itself, so the answer doesn’t depend on trusting Saakshi’s servers.</li>

@@ -9,7 +9,7 @@ import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
 import { Story } from "@/components/site/Story";
 import { Bead, TrySteps } from "@/components/site/TrySteps";
-import { ANCHOR_ADDRESS, EXPLORER } from "@/lib/chain";
+import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
 import { APP_ORIGIN } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -313,9 +313,14 @@ function UnderTheHood() {
       </div>
       <p className="mt-6 text-[14px] text-muted">
         Contract:{" "}
-        <a href={`${EXPLORER}/address/${ANCHOR_ADDRESS}`} target="_blank" rel="noreferrer" className="font-mono text-[13px] text-rani underline underline-offset-2">
+        <a href={`${EXPLORER}/address/${ANCHOR_ADDRESS}`} target="_blank" rel="noreferrer" className="break-all font-mono text-[13px] text-rani underline underline-offset-2">
           {ANCHOR_ADDRESS}
         </a>
+        . Its source code is{" "}
+        <a href={SOURCE_URL} target="_blank" rel="noreferrer" className="text-rani underline underline-offset-2">
+          verified on Sourcify
+        </a>{" "}
+        as an exact match.
       </p>
     </section>
   );
