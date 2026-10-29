@@ -56,7 +56,7 @@ export interface Answer {
   followUp: string;
 }
 
-export type Recipient = "police" | "protection" | "icc" | "cyber";
+export type Recipient = "police" | "protection" | "icc" | "platform" | "cyber";
 
 export interface EvidenceLine {
   kind: "recording" | "photo" | "journal";
@@ -235,6 +235,8 @@ const RECIPIENT: Record<Recipient, string> = {
   protection:
     "The Protection Officer, [district], under the Protection of Women from Domestic Violence Act, 2005. Ask for a Domestic Incident Report to be recorded and for help applying to the Magistrate for protection, residence and monetary orders.",
   icc: "The Presiding Officer, Internal Committee, [name of organisation], under Section 9 of the POSH Act, 2013. Ask for an inquiry and, if needed, interim relief.",
+  platform:
+    "The Grievance Officer of [name of the platform], under Rule 3(2)(b) of the IT (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021. She sends it through the platform’s grievance form or by email, so no address block. Give the content as [link to the post or profile]; say what kind of content it is without describing it in detail, that she is the person shown, and that it was shared without her consent. Ask for it to be removed or disabled within 24 hours of this complaint, and for the records of the post and the account to be preserved for the police.",
   cyber:
     "The text to paste into the incident description on cybercrime.gov.in (no address block). Ask for the content to be taken down and for action against the person responsible.",
 };

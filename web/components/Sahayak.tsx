@@ -360,6 +360,7 @@ const RECIPIENTS: { id: Recipient; label: StringKey; note: StringKey }[] = [
   { id: "police", label: "toPolice", note: "toPoliceNote" },
   { id: "protection", label: "toProtection", note: "toProtectionNote" },
   { id: "icc", label: "toIcc", note: "toIccNote" },
+  { id: "platform", label: "toPlatform", note: "toPlatformNote" },
   { id: "cyber", label: "toCyber", note: "toCyberNote" },
 ];
 const DRAFT_LANGS: { id: Language; label: string }[] = [

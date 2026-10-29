@@ -8,7 +8,7 @@ export const maxDuration = 60;
 
 const DAILY_LIMIT = 80;
 const LANGS: Language[] = ["en", "bn", "hi"];
-const RECIPIENTS: Recipient[] = ["police", "protection", "icc", "cyber"];
+const RECIPIENTS: Recipient[] = ["police", "protection", "icc", "platform", "cyber"];
 
 interface Body {
   mode?: "ask" | "draft";

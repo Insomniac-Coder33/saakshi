@@ -220,7 +220,7 @@ export const LAWS: Law[] = [
     section: "Rule 3(2)(b)",
     title: { en: "Getting intimate or morphed images taken down", bn: "অন্তরঙ্গ বা মর্ফ করা ছবি সরানো", hi: "निजी या मॉर्फ़ की गई तस्वीरें हटवाना" },
     summary:
-      "Platforms must remove content showing her private parts, nudity or sexual acts, or morphed or impersonating images of her, within a short deadline (counted in hours) after she or someone for her complains through the platform’s grievance channel. She does not need a police case first. Keep a sealed copy of the post before reporting it.",
+      "Platforms must remove content showing her private parts, nudity or sexual acts, or morphed or impersonating images of her, within 24 hours of a complaint from her, or from someone on her behalf, through the platform’s grievance channel. She does not need a police case first. Keep a sealed copy of the post before reporting it.",
   },
 
   // Children
