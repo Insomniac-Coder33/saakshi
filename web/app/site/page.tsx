@@ -220,7 +220,7 @@ function Beyond() {
   const items = [
     {
       title: "Sahayak, her rights in her language",
-      body: "Ask in Bengali, Hindi, English or a mix of them. Answers cite only a fixed list of 27 sections and 8 helplines, under the new BNS, BNSS, DV, POSH, POCSO and IT laws, and Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee. It named a correct law for all 45 of our test questions.",
+      body: "Ask in Bengali, Hindi, English or a mix, typed or spoken. Answers cite only a fixed list of 27 sections and 8 helplines under BNS, BNSS, the DV Act, POSH, POCSO and the IT Act. Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee, and the takedown request for the platform. Running on Gemma 4 through Adaption, it named a correct law for all 45 of our test questions.",
     },
     {
       title: "Guardians who know at once",
@@ -354,7 +354,7 @@ function Built() {
     { d: "20 Oct", t: "Calculator disguise, silent SOS, encrypted 5-second capture, vault, duress PIN, undo, erase.", done: true },
     { d: "25 Oct", t: "Shortlisted for the final. Evidence sealed on Polygon; the public Verify page; this site.", done: true },
     { d: "26 Oct", t: "A sealed journal and photo vault, the Section 63 certificate, and Telegram guardian alerts with live location.", done: true },
-    { d: "28 Oct", t: "Sahayak: legal help and complaint drafts in Bengali, Hindi and English, tested on 45 questions.", done: true },
+    { d: "28–29 Oct", t: "Sahayak: legal help, complaints and takedown requests in Bengali, Hindi and English, typed or spoken, on Gemma 4 through Adaption. Tested on 45 questions.", done: true },
     { d: "Next", t: "The Android app, so recording carries on with the screen locked.", done: false },
   ];
   return (
