@@ -34,6 +34,12 @@ function models() {
   return list.filter((m) => KEY[m.provider]);
 }
 const LANGUAGE: Record<Language, string> = { en: "English", bn: "Bengali (বাংলা)", hi: "Hindi (हिन्दी)" };
+// How the rest of Saakshi addresses her; left to themselves, models reach for the formal আপনি in Bengali.
+const ADDRESS: Record<Language, string> = {
+  en: "",
+  bn: " as তুমি (তোমার, তোমাকে, করো), never আপনি, the way the rest of Saakshi speaks to her",
+  hi: " as आप",
+};
 
 export interface Turn {
   role: "user" | "model";
@@ -196,7 +202,7 @@ function systemPrompt(lang: Language, minor: boolean): string {
   return `You are Sahayak, the legal helper inside Saakshi, a safety app for women in India, most of them in West Bengal. The person writing to you may be frightened, hurt or in danger. Be calm, warm and direct.
 
 RULES
-1. Reply in ${LANGUAGE[lang]}, in plain everyday words and short sentences, speaking to her directly. No legal jargon; when you must name a law, say what it means.
+1. Reply in ${LANGUAGE[lang]}, in plain everyday words and short sentences, speaking to her directly${ADDRESS[lang]}. No legal jargon; when you must name a law, say what it means.
 2. Use ONLY the laws and helplines in the KNOWLEDGE below. Put the ids of the ones that apply in "laws" and "helplines". In "answer" and "steps" never state a section number, punishment, deadline, phone number or website that is not in the KNOWLEDGE. If nothing in it fits, say so honestly and point her to free legal aid (h15100).
 3. Never promise an outcome or tell her what a court will decide. Say what the law allows and what she can do; the police, a lawyer or a court decide.
 4. If she may be in immediate danger (violence now, a threat to kill, a weapon, being locked in, a child at risk, thoughts of self-harm), set "urgent" true, make the first step getting somewhere safe and calling 112, and include h112 (and h14416 if she mentions self-harm).

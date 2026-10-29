@@ -3,7 +3,7 @@
 // Sahayak, the legal helper: she tells it what happened, in her words and language; it explains which
 // laws may apply and what she can do next, and can draft her complaint with her sealed evidence listed.
 // The law cards and helplines come from our checked list (lib/law.ts), never from the model's text.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { digits, t, type StringKey } from "@/lib/i18n";
 import { helplineById, lawById } from "@/lib/law";
 import type { DeviceSetup, Language } from "@/lib/local";
@@ -30,18 +30,69 @@ interface Exchange {
 
 const SUGGESTIONS: StringKey[] = ["sahayakQ1", "sahayakQ2", "sahayakQ3", "sahayakQ4"];
 
+// Speaking instead of typing uses the browser's own speech recognition: Chrome and Safari have it
+// (prefixed), Firefox doesn't, and there the button simply isn't shown.
+interface Recognition {
+  lang: string;
+  interimResults: boolean;
+  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onerror: ((e: { error: string }) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+const SPEECH_LANG: Record<Language, string> = { en: "en-IN", bn: "bn-IN", hi: "hi-IN" };
+function recognizer(): (new () => Recognition) | undefined {
+  const w = window as unknown as Record<string, (new () => Recognition) | undefined>;
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition;
+}
+const unchanging = () => () => {};
+
 export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => void }) {
   const lang = setup.language;
   const tr: Tr = (k, v) => t(lang, k, v);
   const [thread, setThread] = useState<Exchange[]>([]);
   const [text, setText] = useState("");
   const [drafting, setDrafting] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [micBlocked, setMicBlocked] = useState(false);
+  const canSpeak = useSyncExternalStore(unchanging, () => !!recognizer(), () => false);
   const end = useRef<HTMLDivElement>(null);
+  const rec = useRef<Recognition | null>(null);
   const busy = thread.at(-1)?.answer === null && thread.at(-1)?.error === null;
 
   useEffect(() => {
     end.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [thread]);
+
+  // Leaving Sahayak stops the microphone.
+  useEffect(() => () => rec.current?.abort(), []);
+
+  // One stretch of speech at a time: it stops when she pauses, and her words land in the box after
+  // anything she has already typed, for her to check before sending.
+  function listen() {
+    if (rec.current) return rec.current.stop();
+    const Rec = recognizer();
+    if (!Rec) return;
+    const r = new Rec();
+    r.lang = SPEECH_LANG[lang];
+    r.interimResults = true;
+    const before = text.trim();
+    r.onresult = (e) => {
+      const said = Array.from(e.results, (res) => res[0].transcript).join("");
+      setText(`${before ? `${before} ` : ""}${said}`.slice(0, 2000));
+    };
+    r.onerror = (e) => setMicBlocked(e.error === "not-allowed" || e.error === "service-not-allowed");
+    r.onend = () => {
+      rec.current = null;
+      setListening(false);
+    };
+    rec.current = r;
+    setMicBlocked(false);
+    setListening(true);
+    r.start();
+  }
 
   // What the model sees: her questions and its own earlier answers.
   const turnsOf = (list: Exchange[]): Turn[] =>
@@ -53,6 +104,7 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
   async function send(q: string) {
     const question = q.trim();
     if (!question || busy) return;
+    rec.current?.abort();
     setText("");
     const next = [...thread.filter((x) => x.answer), { question, answer: null, error: null }];
     setThread(next);
@@ -151,29 +203,61 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
       <p className="mt-6 text-caption leading-relaxed text-muted" lang={lang}>
         {tr("sahayakPrivacy")}
       </p>
+      {micBlocked && (
+        <p role="status" className="mt-3 text-caption leading-relaxed text-rani" lang={lang}>
+          {tr("micBlocked")}
+        </p>
+      )}
 
+      {/* However short the conversation, the box sits at the foot of the screen, as in any chat. */}
+      <div className="min-h-4 flex-1" />
       <form
-        className="sticky bottom-0 -mx-6 mt-4 flex items-end gap-2 border-t border-hairline bg-white/95 px-6 pb-[max(env(safe-area-inset-bottom),12px)] pt-3 backdrop-blur"
+        className="sticky bottom-0 -mx-6 -mb-[max(env(safe-area-inset-bottom),24px)] flex items-end gap-2 border-t border-hairline bg-white/95 px-6 pb-[max(env(safe-area-inset-bottom),12px)] pt-3 backdrop-blur"
         onSubmit={(e) => {
           e.preventDefault();
           void send(text);
         }}
         lang={lang}
       >
-        <textarea
-          value={text}
-          rows={1}
-          onChange={(e) => setText(e.target.value.slice(0, 2000))}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              void send(text);
-            }
-          }}
-          placeholder={tr("sahayakPlaceholder")}
-          aria-label={tr("sahayakPlaceholder")}
-          className="max-h-40 min-h-12 flex-1 resize-none rounded-3xl border border-hairline px-4 py-3 text-body-sm leading-snug outline-none [field-sizing:content] focus:border-rani"
-        />
+        <div className="relative flex min-w-0 flex-1">
+          <textarea
+            value={text}
+            rows={1}
+            onChange={(e) => setText(e.target.value.slice(0, 2000))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                void send(text);
+              }
+            }}
+            placeholder={tr(listening ? "listening" : "sahayakPlaceholder")}
+            aria-label={tr("sahayakPlaceholder")}
+            className={`max-h-40 min-h-12 flex-1 resize-none rounded-3xl border border-hairline py-3 pl-4 text-body-sm leading-snug outline-none [field-sizing:content] focus:border-rani ${canSpeak ? "pr-12" : "pr-4"}`}
+          />
+          {canSpeak && (
+            <button
+              type="button"
+              onClick={listen}
+              aria-label={tr(listening ? "stopListening" : "speak")}
+              aria-pressed={listening}
+              className={`absolute bottom-1 right-1 flex size-10 items-center justify-center rounded-full ${listening ? "bg-rani text-white" : "text-muted active:bg-blush"}`}
+            >
+              {listening ? (
+                <>
+                  <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-rani/40" />
+                  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden className="relative fill-current">
+                    <rect width="12" height="12" rx="2.5" />
+                  </svg>
+                </>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden className="fill-none stroke-current [stroke-linecap:round] [stroke-width:1.6]">
+                  <rect x="6.5" y="1.8" width="5" height="9.4" rx="2.5" />
+                  <path d="M3.6 8.6a5.4 5.4 0 0 0 10.8 0M9 14v2.4" />
+                </svg>
+              )}
+            </button>
+          )}
+        </div>
         <button
           type="submit"
           disabled={busy || !text.trim()}
