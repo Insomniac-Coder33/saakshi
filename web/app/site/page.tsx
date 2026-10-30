@@ -58,66 +58,61 @@ function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
 // the arch's left leg. Below that: copy, phone, steps, in reading order.
 function Hero() {
   return (
-    <section id="top" className={`${styles.hero} overflow-hidden`}>
-      <div className="mx-auto grid max-w-[1520px] lg:grid-cols-[52%_48%]">
-        <div className="relative px-6 pb-16 pt-20 text-ink md:px-10 lg:pb-20 lg:pt-[98px] xl:pl-12 xl:pr-20">
-          <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.19em] text-rani">
-            <span aria-hidden className="h-px w-9 bg-rani" />
-            Private evidence. Public proof.
+    <section id="top" className={`${styles.hero} overflow-hidden text-white`}>
+      <div className="mx-auto grid max-w-[1520px] lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:gap-8">
+        <div className="relative z-10 px-6 pb-10 pt-20 md:px-10 lg:pb-16 lg:pt-[124px] xl:pl-12">
+          <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.2em] text-rani-bright">
+            <span aria-hidden className="h-px w-10 bg-rani-bright" />
+            Saakshi / the silent witness
           </p>
-          <h1 className="mt-8 max-w-[740px] font-display text-[clamp(58px,5.25vw,88px)] leading-[.99] tracking-[-.035em]">
-            A witness that <em className="block font-normal text-rani">never looks away.</em>
+          <h1 className="mt-9 max-w-[660px] font-display text-[clamp(62px,5.6vw,92px)] leading-[.99] tracking-[-.03em]">
+            What happened <em className="block font-normal text-rani-bright">has a witness.</em>
           </h1>
-          <p className="mt-9 max-w-[29rem] text-[18px] leading-[1.7] text-[#624c58] sm:text-[19px]">
-            It looks like a calculator. In a moment that matters, Saakshi quietly records, encrypts and preserves what happened.
+          <p className="mt-9 max-w-[31rem] text-[18px] leading-[1.7] text-on-dark sm:text-[19px]">
+            A working calculator on the surface. When she needs it, Saakshi captures encrypted evidence in five-second pieces and seals its fingerprints for later verification.
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <a href="#try" className="inline-flex h-14 items-center gap-5 rounded-full bg-plum px-7 text-[15px] font-semibold text-white transition-colors hover:bg-rani">
-              Try the live app <span aria-hidden>↗</span>
+          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <a href="#try" className="inline-flex h-14 items-center gap-5 rounded-full bg-rani px-7 text-[15px] font-semibold text-white transition-colors hover:bg-rani-bright">
+              Explore the live app <span aria-hidden>↗</span>
             </a>
-            <a href="/verify" className="inline-flex h-14 items-center gap-3 rounded-full border border-[#d5bec9] px-7 text-[15px] font-medium text-ink transition-colors hover:border-plum">
-              Verify a file <span aria-hidden>↗</span>
+            <a href="/verify" className="group inline-flex h-12 items-center gap-2 border-b border-white/30 text-[15px] font-medium text-white transition-colors hover:border-rani-bright">
+              Verify a file <span aria-hidden className="transition-transform group-hover:translate-x-1">↗</span>
             </a>
           </div>
-
-          <div className="mt-20 grid max-w-[34rem] grid-cols-2 gap-7 border-t border-[#d9c8cf] pt-6">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-rani">On her phone</p>
-              <p className="mt-2 text-[13px] leading-[1.55] text-[#624c58]">Encrypted before a recording leaves the device.</p>
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-rani">On the record</p>
-              <p className="mt-2 text-[13px] leading-[1.55] text-[#624c58]">A public seal makes changes detectable.</p>
-            </div>
+          <div className="mt-16 max-w-[30rem] border-t border-white/15 pt-6">
+            <p className="text-[10px] font-semibold uppercase tracking-[.19em] text-rani-bright">Inside the demo</p>
+            <p className="mt-3 text-[14px] leading-[1.7] text-on-dark">
+              Open the vault with <span className="font-mono text-white">{DEMO_PIN} =</span>. Triple tap the calculator display for a silent SOS.
+              <span className="block">Duress PIN <span className="font-mono text-white">{DEMO_DURESS_PIN}</span>.</span>
+            </p>
           </div>
         </div>
 
-        <div id="try" className={`${styles.stage} relative isolate scroll-mt-6 overflow-hidden px-6 pb-14 pt-11 text-white md:px-10 lg:px-8 lg:pb-14 lg:pt-12`}>
-          <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] h-[68%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(224,70,128,.24),rgba(120,33,73,.1)_48%,transparent_72%)] blur-3xl" />
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#1b0b17] to-transparent" />
+        <div id="try" className={`${styles.scene} scroll-mt-6`}>
+          <div aria-hidden className={styles.glow} />
+          <div aria-hidden className={styles.floor} />
+          <div className="absolute left-[6%] top-[7%] text-[10px] font-semibold uppercase tracking-[.2em] text-rani-bright/80 lg:left-[3%]">
+            01 / In plain sight
+          </div>
+          <div className="absolute right-[6%] bottom-[8%] text-[10px] font-semibold uppercase tracking-[.2em] text-on-dark-muted lg:right-[3%]">
+            Tap to enter the demo ↗
+          </div>
 
-          <div className="relative mx-auto max-w-[580px]">
-            <div className="flex items-center justify-between border-b border-white/15 pb-4 text-[10px] font-semibold uppercase tracking-[.18em] text-[#d5b7c5]">
-              <span>Inside the disguise</span>
-              <span>01 / Live demonstration</span>
+          <div className={styles.rig}>
+            <div aria-hidden className={`${styles.plate} ${styles.plateTwo}`} />
+            <div aria-hidden className={`${styles.plate} ${styles.plateOne}`} />
+            <div className={styles.demoPhone}>
+              <LiveDemo presentation3d phoneClassName={styles.phone3d} />
             </div>
-            <div className="relative mx-auto mt-9 w-[min(310px,80vw)] lg:w-[min(320px,calc(46svh-106px))]">
-              <LiveDemo />
-            </div>
-            <div className="relative mx-auto mt-8 grid max-w-[520px] grid-cols-3 gap-3 border-t border-white/15 pt-5 text-center">
-              <div>
-                <p className="text-[10px] uppercase tracking-[.12em] text-[#c3a6b5]">Open vault</p>
-                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_PIN} =</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[.12em] text-[#c3a6b5]">Start SOS</p>
-                <p className="mt-1 text-[13px] text-white">Tap display ×3</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[.12em] text-[#c3a6b5]">Duress</p>
-                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_DURESS_PIN}</p>
-              </div>
-            </div>
+          </div>
+
+          <div aria-hidden className={`${styles.marker} ${styles.markerTop} px-5 py-4`}>
+            <span className="font-display text-[34px] leading-none text-white">05s</span>
+            <p className="mt-1 text-[11px] uppercase tracking-[.13em] text-[#e2b6c9]">Encrypted pieces</p>
+          </div>
+          <div aria-hidden className={`${styles.marker} ${styles.markerBottom} px-5 py-4`}>
+            <span className="font-mono text-[15px] text-white">SHA-256</span>
+            <p className="mt-2 text-[11px] leading-[1.4] text-[#e2b6c9]">Fingerprint taken on her phone before upload.</p>
           </div>
         </div>
       </div>
