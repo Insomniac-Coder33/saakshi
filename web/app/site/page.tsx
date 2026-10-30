@@ -3,14 +3,13 @@
 import type { Metadata } from "next";
 import QRCode from "qrcode";
 import type { ReactNode } from "react";
-import { Chalchitra } from "@/components/site/Chalchitra";
 import { Header } from "@/components/site/Header";
 import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
 import { Story } from "@/components/site/Story";
-import { Bead, TrySteps } from "@/components/site/TrySteps";
+import { Bead } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
-import { APP_ORIGIN } from "@/lib/site";
+import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Saakshi · A witness that never looks away",
@@ -59,60 +58,79 @@ function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
 function Hero() {
   return (
     <section id="top" className="grain overflow-hidden bg-plum-night text-white">
-      <div aria-hidden className="pointer-events-none absolute -left-60 bottom-[-300px] size-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(255,111,165,.10),transparent)]" />
-      {/* --w, the arch's width, is set by whichever runs out first: the screen's height (the whole phone fits)
-          or its width (the copy keeps about 400px). */}
-      <div className="relative mx-auto grid max-w-[1200px] px-6 pb-16 pt-32 md:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-x-10 lg:pb-10 lg:pt-[116px] lg:[--w:clamp(260px,min(calc((100svh_-_132px)*0.494),calc((min(100vw,1200px)_-_720px)*1.1412)),372px)] xl:gap-x-12">
-        {/* The padding centres the copy on the phone rather than on phone and arch together. The headline
-            scales with its column, which narrows as the arch takes its share. */}
-        <div className="animate-rise @container lg:self-center lg:pt-[calc(var(--w)*0.2)]">
-          <Eyebrow dark>SHAKTI Hackathon 2026 · Dharma &amp; Trust</Eyebrow>
-          <h1 className="mt-6 font-display text-[54px] leading-[0.98] tracking-[-0.01em] sm:text-[76px] lg:text-[length:clamp(56px,min(16cqi,10.5svh),88px)]">
-            A witness that <em className="text-rani-bright">never looks away.</em>
-          </h1>
-          <p className="mt-7 max-w-[33rem] text-[18px] leading-[1.65] text-on-dark">
-            Saakshi lives inside an ordinary calculator. When something happens, it silently records, encrypts every five seconds on
-            her phone, and seals the evidence on a public blockchain, so it can’t be deleted, doubted or denied.
-          </p>
-          <div className="mt-9 flex flex-wrap gap-3">
-            <a href="#try" className="flex h-14 items-center rounded-full bg-rani px-6 text-[16px] font-medium text-white hover:bg-rani-deep sm:px-7">
-              Try the live app
-            </a>
-            <a href="/verify" className="flex h-14 items-center rounded-full border border-white/20 px-6 text-[16px] font-medium text-white hover:bg-white/10 sm:px-7">
-              Verify a file
-            </a>
+      <div aria-hidden className="pointer-events-none absolute -right-[20rem] top-[-18rem] size-[70rem] rounded-full bg-[radial-gradient(closest-side,rgba(151,31,82,.17),transparent_70%)]" />
+      <div className="relative mx-auto max-w-[1360px] px-6 pb-0 pt-[116px] md:px-10 lg:pt-[124px] xl:px-12">
+        <div className="grid items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(420px,.88fr)] lg:gap-12 xl:gap-20">
+          <div className="animate-rise max-w-[690px] py-6 lg:py-16">
+            <div className="flex items-center gap-3">
+              <span aria-hidden className="h-px w-9 bg-rani-bright" />
+              <Eyebrow dark>Evidence, kept in her hands</Eyebrow>
+            </div>
+            <h1 className="mt-8 font-display text-[clamp(58px,6vw,94px)] leading-[.99] tracking-[-.035em]">
+              A witness that <em className="block font-normal text-rani-bright">never looks away.</em>
+            </h1>
+            <p className="mt-8 max-w-[34rem] text-[18px] leading-[1.7] text-on-dark sm:text-[20px]">
+              Saakshi hides inside a working calculator. In an emergency, it quietly records, encrypts and saves evidence as it happens, then seals its fingerprints for anyone to verify.
+            </p>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <a href="#try" className="inline-flex h-14 items-center gap-5 rounded-full bg-rani px-7 text-[15px] font-semibold text-white transition-colors hover:bg-rani-bright">
+                Try the live demo <span aria-hidden>↗</span>
+              </a>
+              <a href="/verify" className="inline-flex h-14 items-center gap-3 rounded-full border border-white/20 px-7 text-[15px] font-medium text-white transition-colors hover:bg-white/10">
+                Verify evidence <span aria-hidden>↗</span>
+              </a>
+            </div>
+            <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-3 border-t border-white/10 pt-6 text-[13px] text-on-dark">
+              <Fact>Private by design</Fact>
+              <Fact>English · বাংলা · हिन्दी</Fact>
+              <Fact>No wallet needed</Fact>
+            </ul>
           </div>
-          <ul className="mt-9 flex flex-wrap gap-x-5 gap-y-2.5 text-[14px] text-on-dark">
-            <Fact>Bengali · Hindi · English</Fact>
-            <Fact>No wallet, no gas, no login</Fact>
-            <Fact>Any Android phone</Fact>
-          </ul>
+
+          <div id="try" className="relative scroll-mt-6 overflow-hidden rounded-[30px] border border-white/10 bg-[#180d17] shadow-[0_40px_110px_-50px_rgba(0,0,0,.9)]">
+            <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(214,36,110,.19),transparent_59%)]" />
+            <div className="relative flex items-center justify-between gap-4 border-b border-white/10 px-6 py-5 sm:px-8">
+              <div className="flex items-center gap-3">
+                <span className="flex size-8 items-center justify-center rounded-full border border-rani-bright/40">
+                  <span className="size-2 rounded-full bg-rani-bright shadow-[0_0_14px_rgba(255,111,165,.8)]" />
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[.17em] text-white">Saakshi, live</span>
+              </div>
+              <span className="text-[11px] text-on-dark-muted">An interactive preview</span>
+            </div>
+            <div className="relative mx-auto w-[min(320px,78%)] py-9 sm:py-10">
+              <LiveDemo />
+            </div>
+            <div className="relative grid grid-cols-3 gap-px border-t border-white/10 bg-white/10 text-center">
+              <div className="bg-[#180d17] px-2 py-4">
+                <p className="text-[10px] uppercase tracking-[.12em] text-on-dark-muted">Open vault</p>
+                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_PIN} =</p>
+              </div>
+              <div className="bg-[#180d17] px-2 py-4">
+                <p className="text-[10px] uppercase tracking-[.12em] text-on-dark-muted">Silent SOS</p>
+                <p className="mt-1 text-[13px] text-white">Tap display × 3</p>
+              </div>
+              <div className="bg-[#180d17] px-2 py-4">
+                <p className="text-[10px] uppercase tracking-[.12em] text-on-dark-muted">Duress PIN</p>
+                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_DURESS_PIN}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Wide screens: steps and arch as one unit, the arch as wide as --w (set on the grid) so the whole phone fits a
-            short screen, its legs running on into the margin so the phone itself lines up with the nav. Below that,
-            this wrapper steps aside (display: contents) and the grid places the arch and the steps on their own. */}
-        <div className="contents lg:-mr-[calc(var(--w)*0.1237)] lg:flex lg:gap-6">
-          <div
-            id="try"
-            className="mx-auto mt-14 w-full max-w-[372px] max-sm:-mx-2 max-sm:w-[calc(100%_+_16px)] lg:order-2 lg:mx-0 lg:mt-0 lg:w-(--w) lg:max-w-none lg:flex-none"
-          >
-            <Chalchitra>
-              <LiveDemo
-                caption={
-                  <p className="mt-3.5 text-balance text-center font-display text-[15.5px] italic leading-[1.3] text-on-dark-muted">
-                    Framed like Durga in Kumartuli, where her eyes are painted in last: <span className="text-on-dark">chokkhu daan</span>.
-                  </p>
-                }
-              />
-            </Chalchitra>
-          </div>
-
-          {/* Beside the arch the list fills the phone's height, so each number sits on the arch's leg beside it. */}
-          <TrySteps
-            onArch
-            className="mx-auto mt-2 w-full max-w-[30rem] space-y-5 text-[14px] leading-[1.5] text-on-dark-muted lg:order-1 lg:mx-0 lg:mt-0 lg:flex lg:w-[176px] lg:max-w-none lg:flex-none lg:flex-col lg:justify-center lg:space-y-7 lg:self-stretch lg:pb-[calc(var(--w)*0.16)] lg:pt-[calc(var(--w)*0.403)] lg:text-right lg:text-[13.5px]"
-          />
+        <div className="mt-16 grid gap-px border-y border-white/10 bg-white/10 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+          {[
+            ["01", "Disguised", "A real calculator on the surface."],
+            ["02", "Recording", "Five-second encrypted pieces."],
+            ["03", "Protected", "Evidence leaves the phone as ciphertext."],
+            ["04", "Verifiable", "Sealed fingerprints on Polygon."],
+          ].map(([number, title, body]) => (
+            <div key={number} className="bg-plum-night px-5 py-6 sm:px-7 lg:min-h-[122px]">
+              <span className="font-display text-[19px] italic text-rani-bright">{number}</span>
+              <h2 className="mt-1 text-[14px] font-semibold text-white">{title}</h2>
+              <p className="mt-1 text-[12px] leading-relaxed text-on-dark-muted">{body}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
