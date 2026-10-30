@@ -10,6 +10,7 @@ import { Story } from "@/components/site/Story";
 import { Bead } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
 import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
+import styles from "./hero.module.css";
 
 export const metadata: Metadata = {
   title: "Saakshi · A witness that never looks away",
@@ -57,71 +58,67 @@ function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
 // the arch's left leg. Below that: copy, phone, steps, in reading order.
 function Hero() {
   return (
-    <section id="top" className="grain overflow-hidden bg-[#0e080d] text-white">
-      <div aria-hidden className="pointer-events-none absolute -left-64 top-0 size-[700px] rounded-full bg-[radial-gradient(circle,rgba(97,23,56,.16),transparent_67%)]" />
-      <div aria-hidden className="pointer-events-none absolute -right-56 top-12 size-[900px] rounded-full bg-[radial-gradient(circle,rgba(174,42,92,.13),transparent_65%)]" />
-
-      <div className="relative mx-auto max-w-[1360px] px-6 pb-0 pt-[116px] md:px-10 lg:pt-[132px] xl:px-12">
-        <div className="grid lg:grid-cols-[minmax(0,1.04fr)_minmax(0,.96fr)] lg:gap-10 xl:gap-16">
-          <div className="animate-rise relative z-10 max-w-[680px] lg:pt-[80px]">
-            <div className="flex items-center gap-4">
-              <span aria-hidden className="h-px w-10 bg-rani-bright" />
-              <Eyebrow dark>A private witness, always close</Eyebrow>
-            </div>
-            <h1 className="mt-9 font-display text-[clamp(57px,5.35vw,84px)] leading-[1.01] tracking-[-.025em]">
-              A witness that <em className="block font-normal text-rani-bright">never looks away.</em>
-            </h1>
-            <p className="mt-8 max-w-[31rem] text-[18px] leading-[1.7] text-on-dark sm:text-[19px]">
-              Hidden in an ordinary calculator. Ready to quietly capture and encrypt evidence when it matters, with a public seal anyone can check later.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
-              <a href="#try" className="inline-flex h-14 items-center gap-5 rounded-full bg-rani px-7 text-[15px] font-semibold text-white transition-colors hover:bg-rani-bright">
-                Experience Saakshi <span aria-hidden>↗</span>
-              </a>
-              <a href="/verify" className="group inline-flex h-12 items-center gap-2 border-b border-white/30 text-[15px] font-medium text-white transition-colors hover:border-rani-bright">
-                Verify a file <span aria-hidden className="transition-transform group-hover:translate-x-1">↗</span>
-              </a>
-            </div>
-            <div className="mt-16 max-w-[31rem] border-t border-white/15 pt-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[.17em] text-rani-bright">Made for the moment after</p>
-              <p className="mt-2 text-[14px] leading-relaxed text-on-dark-muted">
-                Recorded on her phone. Encrypted before upload. Sealed so the original can be checked.
-              </p>
-            </div>
+    <section id="top" className={`${styles.hero} overflow-hidden`}>
+      <div className="mx-auto grid max-w-[1520px] lg:grid-cols-[52%_48%]">
+        <div className="relative px-6 pb-16 pt-20 text-ink md:px-10 lg:pb-20 lg:pt-[98px] xl:pl-12 xl:pr-20">
+          <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.19em] text-rani">
+            <span aria-hidden className="h-px w-9 bg-rani" />
+            Private evidence. Public proof.
+          </p>
+          <h1 className="mt-8 max-w-[740px] font-display text-[clamp(58px,5.25vw,88px)] leading-[.99] tracking-[-.035em]">
+            A witness that <em className="block font-normal text-rani">never looks away.</em>
+          </h1>
+          <p className="mt-9 max-w-[29rem] text-[18px] leading-[1.7] text-[#624c58] sm:text-[19px]">
+            It looks like a calculator. In a moment that matters, Saakshi quietly records, encrypts and preserves what happened.
+          </p>
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <a href="#try" className="inline-flex h-14 items-center gap-5 rounded-full bg-plum px-7 text-[15px] font-semibold text-white transition-colors hover:bg-rani">
+              Try the live app <span aria-hidden>↗</span>
+            </a>
+            <a href="/verify" className="inline-flex h-14 items-center gap-3 rounded-full border border-[#d5bec9] px-7 text-[15px] font-medium text-ink transition-colors hover:border-plum">
+              Verify a file <span aria-hidden>↗</span>
+            </a>
           </div>
 
-          <div id="try" className="relative mx-auto mt-16 w-full max-w-[610px] scroll-mt-6 pb-2 lg:mt-0">
-            <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] aspect-square w-[96%] max-w-[570px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[.055]" />
-            <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] aspect-square w-[76%] max-w-[450px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-rani-bright/[.12]" />
-            <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] h-[70%] w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(177,37,92,.32),rgba(82,20,52,.12)_47%,transparent_72%)] blur-2xl" />
-
-            <div className="relative flex items-center justify-between gap-4 border-b border-white/10 pb-4 text-[11px] font-semibold uppercase tracking-[.16em] text-on-dark-muted">
-              <span>01 / The live experience</span>
-              <span className="flex items-center gap-2 text-rani-bright"><i aria-hidden className="size-1.5 rounded-full bg-rani-bright" /> Interactive demo</span>
+          <div className="mt-20 grid max-w-[34rem] grid-cols-2 gap-7 border-t border-[#d9c8cf] pt-6">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-rani">On her phone</p>
+              <p className="mt-2 text-[13px] leading-[1.55] text-[#624c58]">Encrypted before a recording leaves the device.</p>
             </div>
-            <div className="relative mx-auto mt-9 w-[min(300px,82vw)] lg:w-[min(294px,calc(46svh-112px))]">
-              <LiveDemo />
-            </div>
-            <div className="relative mx-auto mt-8 grid max-w-[500px] grid-cols-3 gap-3 border-t border-white/10 pt-5 text-center">
-              <div>
-                <p className="text-[10px] uppercase tracking-[.13em] text-on-dark-muted">Open the vault</p>
-                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_PIN} =</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[.13em] text-on-dark-muted">Silent SOS</p>
-                <p className="mt-1 text-[13px] text-white">Tap display ×3</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[.13em] text-on-dark-muted">Duress PIN</p>
-                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_DURESS_PIN}</p>
-              </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[.18em] text-rani">On the record</p>
+              <p className="mt-2 text-[13px] leading-[1.55] text-[#624c58]">A public seal makes changes detectable.</p>
             </div>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 border-t border-white/10 py-6 text-[11px] font-medium uppercase tracking-[.13em] text-on-dark-muted lg:mt-10">
-          <span>Saakshi · witness in Bengali, Hindi and English</span>
-          <span>Capture <i aria-hidden className="mx-2 text-rani-bright">/</i> Encrypt <i aria-hidden className="mx-2 text-rani-bright">/</i> Verify</span>
+        <div id="try" className={`${styles.stage} relative isolate scroll-mt-6 overflow-hidden px-6 pb-14 pt-11 text-white md:px-10 lg:px-8 lg:pb-14 lg:pt-12`}>
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] h-[68%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(224,70,128,.24),rgba(120,33,73,.1)_48%,transparent_72%)] blur-3xl" />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#1b0b17] to-transparent" />
+
+          <div className="relative mx-auto max-w-[580px]">
+            <div className="flex items-center justify-between border-b border-white/15 pb-4 text-[10px] font-semibold uppercase tracking-[.18em] text-[#d5b7c5]">
+              <span>Inside the disguise</span>
+              <span>01 / Live demonstration</span>
+            </div>
+            <div className="relative mx-auto mt-9 w-[min(310px,80vw)] lg:w-[min(320px,calc(46svh-106px))]">
+              <LiveDemo />
+            </div>
+            <div className="relative mx-auto mt-8 grid max-w-[520px] grid-cols-3 gap-3 border-t border-white/15 pt-5 text-center">
+              <div>
+                <p className="text-[10px] uppercase tracking-[.12em] text-[#c3a6b5]">Open vault</p>
+                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_PIN} =</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[.12em] text-[#c3a6b5]">Start SOS</p>
+                <p className="mt-1 text-[13px] text-white">Tap display ×3</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[.12em] text-[#c3a6b5]">Duress</p>
+                <p className="mt-1 font-mono text-[13px] text-white">{DEMO_DURESS_PIN}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -1,0 +1,17 @@
+.hero {
+  background: #faf6f2;
+}
+
+.stage {
+  background: #2b1322;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    background: linear-gradient(to right, #faf6f2 0 51.8%, #2b1322 51.8% 100%);
+  }
+
+  .stage {
+    background: transparent;
+  }
+}
