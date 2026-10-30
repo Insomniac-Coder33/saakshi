@@ -57,93 +57,74 @@ function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
 // the arch's left leg. Below that: copy, phone, steps, in reading order.
 function Hero() {
   return (
-    <section id="top" className="grain overflow-hidden bg-plum-night text-white">
-      <div aria-hidden className="pointer-events-none absolute -right-[20rem] top-[-18rem] size-[70rem] rounded-full bg-[radial-gradient(closest-side,rgba(151,31,82,.17),transparent_70%)]" />
-      <div className="relative mx-auto max-w-[1360px] px-6 pb-0 pt-[116px] md:px-10 lg:pt-[124px] xl:px-12">
-        <div className="grid items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(420px,.88fr)] lg:gap-12 xl:gap-20">
-          <div className="animate-rise max-w-[690px] py-6 lg:py-16">
-            <div className="flex items-center gap-3">
-              <span aria-hidden className="h-px w-9 bg-rani-bright" />
-              <Eyebrow dark>Evidence, kept in her hands</Eyebrow>
+    <section id="top" className="grain overflow-hidden bg-[#0e080d] text-white">
+      <div aria-hidden className="pointer-events-none absolute -left-64 top-0 size-[700px] rounded-full bg-[radial-gradient(circle,rgba(97,23,56,.16),transparent_67%)]" />
+      <div aria-hidden className="pointer-events-none absolute -right-56 top-12 size-[900px] rounded-full bg-[radial-gradient(circle,rgba(174,42,92,.13),transparent_65%)]" />
+
+      <div className="relative mx-auto max-w-[1360px] px-6 pb-0 pt-[116px] md:px-10 lg:pt-[132px] xl:px-12">
+        <div className="grid lg:grid-cols-[minmax(0,1.04fr)_minmax(0,.96fr)] lg:gap-10 xl:gap-16">
+          <div className="animate-rise relative z-10 max-w-[680px] lg:pt-[80px]">
+            <div className="flex items-center gap-4">
+              <span aria-hidden className="h-px w-10 bg-rani-bright" />
+              <Eyebrow dark>A private witness, always close</Eyebrow>
             </div>
-            <h1 className="mt-8 font-display text-[clamp(58px,6vw,94px)] leading-[.99] tracking-[-.035em]">
+            <h1 className="mt-9 font-display text-[clamp(57px,5.35vw,84px)] leading-[1.01] tracking-[-.025em]">
               A witness that <em className="block font-normal text-rani-bright">never looks away.</em>
             </h1>
-            <p className="mt-8 max-w-[34rem] text-[18px] leading-[1.7] text-on-dark sm:text-[20px]">
-              Saakshi hides inside a working calculator. In an emergency, it quietly records, encrypts and saves evidence as it happens, then seals its fingerprints for anyone to verify.
+            <p className="mt-8 max-w-[31rem] text-[18px] leading-[1.7] text-on-dark sm:text-[19px]">
+              Hidden in an ordinary calculator. Ready to quietly capture and encrypt evidence when it matters, with a public seal anyone can check later.
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
               <a href="#try" className="inline-flex h-14 items-center gap-5 rounded-full bg-rani px-7 text-[15px] font-semibold text-white transition-colors hover:bg-rani-bright">
-                Try the live demo <span aria-hidden>↗</span>
+                Experience Saakshi <span aria-hidden>↗</span>
               </a>
-              <a href="/verify" className="inline-flex h-14 items-center gap-3 rounded-full border border-white/20 px-7 text-[15px] font-medium text-white transition-colors hover:bg-white/10">
-                Verify evidence <span aria-hidden>↗</span>
+              <a href="/verify" className="group inline-flex h-12 items-center gap-2 border-b border-white/30 text-[15px] font-medium text-white transition-colors hover:border-rani-bright">
+                Verify a file <span aria-hidden className="transition-transform group-hover:translate-x-1">↗</span>
               </a>
             </div>
-            <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-3 border-t border-white/10 pt-6 text-[13px] text-on-dark">
-              <Fact>Private by design</Fact>
-              <Fact>English · বাংলা · हिन्दी</Fact>
-              <Fact>No wallet needed</Fact>
-            </ul>
+            <div className="mt-16 max-w-[31rem] border-t border-white/15 pt-5">
+              <p className="text-[11px] font-semibold uppercase tracking-[.17em] text-rani-bright">Made for the moment after</p>
+              <p className="mt-2 text-[14px] leading-relaxed text-on-dark-muted">
+                Recorded on her phone. Encrypted before upload. Sealed so the original can be checked.
+              </p>
+            </div>
           </div>
 
-          <div id="try" className="relative scroll-mt-6 overflow-hidden rounded-[30px] border border-white/10 bg-[#180d17] shadow-[0_40px_110px_-50px_rgba(0,0,0,.9)]">
-            <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(214,36,110,.19),transparent_59%)]" />
-            <div className="relative flex items-center justify-between gap-4 border-b border-white/10 px-6 py-5 sm:px-8">
-              <div className="flex items-center gap-3">
-                <span className="flex size-8 items-center justify-center rounded-full border border-rani-bright/40">
-                  <span className="size-2 rounded-full bg-rani-bright shadow-[0_0_14px_rgba(255,111,165,.8)]" />
-                </span>
-                <span className="text-[11px] font-semibold uppercase tracking-[.17em] text-white">Saakshi, live</span>
-              </div>
-              <span className="text-[11px] text-on-dark-muted">An interactive preview</span>
+          <div id="try" className="relative mx-auto mt-16 w-full max-w-[610px] scroll-mt-6 pb-2 lg:mt-0">
+            <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] aspect-square w-[96%] max-w-[570px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[.055]" />
+            <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] aspect-square w-[76%] max-w-[450px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-rani-bright/[.12]" />
+            <div aria-hidden className="pointer-events-none absolute left-1/2 top-[47%] h-[70%] w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(177,37,92,.32),rgba(82,20,52,.12)_47%,transparent_72%)] blur-2xl" />
+
+            <div className="relative flex items-center justify-between gap-4 border-b border-white/10 pb-4 text-[11px] font-semibold uppercase tracking-[.16em] text-on-dark-muted">
+              <span>01 / The live experience</span>
+              <span className="flex items-center gap-2 text-rani-bright"><i aria-hidden className="size-1.5 rounded-full bg-rani-bright" /> Interactive demo</span>
             </div>
-            <div className="relative mx-auto w-[min(320px,78%)] py-9 sm:py-10">
+            <div className="relative mx-auto mt-9 w-[min(300px,82vw)] lg:w-[min(294px,calc(46svh-112px))]">
               <LiveDemo />
             </div>
-            <div className="relative grid grid-cols-3 gap-px border-t border-white/10 bg-white/10 text-center">
-              <div className="bg-[#180d17] px-2 py-4">
-                <p className="text-[10px] uppercase tracking-[.12em] text-on-dark-muted">Open vault</p>
+            <div className="relative mx-auto mt-8 grid max-w-[500px] grid-cols-3 gap-3 border-t border-white/10 pt-5 text-center">
+              <div>
+                <p className="text-[10px] uppercase tracking-[.13em] text-on-dark-muted">Open the vault</p>
                 <p className="mt-1 font-mono text-[13px] text-white">{DEMO_PIN} =</p>
               </div>
-              <div className="bg-[#180d17] px-2 py-4">
-                <p className="text-[10px] uppercase tracking-[.12em] text-on-dark-muted">Silent SOS</p>
-                <p className="mt-1 text-[13px] text-white">Tap display × 3</p>
+              <div>
+                <p className="text-[10px] uppercase tracking-[.13em] text-on-dark-muted">Silent SOS</p>
+                <p className="mt-1 text-[13px] text-white">Tap display ×3</p>
               </div>
-              <div className="bg-[#180d17] px-2 py-4">
-                <p className="text-[10px] uppercase tracking-[.12em] text-on-dark-muted">Duress PIN</p>
+              <div>
+                <p className="text-[10px] uppercase tracking-[.13em] text-on-dark-muted">Duress PIN</p>
                 <p className="mt-1 font-mono text-[13px] text-white">{DEMO_DURESS_PIN}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-16 grid gap-px border-y border-white/10 bg-white/10 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
-          {[
-            ["01", "Disguised", "A real calculator on the surface."],
-            ["02", "Recording", "Five-second encrypted pieces."],
-            ["03", "Protected", "Evidence leaves the phone as ciphertext."],
-            ["04", "Verifiable", "Sealed fingerprints on Polygon."],
-          ].map(([number, title, body]) => (
-            <div key={number} className="bg-plum-night px-5 py-6 sm:px-7 lg:min-h-[122px]">
-              <span className="font-display text-[19px] italic text-rani-bright">{number}</span>
-              <h2 className="mt-1 text-[14px] font-semibold text-white">{title}</h2>
-              <p className="mt-1 text-[12px] leading-relaxed text-on-dark-muted">{body}</p>
-            </div>
-          ))}
+        <div className="mt-16 flex flex-wrap items-center justify-between gap-x-8 gap-y-3 border-t border-white/10 py-6 text-[11px] font-medium uppercase tracking-[.13em] text-on-dark-muted lg:mt-10">
+          <span>Saakshi · witness in Bengali, Hindi and English</span>
+          <span>Capture <i aria-hidden className="mx-2 text-rani-bright">/</i> Encrypt <i aria-hidden className="mx-2 text-rani-bright">/</i> Verify</span>
         </div>
       </div>
     </section>
-  );
-}
-
-// A bindi for a bullet: the dot of the wordmark's i.
-function Fact({ children }: { children: ReactNode }) {
-  return (
-    <li className="flex items-center gap-2.5">
-      <i aria-hidden className="size-[5px] rounded-full bg-rani-bright" />
-      {children}
-    </li>
   );
 }
 

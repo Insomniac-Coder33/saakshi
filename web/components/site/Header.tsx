@@ -39,7 +39,7 @@ export function Header() {
             </a>
             <a
               href="#try"
-              className="inline-flex h-10 items-center rounded-full bg-rani px-5 text-[12px] font-semibold text-white transition-colors hover:bg-rani-bright sm:px-6"
+              className="inline-flex h-10 items-center rounded-full border border-white/25 px-5 text-[12px] font-semibold text-white transition-colors hover:border-rani-bright hover:bg-white/5 sm:px-6"
             >
               <span className="sm:hidden">Demo</span><span className="hidden sm:inline">Explore the demo</span> <span aria-hidden className="ml-2">↗</span>
             </a>
