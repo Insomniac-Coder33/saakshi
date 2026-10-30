@@ -1,10 +1,10 @@
-.hero {
+.site-hero {
   background:
     radial-gradient(ellipse at 78% 38%, rgba(113, 25, 69, 0.26), transparent 44%),
     linear-gradient(135deg, #100a10 0%, #09070b 52%, #170a14 100%);
 }
 
-.scene {
+.site-scene {
   position: relative;
   display: grid;
   place-items: center;
@@ -15,7 +15,7 @@
   transform-style: preserve-3d;
 }
 
-.glow {
+.site-glow {
   position: absolute;
   inset: 12% 4% 9%;
   border-radius: 50%;
@@ -24,7 +24,7 @@
   pointer-events: none;
 }
 
-.floor {
+.site-floor {
   position: absolute;
   right: -12%;
   bottom: 1%;
@@ -40,14 +40,14 @@
   pointer-events: none;
 }
 
-.rig {
+.site-rig {
   position: relative;
   width: min(325px, calc(46svh - 94px));
   aspect-ratio: 393 / 852;
   transform-style: preserve-3d;
 }
 
-.plate {
+.site-plate {
   position: absolute;
   inset: 0;
   border: 1px solid rgba(255, 123, 170, 0.35);
@@ -57,33 +57,33 @@
   pointer-events: none;
 }
 
-.plateOne {
+.site-plate-one {
   transform: translate3d(40px, 10px, -90px) rotateY(-19deg) rotateX(7deg) rotateZ(5deg);
 }
 
-.plateTwo {
+.site-plate-two {
   opacity: 0.5;
   transform: translate3d(76px, 23px, -170px) rotateY(-19deg) rotateX(7deg) rotateZ(5deg);
 }
 
-.demoPhone {
+.site-demo-phone {
   position: relative;
   z-index: 2;
   transform-style: preserve-3d;
 }
 
-.phone3d {
+.site-phone-3d {
   transform: rotateY(-19deg) rotateX(7deg) rotateZ(5deg) translateZ(65px);
   box-shadow: -25px 55px 90px -28px rgba(0, 0, 0, 0.9), 18px 0 42px rgba(219, 47, 116, 0.14);
   transition: transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 600ms ease;
 }
 
-.phone3d:hover {
+.site-phone-3d:hover {
   transform: rotateY(-11deg) rotateX(4deg) rotateZ(2deg) translateZ(90px);
   box-shadow: -30px 65px 100px -30px rgba(0, 0, 0, 0.92), 18px 0 55px rgba(219, 47, 116, 0.2);
 }
 
-.marker {
+.site-marker {
   position: absolute;
   z-index: 3;
   width: 186px;
@@ -95,35 +95,35 @@
   pointer-events: none;
 }
 
-.markerTop {
+.site-marker-top {
   top: 19%;
   right: 0;
   transform: rotateY(-13deg) rotateZ(5deg) translateZ(95px);
 }
 
-.markerBottom {
+.site-marker-bottom {
   bottom: 17%;
   left: 1%;
   transform: rotateY(-11deg) rotateZ(-4deg) translateZ(130px);
 }
 
 @media (max-width: 1023px) {
-  .scene {
+  .site-scene {
     height: min(700px, calc(100svh - 90px));
     min-height: 625px;
   }
 
-  .rig {
+  .site-rig {
     width: min(280px, 70vw);
   }
 
-  .marker {
+  .site-marker {
     display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phone3d {
+  .site-phone-3d {
     transition: none;
   }
 }

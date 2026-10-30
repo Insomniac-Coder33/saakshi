@@ -10,7 +10,7 @@ import { Story } from "@/components/site/Story";
 import { Bead } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
 import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
-import styles from "./hero.module.css";
+import "./hero.css";
 
 export const metadata: Metadata = {
   title: "Saakshi · A witness that never looks away",
@@ -58,7 +58,7 @@ function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
 // the arch's left leg. Below that: copy, phone, steps, in reading order.
 function Hero() {
   return (
-    <section id="top" className={`${styles.hero} overflow-hidden text-white`}>
+    <section id="top" className="site-hero overflow-hidden text-white">
       <div className="mx-auto grid max-w-[1520px] lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:gap-8">
         <div className="relative z-10 px-6 pb-10 pt-20 md:px-10 lg:pb-16 lg:pt-[124px] xl:pl-12">
           <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.2em] text-rani-bright">
@@ -88,9 +88,9 @@ function Hero() {
           </div>
         </div>
 
-        <div id="try" className={`${styles.scene} scroll-mt-6`}>
-          <div aria-hidden className={styles.glow} />
-          <div aria-hidden className={styles.floor} />
+        <div id="try" className="site-scene scroll-mt-6">
+          <div aria-hidden className="site-glow" />
+          <div aria-hidden className="site-floor" />
           <div className="absolute left-[6%] top-[7%] text-[10px] font-semibold uppercase tracking-[.2em] text-rani-bright/80 lg:left-[3%]">
             01 / In plain sight
           </div>
@@ -98,19 +98,19 @@ function Hero() {
             Tap to enter the demo ↗
           </div>
 
-          <div className={styles.rig}>
-            <div aria-hidden className={`${styles.plate} ${styles.plateTwo}`} />
-            <div aria-hidden className={`${styles.plate} ${styles.plateOne}`} />
-            <div className={styles.demoPhone}>
-              <LiveDemo presentation3d phoneClassName={styles.phone3d} />
+          <div className="site-rig">
+            <div aria-hidden className="site-plate site-plate-two" />
+            <div aria-hidden className="site-plate site-plate-one" />
+            <div className="site-demo-phone">
+              <LiveDemo presentation3d phoneClassName="site-phone-3d" />
             </div>
           </div>
 
-          <div aria-hidden className={`${styles.marker} ${styles.markerTop} px-5 py-4`}>
+          <div aria-hidden className="site-marker site-marker-top px-5 py-4">
             <span className="font-display text-[34px] leading-none text-white">05s</span>
             <p className="mt-1 text-[11px] uppercase tracking-[.13em] text-[#e2b6c9]">Encrypted pieces</p>
           </div>
-          <div aria-hidden className={`${styles.marker} ${styles.markerBottom} px-5 py-4`}>
+          <div aria-hidden className="site-marker site-marker-bottom px-5 py-4">
             <span className="font-mono text-[15px] text-white">SHA-256</span>
             <p className="mt-2 text-[11px] leading-[1.4] text-[#e2b6c9]">Fingerprint taken on her phone before upload.</p>
           </div>
