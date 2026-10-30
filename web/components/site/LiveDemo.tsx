@@ -15,15 +15,7 @@ const H = 852;
 // Smaller than this and the app's text is hard to read, so starting it opens the full-size view instead.
 const MIN_SCALE = 0.6;
 
-export function LiveDemo({
-  caption,
-  presentation3d = false,
-  phoneClassName = "",
-}: {
-  caption?: ReactNode;
-  presentation3d?: boolean;
-  phoneClassName?: string;
-}) {
+export function LiveDemo({ caption }: { caption?: ReactNode }) {
   const [on, setOn] = useState(false);
   const [run, setRun] = useState(0);
   const [big, setBig] = useState(false);
@@ -62,18 +54,12 @@ export function LiveDemo({
     if (!d) return;
     d.close();
     d.show();
-    flushSync(() => {
-      setBig(false);
-      if (presentation3d) setOn(false);
-    });
+    flushSync(() => setBig(false));
     opener.current?.focus({ preventScroll: true });
-  }, [presentation3d]);
+  }, []);
 
   // On a phone, or wherever the phone on the page is too small to read, starting goes straight to full size.
-  const wantsBig = useCallback(
-    () => presentation3d || matchMedia("(max-width: 639px)").matches || (box.current?.clientWidth ?? W) / W < MIN_SCALE,
-    [presentation3d],
-  );
+  const wantsBig = useCallback(() => matchMedia("(max-width: 639px)").matches || (box.current?.clientWidth ?? W) / W < MIN_SCALE, []);
   const start = useCallback(() => (wantsBig() ? enlarge() : setOn(true)), [wantsBig, enlarge]);
 
   useEffect(() => {
@@ -87,10 +73,7 @@ export function LiveDemo({
     const closed = () => {
       if (d.open) return;
       d.show();
-      flushSync(() => {
-        setBig(false);
-        if (presentation3d) setOn(false);
-      });
+      flushSync(() => setBig(false));
     };
     d.addEventListener("cancel", cancel);
     d.addEventListener("close", closed);
@@ -98,7 +81,7 @@ export function LiveDemo({
       d.removeEventListener("cancel", cancel);
       d.removeEventListener("close", closed);
     };
-  }, [shrink, presentation3d]);
+  }, [shrink]);
 
   // The page's "Try it live" links (#try) start the app as well as scrolling to it: that click is the asking.
   // The scroll happens here rather than by following the link, which would pull focus out of the full-size view.
@@ -163,7 +146,7 @@ export function LiveDemo({
           className={
             big
               ? "max-sm:aspect-auto max-sm:size-full max-sm:rounded-none max-sm:p-0 max-sm:shadow-none max-sm:ring-0 sm:w-[min(411px,calc((100svh_-_100px)*0.4613))] md:w-[min(411px,calc((100svh_-_40px)*0.4613))]"
-              : phoneClassName
+              : ""
           }
           screenClassName={big ? "max-sm:rounded-none" : ""}
         >

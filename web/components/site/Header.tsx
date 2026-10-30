@@ -15,33 +15,30 @@ export function Header() {
 
   return (
     <>
-      <header className="relative z-40 border-b border-white/10 bg-[#100a10] text-white">
-        <div className="mx-auto flex h-[76px] max-w-[1520px] items-center justify-between gap-6 px-6 md:px-10 xl:px-12">
+      {/* Over the hero and still: it scrolls away with the page. The sections sit centred over the centred headline. */}
+      <header className="absolute inset-x-0 top-0 z-40 text-white">
+        <div className="mx-auto flex h-[76px] max-w-[1200px] items-center justify-between gap-6 border-b border-white/10 px-6 md:px-10 lg:grid lg:grid-cols-[1fr_auto_1fr]">
           <a href="#top" aria-label="Saakshi, back to top" className="flex shrink-0 items-center">
             <img src="/brand/wordmark-on-dark.svg" alt="Saakshi" className="h-[26px] sm:h-[30px]" />
           </a>
 
-          <nav aria-label="Sections" className="hidden items-center gap-7 lg:flex xl:gap-9">
+          <nav aria-label="Sections" className="hidden items-center gap-8 lg:flex">
             {SECTIONS.map((section) => (
-              <a
-                key={section.href}
-                href={section.href}
-                className="text-[12px] font-medium tracking-[.035em] text-on-dark transition-colors hover:text-white"
-              >
+              <a key={section.href} href={section.href} className="text-[14px] text-on-dark transition-colors hover:text-white">
                 {section.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3 sm:gap-5">
-            <a href="/verify" className="hidden text-[12px] font-medium text-on-dark transition-colors hover:text-white sm:block">
-              Verify evidence <span aria-hidden>↗</span>
+          <div className="flex items-center justify-end gap-3 sm:gap-6">
+            <a href="/verify" className="hidden text-[14px] text-on-dark transition-colors hover:text-white sm:block">
+              Verify a file
             </a>
             <a
               href="#try"
-              className="inline-flex h-10 items-center rounded-full border border-white/25 px-5 text-[12px] font-semibold text-white transition-colors hover:border-rani-bright hover:bg-white/5 sm:px-6"
+              className="inline-flex h-10 items-center rounded-full border border-white/25 px-5 text-[14px] font-medium text-white transition-colors hover:border-rani-bright hover:bg-white/5"
             >
-              <span className="sm:hidden">Demo</span><span className="hidden sm:inline">Explore the demo</span> <span aria-hidden className="ml-2">↗</span>
+              Try it<span className="max-sm:hidden">&nbsp;live</span>
             </a>
             <button
               type="button"
@@ -69,7 +66,7 @@ export function Header() {
             </button>
           </div>
           <nav aria-label="Mobile sections" className="mt-9">
-            {[...SECTIONS, { href: "/verify", label: "Verify evidence" }].map((section, i) => (
+            {[...SECTIONS, { href: "/verify", label: "Verify a file" }].map((section, i) => (
               <a key={section.href} href={section.href} onClick={close} className="flex items-baseline gap-5 border-b border-white/10 py-5">
                 <span className="font-display text-[17px] italic text-rani-bright">0{i + 1}</span>
                 <span className="font-display text-[36px] leading-none">{section.label}</span>
@@ -77,7 +74,7 @@ export function Header() {
             ))}
           </nav>
           <a href="#try" onClick={close} className="mt-auto flex h-14 items-center justify-center rounded-full bg-rani text-[15px] font-medium">
-            Explore the live demo
+            Try the live app
           </a>
         </div>
       </dialog>

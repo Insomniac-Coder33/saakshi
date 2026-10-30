@@ -1,16 +1,17 @@
 // The public showcase. Served at "/" on a showcase host only (see proxy.ts); the app's own address
 // never shows it. Everything on it is real: live demo, real screenshots, live seal numbers.
+// One dark plum world from top to bottom, like the SOS screen; hairlines divide it, never boxes.
 import type { Metadata } from "next";
 import QRCode from "qrcode";
 import type { ReactNode } from "react";
 import { Header } from "@/components/site/Header";
 import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
+import { Phone, Screenshot } from "@/components/site/Phone";
 import { Story } from "@/components/site/Story";
-import { Bead } from "@/components/site/TrySteps";
+import { Bead, Key } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
 import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
-import "./hero.css";
 
 export const metadata: Metadata = {
   title: "Saakshi · A witness that never looks away",
@@ -28,7 +29,7 @@ export default async function Site() {
   });
 
   return (
-    <div className="bg-white text-ink">
+    <div className="bg-plum-night text-white">
       <Header />
       <Hero />
       <Problem />
@@ -50,82 +51,72 @@ export default async function Site() {
   );
 }
 
-function Eyebrow({ children, dark }: { children: ReactNode; dark?: boolean }) {
-  return <p className={`label ${dark ? "text-rani-bright!" : ""}`}>{children}</p>;
+function Eyebrow({ children }: { children: ReactNode }) {
+  return <p className="label text-rani-bright!">{children}</p>;
 }
 
-// From laptops and landscape tablets up: copy | steps | phone in its arch, one row, with the steps strung on
-// the arch's left leg. Below that: copy, phone, steps, in reading order.
+// A heading for a section of the page, under its eyebrow.
+function Title({ eyebrow, children, className = "" }: { eyebrow: string; children: ReactNode; className?: string }) {
+  return (
+    <div className={`reveal ${className}`}>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">{children}</h2>
+    </div>
+  );
+}
+
+// Centred, like a title card: the promise, then the live app lit from behind, between two of its real screens.
 function Hero() {
   return (
-    <section id="top" className="site-hero overflow-hidden text-white">
-      <div className="mx-auto grid max-w-[1520px] lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:gap-8">
-        <div className="relative z-10 px-6 pb-10 pt-20 md:px-10 lg:pb-16 lg:pt-[124px] xl:pl-12">
-          <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.2em] text-rani-bright">
-            <span aria-hidden className="h-px w-10 bg-rani-bright" />
-            Saakshi / the silent witness
-          </p>
-          <h1 className="mt-9 max-w-[660px] font-display text-[clamp(62px,5.6vw,92px)] leading-[.99] tracking-[-.03em]">
-            What happened <em className="block font-normal text-rani-bright">has a witness.</em>
-          </h1>
-          <p className="mt-9 max-w-[31rem] text-[18px] leading-[1.7] text-on-dark sm:text-[19px]">
-            A working calculator on the surface. When she needs it, Saakshi captures encrypted evidence in five-second pieces and seals its fingerprints for later verification.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
-            <a href="#try" className="inline-flex h-14 items-center gap-5 rounded-full bg-rani px-7 text-[15px] font-semibold text-white transition-colors hover:bg-rani-bright">
-              Explore the live app <span aria-hidden>↗</span>
-            </a>
-            <a href="/verify" className="group inline-flex h-12 items-center gap-2 border-b border-white/30 text-[15px] font-medium text-white transition-colors hover:border-rani-bright">
-              Verify a file <span aria-hidden className="transition-transform group-hover:translate-x-1">↗</span>
-            </a>
-          </div>
-          <div className="mt-16 max-w-[30rem] border-t border-white/15 pt-6">
-            <p className="text-[10px] font-semibold uppercase tracking-[.19em] text-rani-bright">Inside the demo</p>
-            <p className="mt-3 text-[14px] leading-[1.7] text-on-dark">
-              Open the vault with <span className="font-mono text-white">{DEMO_PIN} =</span>. Triple tap the calculator display for a silent SOS.
-              <span className="block">Duress PIN <span className="font-mono text-white">{DEMO_DURESS_PIN}</span>.</span>
-            </p>
-          </div>
-        </div>
-
-        <div id="try" className="site-scene scroll-mt-6">
-          <div aria-hidden className="site-glow" />
-          <div aria-hidden className="site-floor" />
-          <div className="absolute left-[6%] top-[7%] text-[10px] font-semibold uppercase tracking-[.2em] text-rani-bright/80 lg:left-[3%]">
-            01 / In plain sight
-          </div>
-          <div className="absolute right-[6%] bottom-[8%] text-[10px] font-semibold uppercase tracking-[.2em] text-on-dark-muted lg:right-[3%]">
-            Tap to enter the demo ↗
-          </div>
-
-          <div className="site-rig">
-            <div aria-hidden className="site-plate site-plate-two" />
-            <div aria-hidden className="site-plate site-plate-one" />
-            <div className="site-demo-phone">
-              <LiveDemo presentation3d phoneClassName="site-phone-3d" />
-            </div>
-          </div>
-
-          <div aria-hidden className="site-marker site-marker-top px-5 py-4">
-            <span className="font-display text-[34px] leading-none text-white">05s</span>
-            <p className="mt-1 text-[11px] uppercase tracking-[.13em] text-[#e2b6c9]">Encrypted pieces</p>
-          </div>
-          <div aria-hidden className="site-marker site-marker-bottom px-5 py-4">
-            <span className="font-mono text-[15px] text-white">SHA-256</span>
-            <p className="mt-2 text-[11px] leading-[1.4] text-[#e2b6c9]">Fingerprint taken on her phone before upload.</p>
-          </div>
+    <section id="top" className="grain relative overflow-hidden pt-[76px]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[300px] h-[1000px] w-[1300px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(214,36,110,.36),rgba(214,36,110,.07)_55%,transparent)]"
+      />
+      <div className="relative mx-auto max-w-[1200px] px-6 pt-14 text-center md:px-10 lg:pt-[min(64px,6svh)]">
+        <h1 className="animate-rise font-display text-[56px] leading-[.95] tracking-[-.015em] sm:text-[88px] lg:text-[length:clamp(88px,min(8.6vw,13.5svh),124px)]">
+          What happened <em className="block text-rani-bright">has a witness.</em>
+        </h1>
+        <p className="mx-auto mt-7 max-w-[40rem] text-[18px] leading-[1.65] text-on-dark sm:text-[19px]">
+          Saakshi lives inside an ordinary calculator. When something happens, it silently records, encrypts every five seconds on her
+          phone, and seals the evidence on a public blockchain, so anyone can check it.
+        </p>
+        <div className="mt-9 flex flex-wrap justify-center gap-3">
+          <a href="#try" className="flex h-14 items-center rounded-full bg-rani px-7 text-[16px] font-medium hover:bg-rani-deep">
+            Try the live app
+          </a>
+          <a href="/verify" className="flex h-14 items-center rounded-full border border-white/20 px-7 text-[16px] font-medium hover:bg-white/10">
+            Verify a file
+          </a>
         </div>
       </div>
+
+      <div className="relative mx-auto mt-16 flex max-w-[1200px] items-start justify-center gap-12 px-6 md:px-10 lg:mt-20">
+        <SideScreen src="/site/sos.webp" tone="dark" />
+        <div id="try" className="w-[min(300px,80vw)] flex-none scroll-mt-6">
+          <LiveDemo />
+        </div>
+        <SideScreen src="/site/proof.webp" tone="light" />
+      </div>
+      <p className="relative mx-auto max-w-[34rem] px-6 pb-24 pt-8 text-center text-[14px] leading-[1.9] text-on-dark-muted">
+        It’s a working calculator. Type{" "}
+        <span className="whitespace-nowrap">
+          <Key>{DEMO_PIN}</Key> then <Key>=</Key>
+        </span>{" "}
+        to open Saakshi, or tap the display three times for a silent SOS. Duress PIN <Key>{DEMO_DURESS_PIN}</Key>.
+      </p>
     </section>
   );
 }
 
-function Step({ n, children }: { n: number; children: ReactNode }) {
+// The silent SOS and the proof, either side of the live app: the night and the morning after.
+function SideScreen({ src, tone }: { src: string; tone: "light" | "dark" }) {
   return (
-    <li className="flex gap-3">
-      <Bead n={n} className="mt-px flex-none" />
-      <span>{children}</span>
-    </li>
+    <div aria-hidden className="mt-24 hidden w-[240px] flex-none brightness-[.42] lg:block">
+      <Phone>
+        <Screenshot src={src} alt="" tone={tone} />
+      </Phone>
+    </div>
   );
 }
 
@@ -137,31 +128,29 @@ function Problem() {
     { n: "3.7%", unit: "", label: "conviction rate for crimes against women in West Bengal, 2023.", src: "NCRB, Crime in India 2023" },
   ];
   return (
-    <section className="border-b border-hairline bg-blush">
-      <div className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-28">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
-          <div className="reveal">
-            <Eyebrow>Why it matters</Eyebrow>
-            <h2 className="mt-4 font-display text-[44px] leading-[1.04] md:text-[60px]">
-              The thread running through all of it is <em className="text-rani">proof.</em>
-            </h2>
-            <p className="mt-6 max-w-[30rem] text-[18px] leading-[1.6] text-muted">
-              Phones get snatched. Videos get deleted, or dismissed as edited. Saakshi makes sure the evidence survives the night and is
-              believed in the morning.
-            </p>
-          </div>
-          <dl className="grid gap-px self-start overflow-hidden rounded-[24px] bg-blush-line sm:grid-cols-2">
-            {stats.map((s) => (
-              <div key={s.n} className="reveal bg-white p-7">
-                <dt className="font-display text-[52px] leading-none">
-                  {s.n} {s.unit && <span className="text-[24px] text-muted">{s.unit}</span>}
-                </dt>
-                <dd className="mt-3 text-[15px] leading-snug">{s.label}</dd>
-                <dd className="mt-3 text-[12px] text-muted">{s.src}</dd>
-              </div>
-            ))}
-          </dl>
+    <section className="border-t border-white/10">
+      <div className="mx-auto grid max-w-[1200px] gap-14 px-6 py-24 md:px-10 md:py-32 lg:grid-cols-[1fr_1.3fr] lg:gap-20">
+        <div className="reveal">
+          <Eyebrow>Why it matters</Eyebrow>
+          <h2 className="mt-4 font-display text-[44px] leading-[1.04] md:text-[60px]">
+            The thread running through all of it is <em className="text-rani-bright">proof.</em>
+          </h2>
+          <p className="mt-6 max-w-[30rem] text-[18px] leading-[1.6] text-on-dark">
+            Phones get snatched. Videos get deleted, or dismissed as edited. Saakshi makes sure the evidence survives the night and is
+            believed in the morning.
+          </p>
         </div>
+        <dl className="grid gap-x-10 gap-y-12 self-center sm:grid-cols-2">
+          {stats.map((s) => (
+            <div key={s.n} className="reveal border-t border-white/15 pt-6">
+              <dt className="font-display text-[56px] leading-none">
+                {s.n} {s.unit && <span className="text-[24px] text-on-dark-muted">{s.unit}</span>}
+              </dt>
+              <dd className="mt-3 text-[15px] leading-snug text-on-dark">{s.label}</dd>
+              <dd className="mt-2 text-[12px] text-on-dark-muted">{s.src}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );
@@ -169,41 +158,69 @@ function Problem() {
 
 function Proof() {
   return (
-    <section id="proof" className="grain bg-plum text-white">
+    <section id="proof" className="grain bg-plum">
       <div className="relative mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20">
-          <div className="reveal">
-            <Eyebrow dark>Proof, not promises</Eyebrow>
-            <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">Anyone can check. Nobody has to trust us.</h2>
-            <p className="mt-6 max-w-[32rem] text-[18px] leading-[1.6] text-on-dark">
-              Drop a recording on the Verify page. Your browser fingerprints it, splits it back into the five-second pieces it was sealed
-              as, checks each one’s Merkle proof, and reads the seal straight from the blockchain. Change a single byte and it says so.
-            </p>
-            <a href="/verify" className="mt-9 inline-flex h-14 items-center rounded-full bg-white px-7 text-[16px] font-medium text-ink hover:bg-blush">
-              Open the Verify page
-            </a>
-          </div>
-          <div className="reveal self-center">
-            <div className="overflow-hidden rounded-[18px] bg-white shadow-[0_50px_90px_-40px_rgba(0,0,0,.7)] ring-1 ring-white/10">
-              <div className="flex h-9 items-center gap-1.5 border-b border-hairline bg-[#f6eef2] px-4" aria-hidden>
-                <i className="size-2.5 rounded-full bg-[#e2c9d4]" />
-                <i className="size-2.5 rounded-full bg-[#e2c9d4]" />
-                <i className="size-2.5 rounded-full bg-[#e2c9d4]" />
-              </div>
-              {/* On a phone, the phone-width Verify page, so its results are readable. */}
-              <picture>
-                <source media="(max-width: 639px)" srcSet="/site/verify-phone.webp" />
-                <img src="/site/verify.webp" alt="The Verify page: the original file untampered, a changed copy with no seal" className="w-full" loading="lazy" />
-              </picture>
-            </div>
-            <p className="mt-3 text-[13px] text-on-dark-muted">A real check from our tests: the original, and a copy with one byte changed.</p>
-          </div>
+        <div className="reveal mx-auto max-w-[46rem] text-center">
+          <Eyebrow>Proof, not promises</Eyebrow>
+          <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[72px]">Anyone can check. Nobody has to trust us.</h2>
+          <p className="mx-auto mt-6 max-w-[36rem] text-[18px] leading-[1.6] text-on-dark">
+            Drop a recording on the Verify page. Your browser fingerprints it, splits it back into the five-second pieces it was sealed
+            as, checks each one’s Merkle proof, and reads the seal straight from the blockchain. Change a single byte and it says so.
+          </p>
         </div>
-        <div className="reveal mt-16">
+
+        {/* The two results from the Verify page screenshot in our tests, set in type so they read at any width. */}
+        <div className="reveal mt-16 grid gap-5 md:grid-cols-2">
+          <Result
+            name="recording-20261025-2006.webm"
+            hash="6d2850b1 … 77173c3b"
+            verdict="Untampered"
+            ok
+            body={
+              <>
+                Recorded 25 Oct 2026, 8:06:42 pm IST. All 7 pieces sealed on Polygon Amoy, each within 72 s of being recorded.{" "}
+                <a href={`${EXPLORER}/block/51116511`} target="_blank" rel="noreferrer" className="text-white underline underline-offset-2">
+                  Block 51116511
+                </a>
+              </>
+            }
+          />
+          <Result
+            name="changed-recording-20261025-2006.webm"
+            hash="9543a854 … b52d8f57"
+            verdict="No seal found"
+            body="This file does not match any sealed fingerprint. If it is a copy of a Saakshi recording, it has been changed."
+          />
+        </div>
+        <div className="mt-6 flex flex-col items-center gap-6 text-center">
+          <p className="text-[13px] text-on-dark-muted">A real check from our tests: the original, and a copy with one byte changed.</p>
+          <a href="/verify" className="flex h-14 items-center rounded-full bg-white px-7 text-[16px] font-medium text-ink hover:bg-blush">
+            Open the Verify page
+          </a>
+        </div>
+
+        <div className="reveal mt-24">
           <LiveStats />
         </div>
       </div>
     </section>
+  );
+}
+
+function Result({ name, hash, verdict, ok = false, body }: { name: string; hash: string; verdict: string; ok?: boolean; body: ReactNode }) {
+  return (
+    <div className="rounded-[24px] border border-plum-line bg-plum-night/55 p-7 md:p-9">
+      <p className="break-all font-mono text-[13px] text-on-dark">{name}</p>
+      <p className="mt-1 font-mono text-[12px] text-on-dark-muted">{hash}</p>
+      <p className={`mt-7 font-display text-[48px] leading-none md:text-[56px] ${ok ? "text-[#7fd1ad]" : "text-rani-bright"}`}>{verdict}</p>
+      <p className="mt-4 text-[15px] leading-[1.6] text-on-dark">{body}</p>
+      {/* One mark per sealed piece; a changed copy matches none. */}
+      <div aria-hidden className="mt-7 flex gap-1.5">
+        {Array.from({ length: 7 }, (_, i) => (
+          <i key={i} className={`h-1.5 flex-1 rounded-full ${ok ? "bg-[#7fd1ad]/60" : "bg-white/10"}`} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -223,27 +240,21 @@ function Beyond() {
     },
     {
       title: "A certificate for court",
-      body: "One tap prints the Section 63 certificate that the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and a QR code to verify.",
+      body: "One tap prints the Section 63 certificate that the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and a QR code to verify.",
     },
   ];
   return (
-    <section id="more" className="border-b border-hairline bg-blush">
-      <div className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
-        <div className="reveal max-w-[44rem]">
-          <Eyebrow>More than a recorder</Eyebrow>
-          <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">
-            From the night itself to the <em className="text-rani">complaint.</em>
-          </h2>
-        </div>
-        <div className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-blush-line ring-1 ring-blush-line sm:grid-cols-2">
-          {items.map((x, i) => (
-            <div key={x.title} className="reveal bg-white p-8">
-              <span className="flex size-7 items-center justify-center rounded-full bg-alert-bg text-[12px] font-medium text-rani">{i + 1}</span>
-              <h3 className="mt-5 font-display text-[30px] leading-tight">{x.title}</h3>
-              <p className="mt-3 text-[15px] leading-[1.6] text-muted">{x.body}</p>
-            </div>
-          ))}
-        </div>
+    <section id="more" className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+      <Title eyebrow="More than a recorder" className="max-w-[44rem]">
+        From the night itself to the <em className="text-rani-bright">complaint.</em>
+      </Title>
+      <div className="mt-16 grid gap-x-16 gap-y-14 md:grid-cols-2">
+        {items.map((x) => (
+          <div key={x.title} className="reveal border-t border-white/15 pt-7">
+            <h3 className="font-display text-[34px] leading-[1.08]">{x.title}</h3>
+            <p className="mt-4 max-w-[34rem] text-[16px] leading-[1.65] text-on-dark">{x.body}</p>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -280,39 +291,37 @@ function UnderTheHood() {
     },
   ];
   return (
-    <section id="hood" className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
-      <div className="reveal max-w-[44rem]">
-        <Eyebrow>Under the hood</Eyebrow>
-        <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">A snatched phone can record more. It can’t read what was recorded.</h2>
+    <section id="hood" className="border-t border-white/10">
+      <div className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+        <Title eyebrow="Under the hood" className="max-w-[46rem]">
+          A snatched phone can record more. It can’t read what was recorded.
+        </Title>
+        <div className="mt-16 grid gap-x-12 gap-y-14 md:grid-cols-3">
+          {cols.map((c) => (
+            <div key={c.where} className="reveal">
+              <p className="label text-rani-bright!">{c.where}</p>
+              <ul className="mt-5 text-[15px] leading-[1.6] text-on-dark">
+                {c.lines.map((l) => (
+                  <li key={l} className="border-t border-white/12 py-4">
+                    {l}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="mt-8 text-[14px] text-on-dark-muted">
+          Contract:{" "}
+          <a href={`${EXPLORER}/address/${ANCHOR_ADDRESS}`} target="_blank" rel="noreferrer" className="break-all font-mono text-[13px] text-rani-bright underline underline-offset-2">
+            {ANCHOR_ADDRESS}
+          </a>
+          . Its source code is{" "}
+          <a href={SOURCE_URL} target="_blank" rel="noreferrer" className="text-rani-bright underline underline-offset-2">
+            verified on Sourcify
+          </a>{" "}
+          as an exact match.
+        </p>
       </div>
-      <div className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline ring-1 ring-hairline md:grid-cols-3">
-        {cols.map((c, i) => (
-          <div key={c.where} className="reveal bg-white p-8">
-            <p className="flex items-center gap-3 text-[13px] font-medium uppercase tracking-[0.16em] text-rani">
-              <span className="flex size-7 items-center justify-center rounded-full bg-alert-bg text-[12px]">{i + 1}</span>
-              {c.where}
-            </p>
-            <ul className="mt-6 space-y-4 text-[15px] leading-[1.55]">
-              {c.lines.map((l) => (
-                <li key={l} className="border-t border-hairline pt-4 first:border-0 first:pt-0">
-                  {l}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <p className="mt-6 text-[14px] text-muted">
-        Contract:{" "}
-        <a href={`${EXPLORER}/address/${ANCHOR_ADDRESS}`} target="_blank" rel="noreferrer" className="break-all font-mono text-[13px] text-rani underline underline-offset-2">
-          {ANCHOR_ADDRESS}
-        </a>
-        . Its source code is{" "}
-        <a href={SOURCE_URL} target="_blank" rel="noreferrer" className="text-rani underline underline-offset-2">
-          verified on Sourcify
-        </a>{" "}
-        as an exact match.
-      </p>
     </section>
   );
 }
@@ -322,20 +331,17 @@ function Limits() {
     ["The screen stays on.", "A web app can’t keep recording once the phone locks, so Saakshi holds the screen awake and black. A native Android app, our next step, would remove this."],
     ["A seal proves sameness, not truth.", "It shows a file is unchanged since it was captured. It doesn’t prove what the file shows."],
     ["Test network, for now.", "Seals go to Polygon Amoy during the hackathon. Moving to Polygon mainnet is a configuration change."],
-    ["Information, not legal advice.", "Sahayak explains which laws may apply and drafts the complaint; Saakshi drafts the Section 63 certificate. She signs them, and the police, a lawyer or a court decide what happens."],
+    ["Information, not legal advice.", "Sahayak explains which laws may apply and drafts the complaint; Saakshi drafts the Section 63 certificate. She signs them, and the police, a lawyer or a court decide what happens."],
   ];
   return (
-    <section className="border-y border-hairline bg-blush">
-      <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
-        <div className="reveal">
-          <Eyebrow>Honest limits</Eyebrow>
-          <h2 className="mt-4 font-display text-[44px] leading-[1.04] md:text-[56px]">What it can’t do, said plainly.</h2>
-        </div>
-        <dl className="grid gap-8 sm:grid-cols-2">
+    <section className="border-t border-white/10">
+      <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-24 md:px-10 md:py-32 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
+        <Title eyebrow="Honest limits">What it can’t do, said plainly.</Title>
+        <dl className="grid gap-x-12 gap-y-10 sm:grid-cols-2">
           {items.map(([t, d]) => (
-            <div key={t} className="reveal border-t border-blush-line pt-5">
-              <dt className="font-display text-[26px] leading-tight">{t}</dt>
-              <dd className="mt-2 text-[15px] leading-[1.55] text-muted">{d}</dd>
+            <div key={t} className="reveal border-t border-white/15 pt-6">
+              <dt className="font-display text-[28px] leading-tight">{t}</dt>
+              <dd className="mt-3 text-[15px] leading-[1.6] text-on-dark">{d}</dd>
             </div>
           ))}
         </dl>
@@ -346,41 +352,39 @@ function Limits() {
 
 function Built() {
   const days = [
-    { d: "19 Oct", t: "The idea, the research and the Round 1 pitch.", done: true },
-    { d: "20 Oct", t: "Calculator disguise, silent SOS, encrypted 5-second capture, vault, duress PIN, undo, erase.", done: true },
-    { d: "25 Oct", t: "Shortlisted for the final. Evidence sealed on Polygon; the public Verify page; this site.", done: true },
-    { d: "26 Oct", t: "A sealed journal and photo vault, the Section 63 certificate, and Telegram guardian alerts with live location.", done: true },
-    { d: "28–29 Oct", t: "Sahayak: legal help, complaints and takedown requests in Bengali, Hindi and English, typed or spoken, on Gemma 4 through Adaption. Tested on 45 questions.", done: true },
-    { d: "Next", t: "The Android app, so recording carries on with the screen locked.", done: false },
+    { d: "19 Oct", t: "The idea, the research and the Round 1 pitch." },
+    { d: "20 Oct", t: "Calculator disguise, silent SOS, encrypted 5-second capture, vault, duress PIN, undo, erase." },
+    { d: "25 Oct", t: "Shortlisted for the final. Evidence sealed on Polygon; the public Verify page; this site." },
+    { d: "26 Oct", t: "A sealed journal and photo vault, the Section 63 certificate, and Telegram guardian alerts with live location." },
+    { d: "28–29 Oct", t: "Sahayak: legal help, complaints and takedown requests in Bengali, Hindi and English, typed or spoken, on Gemma 4 through Adaption. Tested on 45 questions." },
+    { d: "Next", t: "The Android app, so recording carries on with the screen locked.", planned: true },
   ];
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
-      <div className="reveal">
-        <Eyebrow>Built during SHAKTI</Eyebrow>
-        <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">Everything here started on 19 October.</h2>
+    <section className="border-t border-white/10">
+      <div className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+        <Title eyebrow="Built during SHAKTI">Everything here started on 19 October.</Title>
+        <ol className="mt-16">
+          {days.map((x) => (
+            <li key={x.d} className="reveal grid gap-2 border-t border-white/12 py-7 sm:grid-cols-[200px_1fr] sm:gap-10">
+              <p className={`font-display text-[34px] leading-none ${x.planned ? "text-rani-bright" : ""}`}>
+                {x.d}
+                {x.planned && <span className="ml-3 align-middle font-sans text-[13px] text-on-dark-muted">Planned</span>}
+              </p>
+              <p className="max-w-[40rem] text-[16px] leading-[1.6] text-on-dark">{x.t}</p>
+            </li>
+          ))}
+        </ol>
       </div>
-      <ol className="mt-14 grid gap-px overflow-hidden rounded-[24px] bg-hairline ring-1 ring-hairline sm:grid-cols-2 lg:grid-cols-3">
-        {days.map((x) => (
-          <li key={x.d} className="reveal bg-white p-7">
-            <p className={`flex items-center gap-2 text-[13px] font-medium ${x.done ? "text-verified" : "text-rani"}`}>
-              <i className={`size-2 rounded-full ${x.done ? "bg-verified" : "bg-rani"}`} />
-              {x.done ? "Done" : "Planned"}
-            </p>
-            <p className="mt-4 font-display text-[34px] leading-none">{x.d}</p>
-            <p className="mt-4 text-[15px] leading-[1.55] text-muted">{x.t}</p>
-          </li>
-        ))}
-      </ol>
     </section>
   );
 }
 
 function Install({ qr }: { qr: string }) {
   return (
-    <section className="grain bg-plum-night text-white">
+    <section className="grain bg-plum">
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1fr_auto] lg:gap-20">
         <div className="reveal">
-          <Eyebrow dark>Put it on a phone</Eyebrow>
+          <Eyebrow>Put it on a phone</Eyebrow>
           <h2 className="mt-4 font-display text-[48px] leading-[1.02] md:text-[64px]">It installs as a calculator.</h2>
           <ol className="mt-8 max-w-[34rem] space-y-3 text-[17px] leading-[1.5] text-on-dark">
             <Step n={1}>Scan the code with an Android phone and open it in Chrome.</Step>
@@ -397,10 +401,19 @@ function Install({ qr }: { qr: string }) {
   );
 }
 
+function Step({ n, children }: { n: number; children: ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <Bead n={n} className="mt-px flex-none" />
+      <span>{children}</span>
+    </li>
+  );
+}
+
 function Footer() {
   return (
-    <footer className="bg-plum-night text-on-dark-muted">
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-6 border-t border-white/10 px-6 py-12 text-[14px] md:flex-row md:items-center md:justify-between md:px-10">
+    <footer className="text-on-dark-muted">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-6 px-6 py-12 text-[14px] md:flex-row md:items-center md:justify-between md:px-10">
         <div className="flex items-center gap-4">
           <img src="/brand/seal-pink.svg" alt="" className="size-10" />
           <p>

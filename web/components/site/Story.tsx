@@ -82,13 +82,13 @@ export function Story() {
             ref={(el) => {
               refs.current[i] = el;
             }}
-            className="flex flex-col justify-center lg:min-h-[62vh] border-t border-hairline py-14 first:border-0 lg:py-0"
+            className="flex flex-col justify-center border-t border-white/10 py-14 first:border-0 lg:min-h-[62vh] lg:py-0"
           >
-            <p className="label">{s.time}</p>
-            <h3 className={`mt-3 font-display text-[40px] leading-[1.05] transition-colors duration-500 md:text-[52px] ${active === i ? "text-ink" : "lg:text-ink/30"}`}>
+            <p className="label text-rani-bright!">{s.time}</p>
+            <h3 className={`mt-3 font-display text-[40px] leading-[1.05] transition-colors duration-500 md:text-[52px] ${active === i ? "text-white" : "lg:text-white/25"}`}>
               {s.title}
             </h3>
-            <p className="mt-5 max-w-[34rem] text-[18px] leading-[1.6] text-muted">{s.body}</p>
+            <p className="mt-5 max-w-[34rem] text-[18px] leading-[1.6] text-on-dark">{s.body}</p>
             <Phone className="mx-auto mt-10 w-[260px] lg:hidden">
               <Screenshot src={s.shot} alt={s.alt} tone={s.tone} fade={s.fade} />
             </Phone>
@@ -107,7 +107,7 @@ export function Story() {
           </Phone>
           <div className="mt-6 flex justify-center gap-2" aria-hidden>
             {STEPS.map((s, i) => (
-              <i key={s.shot} className={`h-1.5 rounded-full transition-all duration-500 ${active === i ? "w-6 bg-rani" : "w-1.5 bg-hairline"}`} />
+              <i key={s.shot} className={`h-1.5 rounded-full transition-all duration-500 ${active === i ? "w-6 bg-rani-bright" : "w-1.5 bg-white/15"}`} />
             ))}
           </div>
         </div>

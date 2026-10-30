@@ -24,7 +24,7 @@ export function LiveStats() {
     ? new Date(stats.latest.at).toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })
     : null;
   return (
-    <div className="grid gap-px overflow-hidden rounded-[24px] bg-plum-line sm:grid-cols-3">
+    <div className="grid gap-x-10 sm:grid-cols-3">
       <Stat value={stats ? stats.piecesSealed.toLocaleString("en-IN") : "·"} label="evidence pieces sealed on Polygon" />
       <Stat value={stats ? stats.seals.toLocaleString("en-IN") : "·"} label="Merkle roots anchored on-chain" />
       {/* The wait needs pieces that are still stored; erased accounts take theirs with them. Until then, the latest seal's date. */}
@@ -43,7 +43,7 @@ export function LiveStats() {
           )
         }
       />
-      <p className="bg-plum px-7 py-4 text-[13px] text-on-dark-muted sm:col-span-3">
+      <p className="mt-8 text-[13px] text-on-dark-muted sm:col-span-3">
         Live from the{" "}
         <a href={`${EXPLORER}/address/${ANCHOR_ADDRESS}`} target="_blank" rel="noreferrer" className="text-on-dark underline underline-offset-2">
           EvidenceAnchor contract
@@ -56,7 +56,7 @@ export function LiveStats() {
 
 function Stat({ value, label }: { value: string; label: React.ReactNode }) {
   return (
-    <div className="bg-plum px-7 py-8">
+    <div className="border-t border-white/15 pb-2 pt-7 max-sm:mb-6">
       <p className="font-display text-[56px] leading-none text-white">{value}</p>
       <p className="mt-3 text-[14px] leading-snug text-on-dark-muted">{label}</p>
     </div>
