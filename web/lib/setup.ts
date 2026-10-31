@@ -1,6 +1,7 @@
 // Creating, unlocking and erasing her Saakshi.
 import { createKeyMaterial, pinVerifier, randomBytes, rewrapKeyMaterial, toB64, unlockPrivateKey } from "./crypto";
-import { clearDevice, getSetup, saveSetup, type DeviceSetup, type Language } from "./local";
+import { clearDevice, getSetup, localSessions, putSession, saveSetup, type DeviceSetup, type Language } from "./local";
+import type { RemoteProfile } from "./recover";
 import { ensureUser, SESSION_STORAGE_KEY, supabase } from "./supabase";
 
 export interface SetupInput {
@@ -17,9 +18,11 @@ export async function createSetup(input: SetupInput): Promise<DeviceSetup> {
   const duressSalt = toB64(randomBytes(16));
   const duressVerifier = await pinVerifier(input.duressPin, duressSalt, material.kdfIterations);
 
+  // Insert, never upsert: an account that already has a key must never get a new one, or every recording
+  // sealed under the old key becomes unreadable. A phone signed in to such an account asks for the PIN instead.
   const { error } = await supabase()
     .from("profiles")
-    .upsert({
+    .insert({
       id: userId,
       display_name: input.name || null,
       language: input.language,
@@ -43,6 +46,56 @@ export async function createSetup(input: SetupInput): Promise<DeviceSetup> {
   };
   await saveSetup(setup);
   return setup;
+}
+
+/** On a new phone, after her guardians approved: does this PIN open the vault the server keeps for her? */
+export async function opensWith(profile: RemoteProfile, pin: string): Promise<boolean> {
+  return (await unlockPrivateKey(profile, pin)) !== null;
+}
+
+/** Sets this phone up with her existing account. The duress PIN lives only on a phone, so she picks it again. */
+export async function restoreSetup(profile: RemoteProfile, duressPin: string): Promise<DeviceSetup> {
+  const duressSalt = toB64(randomBytes(16));
+  const setup: DeviceSetup = {
+    publicKey: profile.publicKey,
+    wrappedPrivateKey: profile.wrappedPrivateKey,
+    kdfSalt: profile.kdfSalt,
+    kdfIterations: profile.kdfIterations,
+    userId: profile.userId,
+    name: profile.name,
+    language: profile.language,
+    ageGroup: profile.ageGroup,
+    duressSalt,
+    duressVerifier: await pinVerifier(duressPin, duressSalt, profile.kdfIterations),
+    createdAt: new Date().toISOString(),
+  };
+  await pullSessions();
+  await saveSetup(setup);
+  return setup;
+}
+
+/** The vault lists what's on the phone, so a phone that has just taken over her account copies the list down. */
+async function pullSessions(): Promise<void> {
+  const { data, error } = await supabase()
+    .from("sessions")
+    .select("id, kind, status, duress, ephemeral_public_key, mime, title, started_at, ended_at");
+  if (error) throw error;
+  const have = new Set((await localSessions()).map((s) => s.id));
+  for (const r of data ?? []) {
+    if (have.has(r.id)) continue;
+    await putSession({
+      id: r.id,
+      kind: r.kind,
+      status: r.status,
+      duress: r.duress,
+      ephemeralPublicKey: r.ephemeral_public_key,
+      mime: r.mime,
+      title: r.title,
+      startedAt: r.started_at,
+      endedAt: r.ended_at,
+      dirty: false,
+    });
+  }
 }
 
 export type PinResult = { kind: "vault"; privateKey: CryptoKey } | { kind: "duress" } | { kind: "none" };

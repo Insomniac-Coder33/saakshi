@@ -1,13 +1,15 @@
 "use client";
 
 // First run: language, name, age, PIN, duress PIN, permissions, then the app becomes a calculator.
-import { useState } from "react";
-import { LANGUAGES, t, type StringKey } from "@/lib/i18n";
+// Or, for a woman moving from another phone: a code her guardians approve, her PIN, a new duress PIN.
+import { useEffect, useRef, useState } from "react";
+import { digits, LANGUAGES, t, type StringKey } from "@/lib/i18n";
 import type { DeviceSetup, Language } from "@/lib/local";
-import { createSetup } from "@/lib/setup";
+import { completeRecovery, ownProfile, recoveryStatus, startRecovery, type RecoveryRequest, type RecoveryStatus, type RemoteProfile } from "@/lib/recover";
+import { createSetup, opensWith, restoreSetup } from "@/lib/setup";
 import { BackIcon, Button, PinInput, RoundButton, Screen, Wordmark } from "./ui";
 
-type Step = "welcome" | "name" | "age" | "pin" | "duress" | "perms" | "ready";
+type Step = "welcome" | "name" | "age" | "pin" | "duress" | "perms" | "ready" | "recover" | "code" | "recoverPin";
 const ORDER: Step[] = ["welcome", "name", "age", "pin", "duress", "perms", "ready"];
 
 type PermState = "idle" | "granted" | "denied";
@@ -26,13 +28,104 @@ export function Onboarding({ onDone }: { onDone: (setup: DeviceSetup) => void })
   const [setup, setSetup] = useState<DeviceSetup | null>(null);
   const [media, setMedia] = useState<PermState>("idle");
   const [geo, setGeo] = useState<PermState>("idle");
+  const [request, setRequest] = useState<RecoveryRequest | null>(null);
+  const [recStatus, setRecStatus] = useState<RecoveryStatus | null>(null);
+  const [profile, setProfile] = useState<RemoteProfile | null>(null);
+  const [resumed, setResumed] = useState(false);
+  const polling = useRef(false);
 
-  const tr = (k: StringKey) => t(lang, k);
+  const tr = (k: StringKey, vars?: Record<string, string | number>) => t(lang, k, vars);
   const go = (s: Step) => {
     setError(null);
     setStep(s);
   };
-  const back = () => go(ORDER[Math.max(0, ORDER.indexOf(step) - 1)]);
+  const back = () => {
+    if (step === "recover") return go("welcome");
+    if (step === "code") return go("recover");
+    if (step === "duress" && profile) return go("recoverPin");
+    go(ORDER[Math.max(0, ORDER.indexOf(step) - 1)]);
+  };
+
+  async function getCode() {
+    setBusy(true);
+    setError(null);
+    try {
+      setRequest(await startRecovery());
+      setRecStatus(null);
+      go("code");
+    } catch {
+      setError("needsNetwork");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // While the code is up, ask every few seconds whether her guardians have approved; once they have,
+  // this phone signs in to her account and asks for her PIN.
+  useEffect(() => {
+    if (step !== "code" || !request) return;
+    let stopped = false;
+    const tick = async () => {
+      if (polling.current || stopped) return;
+      polling.current = true;
+      try {
+        const s = await recoveryStatus(request.id);
+        if (stopped) return;
+        setRecStatus(s);
+        if (s.status === "approved" || s.status === "claimed") {
+          stopped = true;
+          setBusy(true);
+          const p = await completeRecovery(request.id);
+          setProfile(p);
+          setLang(p.language);
+          setName(p.name);
+          setAgeGroup(p.ageGroup);
+          setBusy(false);
+          go("recoverPin");
+        }
+      } catch {
+        setBusy(false);
+        stopped = false;
+        setError("recoverFailed");
+      } finally {
+        polling.current = false;
+      }
+    };
+    void tick();
+    const timer = window.setInterval(() => void tick(), 4000);
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+    };
+  }, [step, request]);
+
+  // Already signed in to an account that has a Saakshi, with nothing on this phone: only her PIN is needed.
+  useEffect(() => {
+    let live = true;
+    void ownProfile()
+      .then((p) => {
+        if (!live || !p) return;
+        setProfile(p);
+        setLang(p.language);
+        setName(p.name);
+        setAgeGroup(p.ageGroup);
+        setResumed(true);
+        setStep("recoverPin");
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  async function checkOldPin() {
+    if (!profile) return;
+    setBusy(true);
+    const ok = await opensWith(profile, pin);
+    setBusy(false);
+    if (ok) go("duress");
+    else setError("recoverPinWrong");
+  }
 
   function checkPinPair(a: string, b: string): StringKey | null {
     if (a.length < 4) return "pinShort";
@@ -46,7 +139,9 @@ export function Onboarding({ onDone }: { onDone: (setup: DeviceSetup) => void })
     setBusy(true);
     setError(null);
     try {
-      setSetup(await createSetup({ name: name.trim(), language: lang, ageGroup, pin, duressPin: duress }));
+      setSetup(
+        profile ? await restoreSetup(profile, duress) : await createSetup({ name: name.trim(), language: lang, ageGroup, pin, duressPin: duress }),
+      );
       setPin("");
       setPin2("");
       setDuress("");
@@ -82,14 +177,14 @@ export function Onboarding({ onDone }: { onDone: (setup: DeviceSetup) => void })
   return (
     <Screen tone={step === "welcome" || step === "ready" ? "blush" : "white"}>
       <header className="flex h-14 items-center justify-between">
-        {step !== "welcome" && step !== "perms" && step !== "ready" ? (
+        {step !== "welcome" && step !== "perms" && step !== "ready" && step !== "recoverPin" ? (
           <RoundButton label={tr("back")} onClick={back}>
             <BackIcon />
           </RoundButton>
         ) : (
           <Wordmark />
         )}
-        <div className="flex gap-1.5" aria-hidden>
+        <div className={`flex gap-1.5 ${progress < 0 ? "invisible" : ""}`} aria-hidden>
           {ORDER.slice(1).map((s, i) => (
             <i key={s} className={`h-1 w-5 rounded-full ${i < progress ? "bg-rani" : "bg-hairline"}`} />
           ))}
@@ -123,8 +218,62 @@ export function Onboarding({ onDone }: { onDone: (setup: DeviceSetup) => void })
               <Button className="mt-4" onClick={() => go("name")}>
                 {tr("continue")}
               </Button>
+              <button type="button" onClick={() => go("recover")} className="mt-2 h-12 w-full text-[15px] text-muted underline underline-offset-4">
+                {tr("moveLink")}
+              </button>
             </div>
           </>
+        )}
+
+        {step === "recover" && (
+          <Body title={tr("recoverTitle")} body={tr("recoverBody")}>
+            <p className="text-body-sm leading-relaxed text-muted">{tr("recoverNoGuardians")}</p>
+            <ErrorLine error={error} lang={lang} />
+            <div className="mt-auto flex flex-col gap-3">
+              <Button disabled={busy} onClick={() => void getCode()}>
+                {tr("recoverStart")}
+              </Button>
+              <Button variant="ghost" onClick={() => go("name")}>
+                {tr("recoverSetUpNew")}
+              </Button>
+            </div>
+          </Body>
+        )}
+
+        {step === "code" && request && (
+          <Body title={tr("codeTitle")} body={tr("codeBody")}>
+            {/* Western digits even in Bengali: her guardians type them into Telegram. */}
+            <p className="font-display text-[64px] leading-none tracking-[.06em] [font-variant-numeric:tabular-nums]" lang="en">
+              {request.code.slice(0, 3)} {request.code.slice(3)}
+            </p>
+            <p role="status" className="mt-6 text-body leading-relaxed text-muted">
+              {busy
+                ? tr("recoverOpening")
+                : recStatus?.status === "declined"
+                  ? tr("codeDeclined")
+                  : recStatus?.status === "expired"
+                    ? tr("codeExpired")
+                    : recStatus?.needed && recStatus.approvals > 0
+                      ? tr("codeProgress", { n: digits(lang, recStatus.approvals), total: digits(lang, recStatus.needed) })
+                      : tr("codeWaiting")}
+            </p>
+            <ErrorLine error={error} lang={lang} />
+            {(recStatus?.status === "declined" || recStatus?.status === "expired") && (
+              <Button className="mt-auto" disabled={busy} onClick={() => void getCode()}>
+                {tr("codeNew")}
+              </Button>
+            )}
+          </Body>
+        )}
+
+        {step === "recoverPin" && (
+          <Body title={tr("recoverPinTitle")} body={tr(resumed ? "resumePinBody" : "recoverPinBody")}>
+            <PinInput label={tr("recoverPinTitle")} value={pin} onChange={setPin} autoFocus />
+            <ErrorLine error={error} lang={lang} />
+            <Button className="mt-auto" disabled={busy || pin.length < 4} onClick={() => void checkOldPin()}>
+              {tr("continue")}
+            </Button>
+          </Body>
         )}
 
         {step === "name" && (

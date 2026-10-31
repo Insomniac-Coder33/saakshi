@@ -1,11 +1,14 @@
 // The guardian bot's webhook. A guardian opens t.me/<bot>?start=<invite token> and taps Start; this
-// links their chat to her invite. /stop unlinks them. Nothing else they send goes anywhere.
+// links their chat to her invite. /stop unlinks them. A six-digit code is her new phone asking to be
+// let in; the guardian approves or declines with the buttons that follow. Nothing else goes anywhere.
 import { adminClient } from "@/lib/admin";
 import { profileOf } from "@/lib/alerts";
-import { message, send, telegramReady, webhookSecret } from "@/lib/telegram";
+import { askGuardian, codeIn, decide } from "@/lib/recovery";
+import { message, send, telegramReady, tg, webhookSecret } from "@/lib/telegram";
 
 interface Update {
   message?: { chat: { id: number; type: string }; from?: { first_name?: string }; text?: string };
+  callback_query?: { id: string; from: { id: number }; data?: string; message?: { chat: { id: number }; message_id: number } };
 }
 
 export async function POST(request: Request) {
@@ -23,11 +26,28 @@ export async function POST(request: Request) {
 }
 
 async function reply(update: Update) {
+  const tap = update.callback_query;
+  if (tap) {
+    // Stop the button's spinner first; the answer arrives as the message itself changing.
+    await tg("answerCallbackQuery", { callback_query_id: tap.id }).catch(() => {});
+    if (tap.data) {
+      const shown = tap.message ? { chatId: tap.message.chat.id, messageId: tap.message.message_id } : undefined;
+      await decide(adminClient(), tap.from.id, tap.data, shown);
+    }
+    return;
+  }
+
   const msg = update.message;
   if (!msg?.text || msg.chat.type !== "private") return;
   const chatId = msg.chat.id;
   const db = adminClient();
   const text = msg.text.trim();
+
+  const code = codeIn(text);
+  if (code) {
+    await askGuardian(db, chatId, code);
+    return;
+  }
 
   const start = /^\/start(?:\s+([0-9a-f]{24}))?$/.exec(text);
   if (start) {

@@ -36,13 +36,44 @@ export async function tg<T = unknown>(method: string, body: Record<string, unkno
 
 export const send = (chatId: number, text: string) => tg<{ message_id: number }>("sendMessage", { chat_id: chatId, text });
 
+/** A message with buttons under it; each button sends its `data` back to the webhook when tapped. */
+export const sendButtons = (chatId: number, text: string, buttons: { text: string; data: string }[]) =>
+  tg<{ message_id: number }>("sendMessage", {
+    chat_id: chatId,
+    text,
+    reply_markup: { inline_keyboard: [buttons.map((b) => ({ text: b.text, callback_data: b.data }))] },
+  });
+
+/** Replaces a message's text, which also takes its buttons away. */
+export const editText = (chatId: number, messageId: number, text: string) =>
+  tg("editMessageText", { chat_id: chatId, message_id: messageId, text });
+
 /** 9:47 pm, on Indian time. */
 export function istClock(d = new Date(), lang: Language = "en"): string {
   return d.toLocaleTimeString(lang === "en" ? "en-IN" : `${lang}-IN`, { hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" });
 }
 
-type Vars = { name: string; time: string };
-type Message = "linked" | "linkedAnon" | "start" | "noFix" | "duress" | "silent" | "end" | "test" | "stopped" | "badLink" | "onlyAlerts";
+type Vars = { name: string; time: string; code: string };
+type Message =
+  | "linked"
+  | "linkedAnon"
+  | "start"
+  | "noFix"
+  | "duress"
+  | "silent"
+  | "end"
+  | "test"
+  | "stopped"
+  | "badLink"
+  | "onlyAlerts"
+  | "recoverAsk"
+  | "recoverNoCode"
+  | "recoverApproved"
+  | "recoverApprovedWait"
+  | "recoverDeclined"
+  | "recoverClosed"
+  | "approve"
+  | "decline";
 
 const en: Record<Message, (v: Vars) => string> = {
   linked: ({ name }) =>
@@ -61,6 +92,15 @@ const en: Record<Message, (v: Vars) => string> = {
   stopped: () => `You’re no longer a guardian. You won’t get any more alerts.`,
   badLink: () => `This invite link has already been used or has expired. Ask her to send you a new one.`,
   onlyAlerts: () => `This chat only sends alerts. Nothing you write here reaches her.`,
+  recoverAsk: ({ name, code }) =>
+    `🔑 ${name} is moving Saakshi to a new phone.\n\nThe new phone shows the code ${code}. Approve only if ${name} asked you herself, in person or on a call. If you’re not sure, call her first.\n\nApproving lets that phone into her account. Her recordings still need her PIN to open.`,
+  recoverNoCode: () => `That code doesn’t match a request. Codes last 30 minutes, so ask her to check the code on her new phone.`,
+  recoverApproved: ({ name }) => `Thank you. You approved moving ${name}’s Saakshi to her new phone.`,
+  recoverApprovedWait: ({ name }) => `Thank you. ${name}’s Saakshi opens on her new phone as soon as one more guardian approves.`,
+  recoverDeclined: ({ name }) => `You declined. The new phone won’t get ${name}’s Saakshi.`,
+  recoverClosed: () => `This request has already been settled or has expired.`,
+  approve: () => `Approve`,
+  decline: () => `Decline`,
 };
 
 const bn: Record<Message, (v: Vars) => string> = {
@@ -80,6 +120,15 @@ const bn: Record<Message, (v: Vars) => string> = {
   stopped: () => `আপনি আর কাছের মানুষ নন। আর কোনো সতর্কবার্তা পাবেন না।`,
   badLink: () => `এই লিংকটা আগেই ব্যবহার হয়েছে বা মেয়াদ শেষ। ওঁকে নতুন একটা পাঠাতে বলুন।`,
   onlyAlerts: () => `এই চ্যাট শুধু সতর্কবার্তা পাঠায়। এখানে লেখা কিছু ওঁর কাছে পৌঁছায় না।`,
+  recoverAsk: ({ name, code }) =>
+    `🔑 ${name} সাক্ষী নতুন ফোনে নিচ্ছেন।\n\nনতুন ফোনে কোড দেখাচ্ছে ${code}। শুধু তখনই অনুমতি দিন, যদি ${name} নিজে আপনাকে বলে থাকেন, সামনাসামনি বা ফোনে। নিশ্চিত না হলে আগে ওঁকে ফোন করুন।\n\nঅনুমতি দিলে ওই ফোন ওঁর অ্যাকাউন্টে ঢুকতে পারবে। রেকর্ডিং খুলতে তবুও ওঁর পিন লাগবে।`,
+  recoverNoCode: () => `এই কোডের কোনো অনুরোধ নেই। কোড ৩০ মিনিট চলে, তাই ওঁকে নতুন ফোনের কোডটা আবার দেখতে বলুন।`,
+  recoverApproved: ({ name }) => `ধন্যবাদ। আপনি ${name}-এর সাক্ষী নতুন ফোনে নেওয়ার অনুমতি দিয়েছেন।`,
+  recoverApprovedWait: ({ name }) => `ধন্যবাদ। আরেকজন কাছের মানুষ অনুমতি দিলেই ${name}-এর নতুন ফোনে সাক্ষী খুলবে।`,
+  recoverDeclined: ({ name }) => `আপনি অনুমতি দেননি। নতুন ফোনটা ${name}-এর সাক্ষী পাবে না।`,
+  recoverClosed: () => `এই অনুরোধের নিষ্পত্তি হয়ে গেছে বা মেয়াদ শেষ।`,
+  approve: () => `অনুমতি দিন`,
+  decline: () => `না`,
 };
 
 const hi: Record<Message, (v: Vars) => string> = {
@@ -99,12 +148,21 @@ const hi: Record<Message, (v: Vars) => string> = {
   stopped: () => `अब आप उनके अपने नहीं हैं। आगे कोई अलर्ट नहीं मिलेगा।`,
   badLink: () => `यह लिंक पहले ही इस्तेमाल हो चुका है या पुराना हो गया है। उनसे नया लिंक भेजने को कहें।`,
   onlyAlerts: () => `यह चैट सिर्फ़ अलर्ट भेजती है। यहाँ लिखी कोई बात उन तक नहीं पहुँचती।`,
+  recoverAsk: ({ name, code }) =>
+    `🔑 ${name} साक्षी को नए फ़ोन पर ले जा रही हैं।\n\nनए फ़ोन पर कोड ${code} दिख रहा है। अनुमति तभी दें जब ${name} ने ख़ुद आपसे कहा हो, आमने-सामने या फ़ोन पर। पक्का न हो तो पहले उन्हें फ़ोन करें।\n\nअनुमति देने से वह फ़ोन उनके अकाउंट में आ जाएगा। रिकॉर्डिंग खोलने के लिए फिर भी उनका पिन चाहिए।`,
+  recoverNoCode: () => `इस कोड का कोई अनुरोध नहीं है। कोड 30 मिनट चलता है, इसलिए उनसे नए फ़ोन पर कोड दोबारा देखने को कहें।`,
+  recoverApproved: ({ name }) => `धन्यवाद। आपने ${name} की साक्षी को नए फ़ोन पर ले जाने की अनुमति दी।`,
+  recoverApprovedWait: ({ name }) => `धन्यवाद। एक और अपने के अनुमति देते ही ${name} के नए फ़ोन पर साक्षी खुल जाएगी।`,
+  recoverDeclined: ({ name }) => `आपने अनुमति नहीं दी। नए फ़ोन को ${name} की साक्षी नहीं मिलेगी।`,
+  recoverClosed: () => `इस अनुरोध का फ़ैसला हो चुका है या उसका समय ख़त्म हो गया।`,
+  approve: () => `अनुमति दें`,
+  decline: () => `मना करें`,
 };
 
 const MESSAGES: Record<Language, Record<Message, (v: Vars) => string>> = { en, bn, hi };
 const SOMEONE: Record<Language, string> = { en: "Your contact", bn: "আপনার পরিচিত", hi: "आपकी परिचित" };
 
-export function message(lang: Language, key: Message, name: string | null, at = new Date()): string {
+export function message(lang: Language, key: Message, name: string | null, at = new Date(), code = ""): string {
   const l = MESSAGES[lang] ? lang : "en";
-  return MESSAGES[l][key]({ name: name || SOMEONE[l], time: istClock(at, l) });
+  return MESSAGES[l][key]({ name: name || SOMEONE[l], time: istClock(at, l), code });
 }
