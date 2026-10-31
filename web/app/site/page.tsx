@@ -228,11 +228,11 @@ function Beyond() {
   const items = [
     {
       title: "Sahayak, her rights in her language",
-      body: "Ask in Bengali, Hindi, English or a mix, typed or spoken. Answers cite only a fixed list of 27 sections and 8 helplines under BNS, BNSS, the DV Act, POSH, POCSO and the IT Act. Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee, and the takedown request for the platform. Running on Gemma 4 through Adaption, it named a correct law for all 45 of our test questions.",
+      body: "Ask in Bengali, Hindi, English or a mix, typed or spoken, and hear the answer read aloud. Answers cite only a fixed list of 27 sections and 8 helplines under BNS, BNSS, the DV Act, POSH, POCSO and the IT Act. Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee, and the takedown request for the platform. Running on Gemma 4 through Adaption, it named a correct law for all 45 of our test questions.",
     },
     {
       title: "Guardians who know at once",
-      body: "Trusted people link through Telegram. When she starts an SOS they get her live location after a 10-second undo, at once if the duress PIN is used, and a warning if her phone goes silent.",
+      body: "Trusted people link through Telegram. When she starts an SOS they get her live location after a 10-second undo, at once if the duress PIN is used, and a warning if her phone goes silent. If her phone is lost or taken, two of them can let a new phone into her Saakshi; only her PIN opens it.",
     },
     {
       title: "A journal and photos, sealed",
@@ -357,6 +357,7 @@ function Built() {
     { d: "25 Oct", t: "Shortlisted for the final. Evidence sealed on Polygon; the public Verify page; this site." },
     { d: "26 Oct", t: "A sealed journal and photo vault, the Section 63 certificate, and Telegram guardian alerts with live location." },
     { d: "28–29 Oct", t: "Sahayak: legal help, complaints and takedown requests in Bengali, Hindi and English, typed or spoken, on Gemma 4 through Adaption. Tested on 45 questions." },
+    { d: "30–31 Oct", t: "A sealed sample anyone can check on the Verify page. Moving to a new phone with her guardians’ approval. Sahayak reads its answers aloud." },
     { d: "Next", t: "The Android app, so recording carries on with the screen locked.", planned: true },
   ];
   return (

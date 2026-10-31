@@ -25,13 +25,14 @@ Built solo by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Block
 
 ### Sealed and checkable
 - **Sealed on Polygon.** Each fingerprint is salted and gathered into a Merkle tree, and only the root goes on-chain, through `EvidenceAnchor` on Polygon Amoy (about 24,000 gas a root). A relayer pays, so she never needs a wallet. A database job seals every minute, even after her phone is gone.
-- **Public Verify page.** Anyone can drop a downloaded recording on it. It is hashed in the browser, split into its pieces, and every Merkle proof and transaction is checked on-chain from the browser. A recording’s proof screen shows a QR code that opens its result.
+- **Public Verify page.** Anyone can drop a downloaded recording on it. It is hashed in the browser, split into its pieces, and every Merkle proof and transaction is checked on-chain from the browser. A recording’s proof screen shows a QR code that opens its result. Without a file of your own, the page checks a sealed sample recording, then the same file with one byte changed.
 - **Section 63 certificate.** One tap prints the certificate the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and the verify QR code.
 
 ### Beyond the night itself
 - **Journal and photo vault.** Dated entries and photos of injuries or messages, encrypted and sealed like recordings.
 - **Guardians on Telegram.** Trusted people link through the Saakshi Guardian bot. When she starts an SOS they get her live location after the 10-second undo, at once if the duress PIN is used, and a warning if her phone goes silent.
-- **Sahayak, legal help in her language.** She asks in Bengali, Hindi, English or a mix, typed or spoken. Answers may cite only ids from a checked list of 27 sections and 8 helplines (`web/lib/law.ts`), and the law cards show our text, never the model’s. Sahayak drafts:
+- **Moving to a new phone.** If her phone is lost, broken or taken, a new phone shows a six-digit code. She reads it to her guardians, who send it to the bot and approve. After two approvals (or her only guardian’s), every other device is signed out of her account, the new phone signs in with a single-use token, and her PIN opens her recordings there. Guardians vouch for her; they can never open anything.
+- **Sahayak, legal help in her language.** She asks in Bengali, Hindi, English or a mix, typed or spoken, and can have the answer read aloud in her language (Sarvam’s Bulbul voice). Answers may cite only ids from a checked list of 27 sections and 8 helplines (`web/lib/law.ts`), and the law cards show our text, never the model’s. Sahayak drafts:
   - an FIR request to any police station (a Zero FIR);
   - an application to a Protection Officer under the Domestic Violence Act;
   - a complaint to the Internal Committee at her workplace (POSH);
@@ -94,7 +95,7 @@ Camera, microphone, wake lock and service workers need HTTPS or `localhost`.
 | `RELAYER_PRIVATE_KEY` | The wallet that pays for seals on Polygon Amoy |
 | `AMOY_RPC_URL` | Optional; a public Amoy RPC is used otherwise |
 | `TELEGRAM_BOT_TOKEN` | Guardian alerts |
-| `ADAPTION_API_KEY`, `SARVAM_API_KEY`, `GEMINI_API_KEY` | Sahayak’s models; any one is enough |
+| `ADAPTION_API_KEY`, `SARVAM_API_KEY`, `GEMINI_API_KEY` | Sahayak’s models; any one is enough. `SARVAM_API_KEY` also reads answers aloud |
 | `SAHAYAK_MODELS` | Optional; comma-separated model ids, in order |
 | `NEXT_PUBLIC_APP_ORIGIN`, `NEXT_PUBLIC_VERIFY_ORIGIN`, `SITE_HOSTS` | Optional; the app and showcase domains |
 
@@ -102,6 +103,7 @@ Camera, microphone, wake lock and service workers need HTTPS or `localhost`.
 - A web app can’t keep recording reliably once the phone is locked, so Saakshi holds the screen awake and dark.
 - A seal proves a file is unchanged since capture, not that what it shows is true.
 - Seals go to Polygon Amoy, a test network, during the hackathon. Moving to mainnet is a configuration change.
+- Moving to a new phone needs at least one guardian linked beforehand, and her PIN. If she forgets her PIN, nobody can open her recordings, us included.
 - Sahayak gives legal information, not legal advice. She signs anything it drafts, and the police, a lawyer or a court decide what happens.
 
 ## Built before and during SHAKTI
