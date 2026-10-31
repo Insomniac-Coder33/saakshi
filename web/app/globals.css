@@ -113,6 +113,31 @@
   }
 }
 
+/* Showcase hero, on load: the bindi is pressed on, the third eye opens, then the words arrive in turn.
+   Each step waits with `both`, so it is hidden until its turn; where animation doesn't run, all is visible. */
+.opening-eye * { transform-box: fill-box; transform-origin: center; }
+.opening-eye .disc { fill: var(--color-rani); animation: eye-press 0.5s var(--ease-calm) 0.1s both; }
+.opening-eye .lid { fill: var(--color-plum); animation: eye-line 0.3s ease-out 0.5s both, eye-open 0.9s var(--ease-calm) 0.85s both; }
+.opening-eye .pupil { fill: var(--color-rani); animation: eye-pupil 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) 1.5s both; }
+.opening-eye .halo { fill: var(--color-rani-bright); opacity: 0; animation: eye-halo 1.6s ease-out 1.6s both; }
+@keyframes eye-press { 0% { transform: scale(0); } 70% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes eye-line { from { transform: scaleX(0.07) scaleY(0); } to { transform: scaleX(0.07) scaleY(1); } }
+@keyframes eye-open { from { transform: scaleX(0.07) scaleY(1); } to { transform: none; } }
+@keyframes eye-pupil { from { transform: scale(0); } to { transform: none; } }
+@keyframes eye-halo { 0% { opacity: 0; transform: scale(0.9); } 30% { opacity: 0.55; } 100% { opacity: 0; transform: scale(1.7); } }
+@keyframes opening-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes opening-fade { from { opacity: 0; } to { opacity: 1; } }
+@utility opening {
+  animation: opening-rise 0.8s var(--ease-calm) both;
+}
+@utility opening-light {
+  animation: opening-fade 1.2s ease 1.6s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .opening-eye *, .opening, .opening-light { animation-delay: 0s !important; }
+  .opening-eye .halo { animation: none; }
+}
+
 /* The live demo's full-size view and the section sheet: the page behind them holds still. */
 :root:has(dialog:modal) { overflow: hidden; }
 

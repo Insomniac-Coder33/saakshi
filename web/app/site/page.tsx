@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Header } from "@/components/site/Header";
 import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
+import { OpeningEye } from "@/components/site/OpeningEye";
 import { Phone, Screenshot } from "@/components/site/Phone";
 import { Story } from "@/components/site/Story";
 import { Bead, Key } from "@/components/site/TrySteps";
@@ -65,23 +66,25 @@ function Title({ eyebrow, children, className = "" }: { eyebrow: string; childre
   );
 }
 
-// Centred, like a title card: the promise, then the live app lit from behind, between two of its real screens.
+// Centred, like a title card: the third eye opens, then the promise, then the live app lit from behind,
+// between two of its real screens. Each part waits its turn (the `opening` utilities), once, on load.
 function Hero() {
   return (
     <section id="top" className="grain relative overflow-hidden pt-[76px]">
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[300px] h-[1000px] w-[1300px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(214,36,110,.36),rgba(214,36,110,.07)_55%,transparent)]"
+        className="opening-light pointer-events-none absolute left-1/2 top-[300px] h-[1000px] w-[1300px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(214,36,110,.36),rgba(214,36,110,.07)_55%,transparent)]"
       />
-      <div className="relative mx-auto max-w-[1200px] px-6 pt-14 text-center md:px-10 lg:pt-[min(64px,6svh)]">
-        <h1 className="animate-rise font-display text-[56px] leading-[.95] tracking-[-.015em] sm:text-[88px] lg:text-[length:clamp(88px,min(8.6vw,13.5svh),124px)]">
+      <div className="relative mx-auto max-w-[1200px] px-6 pt-10 text-center md:px-10 lg:pt-[min(36px,4svh)]">
+        <OpeningEye className="mx-auto size-14 lg:size-[64px]" />
+        <h1 className="opening mt-6 font-display text-[56px] leading-[.95] tracking-[-.015em] sm:text-[88px] lg:text-[length:clamp(84px,min(8.4vw,12.5svh),120px)]" style={{ animationDelay: "1.75s" }}>
           What happened <em className="block text-rani-bright">has a witness.</em>
         </h1>
-        <p className="mx-auto mt-7 max-w-[40rem] text-[18px] leading-[1.65] text-on-dark sm:text-[19px]">
+        <p style={{ animationDelay: "2s" }} className="opening mx-auto mt-7 max-w-[40rem] text-[18px] leading-[1.65] text-on-dark sm:text-[19px]">
           Saakshi lives inside an ordinary calculator. When something happens, it silently records, encrypts every five seconds on her
           phone, and seals the evidence on a public blockchain, so anyone can check it.
         </p>
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
+        <div style={{ animationDelay: "2.15s" }} className="opening mt-9 flex flex-wrap justify-center gap-3">
           <a href="#try" className="flex h-14 items-center rounded-full bg-rani px-7 text-[16px] font-medium hover:bg-rani-deep">
             Try the live app
           </a>
@@ -91,14 +94,14 @@ function Hero() {
         </div>
       </div>
 
-      <div className="relative mx-auto mt-16 flex max-w-[1200px] items-start justify-center gap-12 px-6 md:px-10 lg:mt-20">
+      <div style={{ animationDelay: "2.35s" }} className="opening relative mx-auto mt-14 flex max-w-[1200px] items-start justify-center gap-12 px-6 md:px-10 lg:mt-14">
         <SideScreen src="/site/sos.webp" tone="dark" />
         <div id="try" className="w-[min(300px,80vw)] flex-none scroll-mt-6">
           <LiveDemo />
         </div>
         <SideScreen src="/site/proof.webp" tone="light" />
       </div>
-      <p className="relative mx-auto max-w-[34rem] px-6 pb-24 pt-8 text-center text-[14px] leading-[1.9] text-on-dark-muted">
+      <p style={{ animationDelay: "2.5s" }} className="opening relative mx-auto max-w-[34rem] px-6 pb-24 pt-8 text-center text-[14px] leading-[1.9] text-on-dark-muted">
         It’s a working calculator. Type{" "}
         <span className="whitespace-nowrap">
           <Key>{DEMO_PIN}</Key> then <Key>=</Key>
