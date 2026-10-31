@@ -10,6 +10,7 @@ import type { DeviceSetup, Language } from "@/lib/local";
 import {
   askSahayak,
   draftComplaint,
+  readAloud,
   SahayakError,
   sealedEvidence,
   type Answer,
@@ -283,6 +284,7 @@ function AnswerCard({ answer, lang, tr }: { answer: Answer; lang: Language; tr: 
         </a>
       )}
       <p className="whitespace-pre-wrap text-body leading-relaxed">{answer.answer}</p>
+      <ReadAloud lang={lang} tr={tr} text={[answer.answer, ...answer.steps].map((x) => endSentence(x, lang)).join(" ")} />
 
       {answer.steps.length > 0 && (
         <>
@@ -352,7 +354,72 @@ function AnswerCard({ answer, lang, tr }: { answer: Answer; lang: Language; tr: 
       )}
 
       {answer.followUp && <p className="mt-4 text-body-sm italic leading-relaxed text-muted">{answer.followUp}</p>}
+
     </article>
+  );
+}
+
+// Each step ends in a full stop (or a danda), so the voice pauses between them.
+const endSentence = (x: string, lang: Language) => (/[.!?।]$/.test(x.trim()) ? x.trim() : `${x.trim()}${lang === "en" ? "." : "।"}`);
+
+// One voice at a time: starting another answer stops the one playing.
+let stopPlaying: (() => void) | null = null;
+
+/** For a woman who would rather listen than read: the answer and its steps, in her language. */
+function ReadAloud({ text, lang, tr }: { text: string; lang: Language; tr: Tr }) {
+  const [state, setState] = useState<"idle" | "loading" | "playing" | "failed">("idle");
+  const audio = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(
+    () => () => {
+      const a = audio.current;
+      if (!a) return;
+      a.pause();
+      URL.revokeObjectURL(a.src);
+    },
+    [],
+  );
+
+  async function toggle() {
+    if (state === "loading") return;
+    if (state === "playing") {
+      audio.current?.pause();
+      setState("idle");
+      return;
+    }
+    stopPlaying?.();
+    try {
+      if (!audio.current) {
+        setState("loading");
+        const a = new Audio(URL.createObjectURL(await readAloud(lang, text)));
+        a.onended = () => setState("idle");
+        audio.current = a;
+      }
+      audio.current.currentTime = 0;
+      await audio.current.play();
+      stopPlaying = () => {
+        audio.current?.pause();
+        setState("idle");
+      };
+      setState("playing");
+    } catch {
+      setState("failed");
+    }
+  }
+
+  const label = { idle: "readAloud", loading: "readingLoading", playing: "stopReading", failed: "readFailed" } as const;
+  return (
+    <button
+      type="button"
+      onClick={() => void toggle()}
+      aria-pressed={state === "playing"}
+      className={`mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-caption font-medium ${state === "playing" ? "border-rani bg-rani text-white" : "border-hairline text-ink active:bg-blush"}`}
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden className="fill-none stroke-current [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:1.5]">
+        {state === "playing" ? <path d="M5 4v8M11 4v8" /> : <path d="M2.5 6v4h2.5l3.5 3V3L5 6zM11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.5a6 6 0 0 1 0 9" />}
+      </svg>
+      {tr(label[state])}
+    </button>
   );
 }
 

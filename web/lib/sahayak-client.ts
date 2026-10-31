@@ -32,7 +32,22 @@ async function call<T>(body: object): Promise<T> {
   return (await res.json()) as T;
 }
 
-export const askSahayak = (lang: Language, minor: boolean, turns: Turn[]) => call<Answer>({ mode: "ask", lang, minor, turns });
+/** An answer read aloud, as MP3 audio. */
+export async function readAloud(lang: Language, text: string): Promise<Blob> {
+  const { data } = await supabase().auth.getSession();
+  if (!data.session) throw new SahayakError("offline");
+  const res = await fetch("/api/speak", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${data.session.access_token}` },
+    body: JSON.stringify({ lang, text }),
+  }).catch(() => null);
+  if (!res) throw new SahayakError("offline");
+  if (res.status === 429) throw new SahayakError("limit");
+  if (!res.ok) throw new SahayakError("failed");
+  return res.blob();
+}
+
+export const askSahayak =(lang: Language, minor: boolean, turns: Turn[]) => call<Answer>({ mode: "ask", lang, minor, turns });
 
 export const draftComplaint = (lang: Language, recipient: Recipient, turns: Turn[], evidence: EvidenceLine[]) =>
   call<Draft>({ mode: "draft", lang, recipient, turns, evidence });
