@@ -45,6 +45,11 @@ interface Check {
   outcome: Outcome;
 }
 
+// A real recording from our tests, sealed on 31 Oct 2026, for anyone without a file of their own.
+// Its account is kept on purpose: the check only passes while its seal records exist.
+const SAMPLE = "/sample/recording-20261031-1246.webm";
+const SAMPLE_NAME = "recording-20261031-1246.webm";
+
 const IST: Intl.DateTimeFormatOptions = { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kolkata" };
 const when = (d: Date) => `${d.toLocaleString("en-IN", IST)} IST`;
 
@@ -113,6 +118,26 @@ export function Verify() {
     [run],
   );
 
+  // The sample as it was sealed, or with the byte in its middle flipped, so the same check fails.
+  const trySample = useCallback(
+    async (change: boolean) => {
+      const res = await fetch(SAMPLE).catch(() => null);
+      if (!res?.ok) {
+        setChecks((c) => [{ id: crypto.randomUUID(), name: SAMPLE_NAME, hash: "", outcome: { kind: "error" } }, ...c]);
+        return;
+      }
+      const bytes = await res.arrayBuffer();
+      let name = SAMPLE_NAME;
+      if (change) {
+        const at = Math.floor(bytes.byteLength / 2);
+        new Uint8Array(bytes)[at] ^= 0xff;
+        name = `${SAMPLE_NAME}, byte ${at.toLocaleString("en-IN")} changed`;
+      }
+      void run(name, await sha256Of(bytes), bytes);
+    },
+    [run],
+  );
+
   // Opened from the QR code on her phone: show that fingerprint's seal record straight away.
   useEffect(() => {
     const h = new URLSearchParams(location.search).get("h")?.toLowerCase();
@@ -152,6 +177,32 @@ export function Verify() {
             </span>
             <input type="file" multiple className="sr-only" onChange={(e) => void addFiles(e.target.files)} />
           </label>
+
+          <div id="sample" className="mt-8 scroll-mt-6 border-t border-hairline pt-6">
+            <p className="text-[16px] font-medium">No file to hand?</p>
+            <p className="mt-1.5 text-[14px] leading-[1.55] text-muted">
+              Check a sample recording from our tests, sealed on 31 Oct. Then change one byte of it and check again.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2.5">
+              <button
+                type="button"
+                onClick={() => void trySample(false)}
+                className="h-11 rounded-full bg-rani px-5 text-[14px] font-medium text-white hover:bg-rani-deep"
+              >
+                Check the sample
+              </button>
+              <button
+                type="button"
+                onClick={() => void trySample(true)}
+                className="h-11 rounded-full border border-rani/40 px-5 text-[14px] font-medium text-rani hover:bg-alert-bg"
+              >
+                Change one byte and check
+              </button>
+            </div>
+            <a href={SAMPLE} download className="mt-4 inline-block text-[13px] text-muted underline underline-offset-2 hover:text-ink">
+              Download the sample to try it yourself
+            </a>
+          </div>
         </section>
 
         <section className="md:pt-1">

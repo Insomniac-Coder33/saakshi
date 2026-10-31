@@ -169,33 +169,33 @@ function Proof() {
           </p>
         </div>
 
-        {/* The two results from the Verify page screenshot in our tests, set in type so they read at any width. */}
+        {/* What the Verify page says about its sample recording and the same file with one byte flipped, set in type. */}
         <div className="reveal mt-16 grid gap-5 md:grid-cols-2">
           <Result
-            name="recording-20261025-2006.webm"
-            hash="6d2850b1 … 77173c3b"
+            name="recording-20261031-1246.webm"
+            hash="e8db1524 … 653bed5d"
             verdict="Untampered"
             ok
             body={
               <>
-                Recorded 25 Oct 2026, 8:06:42 pm IST. All 7 pieces sealed on Polygon Amoy, each within 72 s of being recorded.{" "}
-                <a href={`${EXPLORER}/block/51116511`} target="_blank" rel="noreferrer" className="text-white underline underline-offset-2">
-                  Block 51116511
+                Recorded 31 Oct 2026, 12:47:06 pm IST. All 7 pieces sealed on Polygon Amoy, each within 58 s of being recorded.{" "}
+                <a href={`${EXPLORER}/block/51608507`} target="_blank" rel="noreferrer" className="text-white underline underline-offset-2">
+                  Block 51608507
                 </a>
               </>
             }
           />
           <Result
-            name="changed-recording-20261025-2006.webm"
-            hash="9543a854 … b52d8f57"
+            name="recording-20261031-1246.webm, byte 1,04,986 changed"
+            hash="96bb5911 … 9355e2f9"
             verdict="No seal found"
-            body="This file does not match any sealed fingerprint. If it is a copy of a Saakshi recording, it has been changed."
+            body="This file does not match any sealed fingerprint. If it is a copy of a file from Saakshi, it has been changed."
           />
         </div>
         <div className="mt-6 flex flex-col items-center gap-6 text-center">
-          <p className="text-[13px] text-on-dark-muted">A real check from our tests: the original, and a copy with one byte changed.</p>
-          <a href="/verify" className="flex h-14 items-center rounded-full bg-white px-7 text-[16px] font-medium text-ink hover:bg-blush">
-            Open the Verify page
+          <p className="text-[13px] text-on-dark-muted">Our sample recording, and the same file with one byte changed. Check both yourself.</p>
+          <a href="/verify#sample" className="flex h-14 items-center rounded-full bg-white px-7 text-[16px] font-medium text-ink hover:bg-blush">
+            Try it on the Verify page
           </a>
         </div>
 
