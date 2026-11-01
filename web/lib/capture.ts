@@ -2,11 +2,15 @@
 // fingerprinted (SHA-256 of the plaintext), encrypted on the phone, written to the local outbox and
 // uploaded straight away. If the phone is snatched, at most the piece being recorded is lost.
 //
+// In the Android app (lib/native.ts), a foreground service keeps all of this running with the screen
+// locked; in a browser, recording keeps the screen on instead.
+//
 // Phones take the camera away (a call, another app, the OS). When a track ends or the recorder goes
 // quiet, recording restarts with a fresh stream as a new *segment*: each segment is its own playable
 // file, because a new recorder writes a new file header.
 import { encryptPiece, openSessionForWriting, sha256Hex } from "./crypto";
 import { enqueue, putSession, type DeviceSetup, type LocalSession, type OutboxItem } from "./local";
+import { holdWhileLocked, releaseHold } from "./native";
 import { drain } from "./sync";
 
 export const PIECE_MS = 5000;
@@ -61,6 +65,7 @@ export class Capture {
   private restarting: Promise<void> | null = null;
   private watchId: number | null = null;
   private wakeLock: WakeLockSentinel | null = null;
+  private held = false; // the Android app is keeping us alive, so the screen may lock
   private lastFixAt = 0;
   private seq = { media: 0, location: 0 };
   private chain: Promise<void> = Promise.resolve();
@@ -102,9 +107,14 @@ export class Capture {
   }
 
   private async begin() {
+    // In the Android app the service starts first: it asks for any permission still missing, so the
+    // camera then opens without a second prompt.
     const [{ key, ephemeralPublicKey }] = await Promise.all([
       openSessionForWriting(this.setup.publicKey, this.session.id),
-      this.startRecorder(),
+      holdWhileLocked().then((held) => {
+        this.held = held;
+        return this.startRecorder();
+      }),
     ]);
     this.key = key;
     this.session.ephemeralPublicKey = ephemeralPublicKey;
@@ -122,8 +132,10 @@ export class Capture {
         { enableHighAccuracy: true, maximumAge: 5000, timeout: 20_000 },
       );
     }
-    await this.holdScreen();
-    document.addEventListener("visibilitychange", this.onVisibility);
+    if (!this.held) {
+      await this.holdScreen();
+      document.addEventListener("visibilitychange", this.onVisibility);
+    }
     this.emit();
   }
 
@@ -267,6 +279,7 @@ export class Capture {
     if (this.watchId !== null) navigator.geolocation.clearWatch(this.watchId);
     await this.wakeLock?.release().catch(() => {});
     await this.chain;
+    if (this.held) await releaseHold();
     this.session = { ...this.session, status, endedAt: new Date().toISOString(), dirty: true };
     await putSession(this.session);
     void drain();
