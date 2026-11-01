@@ -2,8 +2,9 @@
 // - law: the answer cites at least one of the expected laws
 // - urgent: danger cases are flagged urgent
 // - language: the answer is written in the language asked for
-// Usage (from the repo root): node eval/run.mjs <base-url> [langs=en,bn,hi] [parallel=1]
-// Signs in as a throwaway anonymous user and deletes it afterwards. Writes eval/results.json.
+// Usage (from the repo root): node eval/run.mjs <base-url> [langs=en,bn,hi] [parallel=1] [out=results.json]
+// Languages: en bn hi mr te ta gu kn ml or pa (lib/tongues.ts); a case is asked only in the languages it is written in.
+// Signs in as a throwaway anonymous user and deletes it afterwards. Writes eval/<out>.
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -21,6 +22,7 @@ const env = Object.fromEntries(
 const base = process.argv[2] ?? "http://localhost:3100";
 const langs = (process.argv[3] ?? "en,bn,hi").split(",");
 const parallel = Number(process.argv[4] ?? 1);
+const out = process.argv[5] ?? "results.json";
 let stopped = false;
 const { cases } = JSON.parse(readFileSync(join(root, "eval", "sahayak-eval.json"), "utf8"));
 
@@ -29,14 +31,18 @@ const { data: signedIn, error } = await sb.auth.signInAnonymously();
 if (error) throw error;
 const token = signedIn.session.access_token;
 
-const SCRIPT = { en: /[A-Za-z]/, bn: /[ঀ-৿]/, hi: /[ऀ-ॿ]/ };
+const DEVANAGARI = /[ऀ-ॿ]/;
+const SCRIPT = {
+  en: /[A-Za-z]/, bn: /[ঀ-৿]/, hi: DEVANAGARI, mr: DEVANAGARI, te: /[ఀ-౿]/, ta: /[஀-௿]/,
+  gu: /[઀-૿]/, kn: /[ಀ-೿]/, ml: /[ഀ-ൿ]/, or: /[଀-୿]/, pa: /[਀-੿]/,
+};
 const inLanguage = (lang, text) => {
   const letters = [...text].filter((c) => /\p{L}/u.test(c));
   const share = letters.filter((c) => SCRIPT[lang].test(c)).length / Math.max(1, letters.length);
   return share > 0.6;
 };
 
-const jobs = cases.flatMap((c) => langs.map((lang) => ({ c, lang })));
+const jobs = cases.flatMap((c) => langs.filter((lang) => c[lang]).map((lang) => ({ c, lang })));
 const results = [];
 async function run({ c, lang }) {
   const t0 = Date.now();
@@ -80,7 +86,7 @@ const summary = {
   urgentFlagged: `${results.filter((r) => cases.find((c) => c.id === r.id)?.urgent && r.flagged).length}/${results.filter((r) => cases.find((c) => c.id === r.id)?.urgent).length}`,
   medianMs: results.map((r) => r.ms).filter(Boolean).sort((a, b) => a - b)[Math.floor(results.length / 2)],
 };
-writeFileSync(join(root, "eval", "results.json"), JSON.stringify({ summary, results }, null, 2));
+writeFileSync(join(root, "eval", out), JSON.stringify({ summary, results }, null, 2));
 console.log("\n", summary);
 
 const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } });

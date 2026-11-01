@@ -1,9 +1,8 @@
 // Server only. Sahayak's answers read aloud in her language, by Sarvam's Bulbul voice, for women who
 // would rather listen than read. Nothing is kept: the text goes to Sarvam and the audio comes back.
-import type { Language } from "./local";
+import { tongueOf, type Tongue } from "./tongues";
 
 const VOICE = "priya";
-const LANG_CODE: Record<Language, string> = { en: "en-IN", bn: "bn-IN", hi: "hi-IN" };
 
 export const speechReady = () => !!process.env.SARVAM_API_KEY;
 
@@ -25,13 +24,13 @@ export function chunks(text: string, max = 900): string[] {
 }
 
 /** One MP3 for the whole text. MP3 frames stand alone, so the pieces simply join end to end. */
-export async function speak(lang: Language, text: string): Promise<Uint8Array> {
+export async function speak(lang: Tongue, text: string): Promise<Uint8Array> {
   const parts = await Promise.all(
     chunks(text).map(async (piece) => {
       const res = await fetch("https://api.sarvam.ai/text-to-speech", {
         method: "POST",
         headers: { "content-type": "application/json", "api-subscription-key": process.env.SARVAM_API_KEY! },
-        body: JSON.stringify({ text: piece, target_language_code: LANG_CODE[lang], model: "bulbul:v3", speaker: VOICE, output_audio_codec: "mp3" }),
+        body: JSON.stringify({ text: piece, target_language_code: tongueOf(lang).voice, model: "bulbul:v3", speaker: VOICE, output_audio_codec: "mp3" }),
         signal: AbortSignal.timeout(20_000),
       });
       if (!res.ok) throw new Error(`sarvam tts ${res.status}: ${(await res.text()).slice(0, 200)}`);

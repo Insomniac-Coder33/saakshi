@@ -4,13 +4,15 @@
 // Sakshya Adhiniyam, 2023, in the form set out in its Schedule. Part A is filled in from Saakshi's
 // own sealing records (the hashes, the device, the Polygon transactions) and from a hash report
 // with a verify code for each file. She reads it, completes the blanks and signs it herself.
-// Printing it (or "Save as PDF") prints only the paper, never the app around it.
+// Printing it (or "Save as PDF") prints only the paper, never the app around it. The paper itself is
+// CertificatePaper, which the court packet (CourtPacket.tsx) prints after her complaint.
 import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { ANCHOR_ADDRESS, CHAIN_NAME, txUrl } from "@/lib/chain";
 import { t, type StringKey } from "@/lib/i18n";
 import type { Language } from "@/lib/local";
 import type { PieceInfo } from "@/lib/recordings";
+import { VERIFY_ORIGIN } from "@/lib/site";
 import { BackIcon, Button, RoundButton } from "./ui";
 
 export interface CertItem {
@@ -68,6 +70,32 @@ export function Certificate({
   onBack: () => void;
 }) {
   const tr = (k: StringKey) => t(lang, k);
+  return (
+    <main className="min-h-dvh bg-blush print:bg-white">
+      <header className="sticky top-0 z-10 mx-auto flex max-w-[860px] items-center gap-3 bg-blush/95 px-4 py-3 backdrop-blur print:hidden" lang={lang}>
+        <RoundButton label={tr("back")} onClick={onBack}>
+          <BackIcon />
+        </RoundButton>
+        <p className="flex-1 text-body-sm leading-snug text-muted">{tr("certIntro")}</p>
+      </header>
+
+      <article className={PAPER}>
+        <CertificatePaper userId={userId} items={items} />
+      </article>
+
+      <div className="mx-auto max-w-[860px] px-4 py-5 print:hidden" lang={lang}>
+        <Button onClick={() => window.print()}>{tr("certPrint")}</Button>
+      </div>
+    </main>
+  );
+}
+
+/** A sheet of paper on screen; on print, only what is on it. */
+export const PAPER =
+  "mx-auto max-w-[860px] bg-white px-6 py-10 text-[13px] leading-[1.6] text-ink shadow-card md:px-14 print:max-w-none print:p-0 print:shadow-none";
+
+/** The certificate itself, Parts A and B with the hash report, in English as the Schedule sets it out. */
+export function CertificatePaper({ userId, items }: { userId: string; items: CertItem[] }) {
   const [device, setDevice] = useState<{ model: string; system: string } | null>(null);
   const [qrs, setQrs] = useState<Record<string, string>>({});
   const prepared = new Date().toLocaleString("en-IN", { dateStyle: "long", timeStyle: "short", timeZone: IST });
@@ -84,137 +112,129 @@ export function Certificate({
   }, [items]);
 
   return (
-    <main className="min-h-dvh bg-blush print:bg-white">
-      <header className="sticky top-0 z-10 mx-auto flex max-w-[860px] items-center gap-3 bg-blush/95 px-4 py-3 backdrop-blur print:hidden" lang={lang}>
-        <RoundButton label={tr("back")} onClick={onBack}>
-          <BackIcon />
-        </RoundButton>
-        <p className="flex-1 text-body-sm leading-snug text-muted">{tr("certIntro")}</p>
-      </header>
+    <>
+      <p className="text-[11px] uppercase tracking-[0.16em] text-muted">Schedule · Bharatiya Sakshya Adhiniyam, 2023</p>
+      <h1 className="mt-2 font-display text-[30px] leading-tight">Certificate under Section 63(4)(c)</h1>
+      <p className="mt-1 text-[15px] font-medium">Part A · To be filled by the party</p>
 
-      <article className="mx-auto max-w-[860px] bg-white px-6 py-10 text-[13px] leading-[1.6] text-ink shadow-card md:px-14 print:max-w-none print:p-0 print:shadow-none">
-        <p className="text-[11px] uppercase tracking-[0.16em] text-muted">Schedule · Bharatiya Sakshya Adhiniyam, 2023</p>
-        <h1 className="mt-2 font-display text-[30px] leading-tight">Certificate under Section 63(4)(c)</h1>
-        <p className="mt-1 text-[15px] font-medium">Part A · To be filled by the party</p>
+      <p className="mt-6">
+        I, <Blank w="14rem" />, daughter / son / spouse of <Blank w="12rem" />, residing at / employed at <Blank w="20rem" />, do hereby
+        solemnly affirm and sincerely state and submit as follows:
+      </p>
+      <ol className="mt-4 list-decimal space-y-4 pl-5">
+        <li>
+          I have produced the electronic record(s) listed in the hash report below, taken from the following device / digital record
+          source:
+          <span className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+            {["Computer / storage media", "DVR", "Mobile", "Flash drive", "CD / DVD", "Server", "Cloud", "Other"].map((s) => (
+              <Box key={s} checked={s === "Mobile" || s === "Cloud"} label={s} />
+            ))}
+          </span>
+          <span className="mt-3 grid gap-1 sm:grid-cols-2">
+            <Field k="Make & model" v={device?.model || null} />
+            <Field k="Operating system · browser" v={device?.system || null} />
+            <Field k="Serial number" v={null} />
+            <Field k="IMEI / UIN / UID / MAC" v={null} />
+            <Field k="Cloud ID" v={`Saakshi encrypted evidence store, account ${userId}`} wide />
+          </span>
+        </li>
+        <li>
+          The digital device or the digital record source was under lawful control for regularly creating, storing or processing
+          information for the purposes of carrying out regular activities, and during this period it was working properly and the
+          relevant information was regularly fed into it in the ordinary course. If at any point it was not working properly or was out of
+          operation, that has not affected the electronic record or its accuracy.
+        </li>
+        <li>
+          The digital device or the source of the digital record is:
+          <span className="mt-2 flex flex-wrap gap-x-5">
+            {["Owned", "Maintained", "Managed", "Operated"].map((s) => (
+              <Box key={s} label={s} />
+            ))}
+            <span>by me (tick as applicable).</span>
+          </span>
+        </li>
+        <li>
+          I state that the hash value(s) of the electronic record(s) are as set out in the enclosed hash report, obtained through the
+          following algorithm:
+          <span className="mt-2 flex flex-wrap gap-x-5">
+            <Box label="SHA1" />
+            <Box checked label="SHA256" />
+            <Box label="MD5" />
+            <Box label="Other" />
+          </span>
+        </li>
+      </ol>
 
-        <p className="mt-6">
+      <Signature who="Name and signature" />
+
+      <section className="mt-10 break-before-page">
+        <h2 className="font-display text-[24px]">Hash report</h2>
+        <p className="mt-1 text-muted">
+          Enclosed with the certificate. Prepared by Saakshi on {prepared} IST from its sealing records. Every value below can be checked
+          by anyone, without trusting Saakshi; see “How to check” at the end.
+        </p>
+        {items.map((item) => (
+          <HashTable key={item.sha256} item={item} qr={qrs[item.sha256]} />
+        ))}
+      </section>
+
+      <section className="mt-10 break-inside-avoid">
+        <h2 className="font-display text-[24px]">How to check</h2>
+        <ol className="mt-2 list-decimal space-y-1.5 pl-5">
+          <li>Open the verify link (or scan its code) and choose the file. Its SHA-256 is computed in your own browser.</li>
+          <li>
+            It re-computes the SHA-256 of each piece that was sealed (a recording is split back into its 5-second pieces) and checks it
+            against the Merkle root.
+          </li>
+          <li>
+            It then reads each transaction straight from the blockchain. Roots are written by the EvidenceAnchor contract,{" "}
+            <span className="break-all font-mono text-[11px]">{ANCHOR_ADDRESS}</span>, on {CHAIN_NAME} (Polygon’s public test network).
+          </li>
+          <li>A single changed byte gives a different SHA-256, and the check fails.</li>
+          <li>
+            To check without Saakshi’s servers at all, save the file’s proof receipt on the verify page, then open it with the file in
+            the offline checker, <span className="break-all">{VERIFY_ORIGIN}/verify-offline.html</span>, a single page that reads only
+            the public blockchain.
+          </li>
+        </ol>
+        <p className="mt-3 italic text-muted">
+          A seal shows that a file is unchanged since the moment it was sealed. It does not by itself show what the file depicts or who
+          made it.
+        </p>
+      </section>
+
+      <section className="mt-12 break-before-page">
+        <p className="text-[11px] uppercase tracking-[0.16em] text-muted">Only if the court asks for an expert’s certificate</p>
+        <p className="mt-1 text-[15px] font-medium">Part B · To be filled by the expert</p>
+        <p className="mt-4">
           I, <Blank w="14rem" />, daughter / son / spouse of <Blank w="12rem" />, residing at / employed at <Blank w="20rem" />, do hereby
           solemnly affirm and sincerely state and submit as follows:
         </p>
         <ol className="mt-4 list-decimal space-y-4 pl-5">
           <li>
-            I have produced the electronic record(s) listed in the hash report below, taken from the following device / digital record
-            source:
-            <span className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
-              {["Computer / storage media", "DVR", "Mobile", "Flash drive", "CD / DVD", "Server", "Cloud", "Other"].map((s) => (
-                <Box key={s} checked={s === "Mobile" || s === "Cloud"} label={s} />
-              ))}
-            </span>
-            <span className="mt-3 grid gap-1 sm:grid-cols-2">
-              <Field k="Make & model" v={device?.model || null} />
-              <Field k="Operating system · browser" v={device?.system || null} />
-              <Field k="Serial number" v={null} />
-              <Field k="IMEI / UIN / UID / MAC" v={null} />
-              <Field k="Cloud ID" v={`Saakshi encrypted evidence store, account ${userId}`} wide />
-            </span>
+            The produced electronic record / output of the digital record is obtained from the following device / digital record source:{" "}
+            <Blank w="20rem" />
           </li>
           <li>
-            The digital device or the digital record source was under lawful control for regularly creating, storing or processing
-            information for the purposes of carrying out regular activities, and during this period it was working properly and the
-            relevant information was regularly fed into it in the ordinary course. If at any point it was not working properly or was out of
-            operation, that has not affected the electronic record or its accuracy.
-          </li>
-          <li>
-            The digital device or the source of the digital record is:
-            <span className="mt-2 flex flex-wrap gap-x-5">
-              {["Owned", "Maintained", "Managed", "Operated"].map((s) => (
-                <Box key={s} label={s} />
-              ))}
-              <span>by me (tick as applicable).</span>
-            </span>
-          </li>
-          <li>
-            I state that the hash value(s) of the electronic record(s) are as set out in the enclosed hash report, obtained through the
+            I state that the hash value(s) of the electronic / digital record(s) is / are <Blank w="22rem" />, obtained through the
             following algorithm:
             <span className="mt-2 flex flex-wrap gap-x-5">
               <Box label="SHA1" />
-              <Box checked label="SHA256" />
+              <Box label="SHA256" />
               <Box label="MD5" />
               <Box label="Other" />
             </span>
           </li>
         </ol>
+        <Signature who="Name, designation and signature" />
+      </section>
 
-        <Signature who="Name and signature" />
-
-        <section className="mt-10 break-before-page">
-          <h2 className="font-display text-[24px]">Hash report</h2>
-          <p className="mt-1 text-muted">
-            Enclosed with the certificate. Prepared by Saakshi on {prepared} IST from its sealing records. Every value below can be checked
-            by anyone, without trusting Saakshi; see “How to check” at the end.
-          </p>
-          {items.map((item) => (
-            <HashTable key={item.sha256} item={item} qr={qrs[item.sha256]} />
-          ))}
-        </section>
-
-        <section className="mt-10 break-inside-avoid">
-          <h2 className="font-display text-[24px]">How to check</h2>
-          <ol className="mt-2 list-decimal space-y-1.5 pl-5">
-            <li>Open the verify link (or scan its code) and choose the file. Its SHA-256 is computed in your own browser.</li>
-            <li>
-              It re-computes the SHA-256 of each piece that was sealed (a recording is split back into its 5-second pieces) and checks it
-              against the Merkle root.
-            </li>
-            <li>
-              It then reads each transaction straight from the blockchain. Roots are written by the EvidenceAnchor contract,{" "}
-              <span className="break-all font-mono text-[11px]">{ANCHOR_ADDRESS}</span>, on {CHAIN_NAME} (Polygon’s public test network).
-            </li>
-            <li>A single changed byte gives a different SHA-256, and the check fails.</li>
-          </ol>
-          <p className="mt-3 italic text-muted">
-            A seal shows that a file is unchanged since the moment it was sealed. It does not by itself show what the file depicts or who
-            made it.
-          </p>
-        </section>
-
-        <section className="mt-12 break-before-page">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-muted">Only if the court asks for an expert’s certificate</p>
-          <p className="mt-1 text-[15px] font-medium">Part B · To be filled by the expert</p>
-          <p className="mt-4">
-            I, <Blank w="14rem" />, daughter / son / spouse of <Blank w="12rem" />, residing at / employed at <Blank w="20rem" />, do hereby
-            solemnly affirm and sincerely state and submit as follows:
-          </p>
-          <ol className="mt-4 list-decimal space-y-4 pl-5">
-            <li>
-              The produced electronic record / output of the digital record is obtained from the following device / digital record source:{" "}
-              <Blank w="20rem" />
-            </li>
-            <li>
-              I state that the hash value(s) of the electronic / digital record(s) is / are <Blank w="22rem" />, obtained through the
-              following algorithm:
-              <span className="mt-2 flex flex-wrap gap-x-5">
-                <Box label="SHA1" />
-                <Box label="SHA256" />
-                <Box label="MD5" />
-                <Box label="Other" />
-              </span>
-            </li>
-          </ol>
-          <Signature who="Name, designation and signature" />
-        </section>
-
-        <p className="mt-12 border-t border-hairline pt-4 text-[11px] leading-relaxed text-muted">
-          This is a draft prepared by the Saakshi app from its records; it is not legal advice. Read it, correct anything that is wrong and
-          sign it yourself. The police, a lawyer, or your District Legal Services Authority (free legal aid, call 15100) can help you
-          complete it.
-        </p>
-      </article>
-
-      <div className="mx-auto max-w-[860px] px-4 py-5 print:hidden" lang={lang}>
-        <Button onClick={() => window.print()}>{tr("certPrint")}</Button>
-      </div>
-    </main>
+      <p className="mt-12 border-t border-hairline pt-4 text-[11px] leading-relaxed text-muted">
+        This is a draft prepared by the Saakshi app from its records; it is not legal advice. Read it, correct anything that is wrong and
+        sign it yourself. The police, a lawyer, or your District Legal Services Authority (free legal aid, call 15100) can help you
+        complete it.
+      </p>
+    </>
   );
 }
 

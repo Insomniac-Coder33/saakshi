@@ -191,6 +191,13 @@ export function recordingTitle(iso: string, locale: string): string {
   return locale.startsWith("en") ? `${day} ${part}, ${time.toLowerCase()}` : `${day}, ${time}`;
 }
 
+/** The date and time in a downloaded file's name, by the phone's clock: 20261031-1246. */
+export function fileStamp(iso: string): string {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+}
+
 export function shortHash(hex: string): string {
   return `${hex.slice(0, 8)} … ${hex.slice(-8)}`;
 }

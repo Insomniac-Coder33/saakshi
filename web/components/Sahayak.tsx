@@ -3,13 +3,17 @@
 // Sahayak, the legal helper: she tells it what happened, in her words and language; it explains which
 // laws may apply and what she can do next, and can draft her complaint with her sealed evidence listed.
 // The law cards and helplines come from our checked list (lib/law.ts), never from the model's text.
+// Saakshi's screens are in her language (English, Bengali or Hindi); Sahayak's answers, voice and drafts
+// can be in any of the Indian languages in lib/tongues.ts.
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { listEvidence } from "@/lib/evidence";
 import { digits, t, type StringKey } from "@/lib/i18n";
 import { helplineById, lawById } from "@/lib/law";
 import type { DeviceSetup, Language } from "@/lib/local";
 import {
   askSahayak,
   draftComplaint,
+  journalTexts,
   readAloud,
   SahayakError,
   sealedEvidence,
@@ -17,8 +21,11 @@ import {
   type Draft,
   type EvidenceLine,
   type Recipient,
+  type SealedItem,
   type Turn,
 } from "@/lib/sahayak-client";
+import { isTongue, tongueOf, TONGUES, type Tongue } from "@/lib/tongues";
+import { CourtPacket } from "./CourtPacket";
 import { BackIcon, Button, RoundButton, Screen, Wordmark } from "./ui";
 
 type Tr = (k: StringKey, v?: Record<string, string | number>) => string;
@@ -43,16 +50,27 @@ interface Recognition {
   stop(): void;
   abort(): void;
 }
-const SPEECH_LANG: Record<Language, string> = { en: "en-IN", bn: "bn-IN", hi: "hi-IN" };
 function recognizer(): (new () => Recognition) | undefined {
   const w = window as unknown as Record<string, (new () => Recognition) | undefined>;
   return w.SpeechRecognition ?? w.webkitSpeechRecognition;
 }
 const unchanging = () => () => {};
 
-export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => void }) {
+// The language she last chose for answers, kept on this phone under the disguise's name.
+const TONGUE_KEY = "calc.tongue";
+function savedTongue(fallback: Language): Tongue {
+  try {
+    const v = localStorage.getItem(TONGUE_KEY);
+    return isTongue(v) ? v : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export function Sahayak({ setup, privateKey, onBack }: { setup: DeviceSetup; privateKey: CryptoKey; onBack: () => void }) {
   const lang = setup.language;
   const tr: Tr = (k, v) => t(lang, k, v);
+  const [tongue, setTongue] = useState<Tongue>(() => savedTongue(lang));
   const [thread, setThread] = useState<Exchange[]>([]);
   const [text, setText] = useState("");
   const [drafting, setDrafting] = useState(false);
@@ -77,7 +95,7 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
     const Rec = recognizer();
     if (!Rec) return;
     const r = new Rec();
-    r.lang = SPEECH_LANG[lang];
+    r.lang = tongueOf(tongue).locale;
     r.interimResults = true;
     const before = text.trim();
     r.onresult = (e) => {
@@ -110,7 +128,7 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
     const next = [...thread.filter((x) => x.answer), { question, answer: null, error: null }];
     setThread(next);
     try {
-      const answer = await askSahayak(lang, setup.ageGroup === "minor", turnsOf(next));
+      const answer = await askSahayak(tongue, setup.ageGroup === "minor", turnsOf(next));
       setThread((th) => th.map((x, i) => (i === th.length - 1 ? { ...x, answer } : x)));
     } catch (e) {
       const kind = e instanceof SahayakError ? e.kind : "failed";
@@ -118,7 +136,17 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
     }
   }
 
-  if (drafting) return <Drafter setup={setup} turns={turnsOf(thread.filter((x) => x.answer))} onBack={() => setDrafting(false)} />;
+  if (drafting)
+    return <Drafter setup={setup} privateKey={privateKey} tongue={tongue} turns={turnsOf(thread.filter((x) => x.answer))} onBack={() => setDrafting(false)} />;
+
+  function chooseTongue(v: Tongue) {
+    setTongue(v);
+    try {
+      localStorage.setItem(TONGUE_KEY, v);
+    } catch {
+      // Private browsing: it lasts for this visit.
+    }
+  }
 
   const answered = thread.some((x) => x.answer);
 
@@ -136,6 +164,7 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
         <p className="label">{tr("sahayak")}</p>
         <h1 className="mt-1.5 font-display text-[40px] leading-[1.05]">{tr("sahayakTitle")}</h1>
         <p className="mt-3 text-body-sm leading-relaxed text-muted">{tr("sahayakBody")}</p>
+        <TongueSelect label={tr("answersIn")} value={tongue} onChange={chooseTongue} className="mt-4" />
       </section>
 
       {thread.length === 0 && (
@@ -157,9 +186,11 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
       <div className="mt-6 flex flex-col gap-5" lang={lang}>
         {thread.map((x, i) => (
           <div key={i} className="flex flex-col gap-3">
-            <p className="ml-10 self-end whitespace-pre-wrap rounded-[20px] rounded-br-md bg-blush px-4 py-3 text-body-sm leading-relaxed">{x.question}</p>
+            <p className="ml-10 self-end whitespace-pre-wrap rounded-[20px] rounded-br-md bg-blush px-4 py-3 text-body-sm leading-relaxed" lang={tongue}>
+              {x.question}
+            </p>
             {x.answer ? (
-              <AnswerCard answer={x.answer} lang={lang} tr={tr} />
+              <AnswerCard answer={x.answer} lang={lang} tongue={tongue} tr={tr} />
             ) : x.error ? (
               <div className="rounded-[20px] border border-rani/30 bg-alert-bg p-4 text-body-sm leading-relaxed">
                 <p>{tr(x.error === "limit" ? "sahayakLimit" : "sahayakFailed")}</p>
@@ -274,7 +305,33 @@ export function Sahayak({ setup, onBack }: { setup: DeviceSetup; onBack: () => v
   );
 }
 
-function AnswerCard({ answer, lang, tr }: { answer: Answer; lang: Language; tr: Tr }) {
+/** "Answers in": every language Sahayak speaks, each named in its own script. */
+function TongueSelect({ label, value, onChange, className = "" }: { label: string; value: Tongue; onChange: (v: Tongue) => void; className?: string }) {
+  return (
+    <label className={`flex items-center gap-3 ${className}`}>
+      <span className="text-body-sm text-muted">{label}</span>
+      <span className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value as Tongue)}
+          lang={value}
+          className="h-11 appearance-none rounded-full border border-hairline bg-white pl-4 pr-10 text-body-sm text-ink outline-none focus-visible:border-rani"
+        >
+          {TONGUES.map((x) => (
+            <option key={x.id} value={x.id} lang={x.id}>
+              {x.label}
+            </option>
+          ))}
+        </select>
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 fill-none stroke-muted [stroke-width:1.6]">
+          <path d="m2.5 4.5 3.5 3.5 3.5-3.5" />
+        </svg>
+      </span>
+    </label>
+  );
+}
+
+function AnswerCard({ answer, lang, tongue, tr }: { answer: Answer; lang: Language; tongue: Tongue; tr: Tr }) {
   return (
     <article className="rounded-[20px] border border-hairline p-4">
       {answer.urgent && (
@@ -283,16 +340,18 @@ function AnswerCard({ answer, lang, tr }: { answer: Answer; lang: Language; tr: 
           <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-caption font-medium text-rani">112</span>
         </a>
       )}
-      <p className="whitespace-pre-wrap text-body leading-relaxed">{answer.answer}</p>
-      <ReadAloud lang={lang} tr={tr} text={[answer.answer, ...answer.steps].map((x) => endSentence(x, lang)).join(" ")} />
+      <p className="whitespace-pre-wrap text-body leading-relaxed" lang={tongue}>
+        {answer.answer}
+      </p>
+      <ReadAloud tongue={tongue} tr={tr} text={[answer.answer, ...answer.steps].map((x) => endSentence(x, tongue)).join(" ")} />
 
       {answer.steps.length > 0 && (
         <>
           <p className="label mt-5">{tr("sahayakSteps")}</p>
-          <ol className="mt-2 space-y-2">
+          <ol className="mt-2 space-y-2" lang={tongue}>
             {answer.steps.map((s, i) => (
               <li key={i} className="flex gap-3 text-body-sm leading-relaxed">
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blush text-caption text-rani">{digits(lang, i + 1)}</span>
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-blush text-caption text-rani">{digits(tongue === "bn" ? "bn" : "en", i + 1)}</span>
                 <span>{s}</span>
               </li>
             ))}
@@ -353,20 +412,25 @@ function AnswerCard({ answer, lang, tr }: { answer: Answer; lang: Language; tr: 
         </div>
       )}
 
-      {answer.followUp && <p className="mt-4 text-body-sm italic leading-relaxed text-muted">{answer.followUp}</p>}
+      {answer.followUp && (
+        <p className="mt-4 text-body-sm italic leading-relaxed text-muted" lang={tongue}>
+          {answer.followUp}
+        </p>
+      )}
 
     </article>
   );
 }
 
-// Each step ends in a full stop (or a danda), so the voice pauses between them.
-const endSentence = (x: string, lang: Language) => (/[.!?।]$/.test(x.trim()) ? x.trim() : `${x.trim()}${lang === "en" ? "." : "।"}`);
+// Each step ends in a full stop (or a danda, in the languages that use it), so the voice pauses between them.
+const DANDA: Tongue[] = ["bn", "hi", "mr", "or", "pa"];
+const endSentence = (x: string, tongue: Tongue) => (/[.!?।]$/.test(x.trim()) ? x.trim() : `${x.trim()}${DANDA.includes(tongue) ? "।" : "."}`);
 
 // One voice at a time: starting another answer stops the one playing.
 let stopPlaying: (() => void) | null = null;
 
 /** For a woman who would rather listen than read: the answer and its steps, in her language. */
-function ReadAloud({ text, lang, tr }: { text: string; lang: Language; tr: Tr }) {
+function ReadAloud({ text, tongue, tr }: { text: string; tongue: Tongue; tr: Tr }) {
   const [state, setState] = useState<"idle" | "loading" | "playing" | "failed">("idle");
   const audio = useRef<HTMLAudioElement | null>(null);
 
@@ -391,7 +455,7 @@ function ReadAloud({ text, lang, tr }: { text: string; lang: Language; tr: Tr })
     try {
       if (!audio.current) {
         setState("loading");
-        const a = new Audio(URL.createObjectURL(await readAloud(lang, text)));
+        const a = new Audio(URL.createObjectURL(await readAloud(tongue, text)));
         a.onended = () => setState("idle");
         audio.current = a;
       }
@@ -430,19 +494,16 @@ const RECIPIENTS: { id: Recipient; label: StringKey; note: StringKey }[] = [
   { id: "platform", label: "toPlatform", note: "toPlatformNote" },
   { id: "cyber", label: "toCyber", note: "toCyberNote" },
 ];
-const DRAFT_LANGS: { id: Language; label: string }[] = [
-  { id: "en", label: "English" },
-  { id: "bn", label: "বাংলা" },
-  { id: "hi", label: "हिन्दी" },
-];
-
-function Drafter({ setup, turns, onBack }: { setup: DeviceSetup; turns: Turn[]; onBack: () => void }) {
+function Drafter({ setup, privateKey, tongue, turns, onBack }: { setup: DeviceSetup; privateKey: CryptoKey; tongue: Tongue; turns: Turn[]; onBack: () => void }) {
   const lang = setup.language;
   const tr: Tr = (k, v) => t(lang, k, v);
   const [recipient, setRecipient] = useState<Recipient>("police");
-  const [draftLang, setDraftLang] = useState<Language>(lang);
-  const [evidence, setEvidence] = useState<EvidenceLine[] | null>(null);
+  const [draftLang, setDraftLang] = useState<Tongue>(tongue);
+  const [evidence, setEvidence] = useState<SealedItem[] | null>(null);
   const [include, setInclude] = useState(true);
+  const [journalCount, setJournalCount] = useState(0);
+  const [useJournal, setUseJournal] = useState(false); // her words go to the model only if she asks
+  const [packet, setPacket] = useState(false);
   const [result, setResult] = useState<Draft | null>(null);
   const [error, setError] = useState<SahayakError["kind"] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -450,6 +511,7 @@ function Drafter({ setup, turns, onBack }: { setup: DeviceSetup; turns: Turn[]; 
 
   useEffect(() => {
     sealedEvidence().then(setEvidence, () => setEvidence([]));
+    listEvidence("journal").then((j) => setJournalCount(j.length), () => {});
   }, []);
 
   const letter = result ? `${result.subject}\n\n${result.body}` : "";
@@ -458,7 +520,9 @@ function Drafter({ setup, turns, onBack }: { setup: DeviceSetup; turns: Turn[]; 
     setBusy(true);
     setError(null);
     try {
-      setResult(await draftComplaint(draftLang, recipient, turns, include ? (evidence ?? []) : []));
+      const lines: EvidenceLine[] = include ? (evidence ?? []).map(({ kind, at, sha256, verifyUrl }) => ({ kind, at, sha256, verifyUrl })) : [];
+      const journal = useJournal ? await journalTexts(privateKey) : [];
+      setResult(await draftComplaint(draftLang, recipient, turns, lines, journal));
     } catch (e) {
       setError(e instanceof SahayakError ? e.kind : "failed");
     } finally {
@@ -476,6 +540,18 @@ function Drafter({ setup, turns, onBack }: { setup: DeviceSetup; turns: Turn[]; 
       // She closed the share sheet.
     }
   }
+
+  if (packet && result)
+    return (
+      <CourtPacket
+        lang={lang}
+        letterLang={draftLang}
+        letter={letter}
+        userId={setup.userId}
+        evidence={include ? (evidence ?? []) : []}
+        onBack={() => setPacket(false)}
+      />
+    );
 
   return (
     <Screen>
@@ -505,7 +581,10 @@ function Drafter({ setup, turns, onBack }: { setup: DeviceSetup; turns: Turn[]; 
             {tr("draftCheck")}
           </p>
           <div className="mt-4 flex flex-col gap-2.5" lang={lang}>
-            <Button onClick={() => void share()}>{copied ? tr("linkCopied") : tr("draftShare")}</Button>
+            <Button onClick={() => setPacket(true)}>{tr("packetMake")}</Button>
+            <Button variant="ghost" onClick={() => void share()}>
+              {copied ? tr("linkCopied") : tr("draftShare")}
+            </Button>
             <Button variant="ghost" onClick={() => void make()} disabled={busy}>
               {tr("draftAgain")}
             </Button>
@@ -529,23 +608,7 @@ function Drafter({ setup, turns, onBack }: { setup: DeviceSetup; turns: Turn[]; 
             ))}
           </div>
 
-          <div>
-            <p className="label">{tr("draftLanguage")}</p>
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {DRAFT_LANGS.map((l) => (
-                <button
-                  key={l.id}
-                  type="button"
-                  lang={l.id}
-                  aria-pressed={draftLang === l.id}
-                  onClick={() => setDraftLang(l.id)}
-                  className={`h-12 rounded-full border text-body-sm ${draftLang === l.id ? "border-rani bg-rani text-white" : "border-hairline"}`}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <TongueSelect label={tr("draftLanguage")} value={draftLang} onChange={setDraftLang} />
 
           <label className="flex items-start gap-3 rounded-2xl border border-hairline p-4">
             <input type="checkbox" checked={include} onChange={(e) => setInclude(e.target.checked)} className="mt-1 size-5 accent-rani" />
@@ -554,6 +617,16 @@ function Drafter({ setup, turns, onBack }: { setup: DeviceSetup; turns: Turn[]; 
               <span className="mt-1 block text-caption text-muted">{tr("draftEvidenceNote")}</span>
             </span>
           </label>
+
+          {journalCount > 0 && (
+            <label className="flex items-start gap-3 rounded-2xl border border-hairline p-4">
+              <input type="checkbox" checked={useJournal} onChange={(e) => setUseJournal(e.target.checked)} className="mt-1 size-5 accent-rani" />
+              <span className="text-body-sm leading-snug">
+                {tr("draftJournal", { n: digits(lang, journalCount) })}
+                <span className="mt-1 block text-caption text-muted">{tr("draftJournalNote")}</span>
+              </span>
+            </label>
+          )}
 
           {error && <p className="text-body-sm text-rani">{tr(error === "limit" ? "sahayakLimit" : "sahayakFailed")}</p>}
           <Button onClick={() => void make()} disabled={busy || evidence === null}>

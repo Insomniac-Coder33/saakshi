@@ -1,22 +1,22 @@
 // Sahayak, the legal helper. Signed in as her (her anonymous account), with a daily allowance.
 // What she asks goes to the model to be answered and is never stored here.
 import { adminClient } from "@/lib/admin";
-import type { Language } from "@/lib/local";
 import { ask, draft, sahayakReady, type EvidenceLine, type Recipient, type Turn } from "@/lib/sahayak";
+import { isTongue, type Tongue } from "@/lib/tongues";
 
 export const maxDuration = 60;
 
 const DAILY_LIMIT = 80;
-const LANGS: Language[] = ["en", "bn", "hi"];
 const RECIPIENTS: Recipient[] = ["police", "protection", "icc", "platform", "cyber"];
 
 interface Body {
   mode?: "ask" | "draft";
-  lang?: Language;
+  lang?: Tongue;
   minor?: boolean;
   turns?: Turn[];
   recipient?: Recipient;
   evidence?: EvidenceLine[];
+  journal?: string[];
 }
 
 export async function POST(request: Request) {
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   if (error || !auth.user) return Response.json({ error: "invalid token" }, { status: 401 });
 
   const body = (await request.json().catch(() => ({}))) as Body;
-  const lang = LANGS.includes(body.lang as Language) ? (body.lang as Language) : "en";
+  const lang = isTongue(body.lang) ? body.lang : "en";
   const turns = (body.turns ?? [])
     .filter((t) => (t.role === "user" || t.role === "model") && typeof t.text === "string" && t.text.trim())
     .slice(-12);
@@ -43,7 +43,8 @@ export async function POST(request: Request) {
       const evidence = (body.evidence ?? [])
         .filter((e) => /^[0-9a-f]{64}$/.test(e.sha256) && /^https:\/\//.test(e.verifyUrl) && ["recording", "photo", "journal"].includes(e.kind))
         .slice(0, 20);
-      return Response.json(await draft(lang, recipient, turns, evidence));
+      const journal = (body.journal ?? []).filter((j) => typeof j === "string" && j.trim()).slice(0, 20);
+      return Response.json(await draft(lang, recipient, turns, evidence, journal));
     }
     return Response.json(await ask(lang, !!body.minor, turns));
   } catch (e) {

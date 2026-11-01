@@ -196,7 +196,11 @@ function Proof() {
           />
         </div>
         <div className="mt-6 flex flex-col items-center gap-6 text-center">
-          <p className="text-[13px] text-on-dark-muted">Our sample recording, and the same file with one byte changed. Check both yourself.</p>
+          <p className="text-[13px] text-on-dark-muted">Our sample recording, and the same file with one byte changed. Check both yourself, or save its receipt and use the{" "}
+            <a href="/verify-offline.html" className="text-white underline underline-offset-2">
+              offline checker
+            </a>
+            , which never talks to Saakshi.</p>
           <a href="/verify#sample" className="flex h-14 items-center rounded-full bg-white px-7 text-[16px] font-medium text-ink hover:bg-blush">
             Try it on the Verify page
           </a>
@@ -231,7 +235,7 @@ function Beyond() {
   const items = [
     {
       title: "Sahayak, her rights in her language",
-      body: "Ask in Bengali, Hindi, English or a mix, typed or spoken, and hear the answer read aloud. Answers cite only a fixed list of 27 sections and 8 helplines under BNS, BNSS, the DV Act, POSH, POCSO and the IT Act. Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee, and the takedown request for the platform. Running on Gemma 4 through Adaption, it named a correct law for all 45 of our test questions.",
+      body: "Ask in Bengali, Hindi, English or eight more Indian languages, typed or spoken, and hear the answer read aloud. Answers cite only a fixed list of 27 sections and 8 helplines under BNS, BNSS, the DV Act, POSH, POCSO and the IT Act. Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee, and the takedown request for the platform. Running on Gemma 4 through Adaption, it named a correct law for all 85 of our test questions, in 11 languages.",
     },
     {
       title: "Guardians who know at once",
@@ -243,7 +247,7 @@ function Beyond() {
     },
     {
       title: "A certificate for court",
-      body: "One tap prints the Section 63 certificate that the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and a QR code to verify.",
+      body: "One tap prints the Section 63 certificate that the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and a QR code to verify. With a complaint from Sahayak, it prints as one packet, with where to get free legal help.",
     },
   ];
   return (
@@ -361,6 +365,7 @@ function Built() {
     { d: "26 Oct", t: "A sealed journal and photo vault, the Section 63 certificate, and Telegram guardian alerts with live location." },
     { d: "28–29 Oct", t: "Sahayak: legal help, complaints and takedown requests in Bengali, Hindi and English, typed or spoken, on Gemma 4 through Adaption. Tested on 45 questions." },
     { d: "30–31 Oct", t: "A sealed sample anyone can check on the Verify page. Moving to a new phone with her guardians’ approval. Sahayak reads its answers aloud." },
+    { d: "1 Nov", t: "Sahayak in eight more Indian languages. The court packet: her complaint, dated from her journal, with the evidence certificate. An offline checker that never talks to Saakshi." },
     { d: "Next", t: "The Android app, so recording carries on with the screen locked.", planned: true },
   ];
   return (

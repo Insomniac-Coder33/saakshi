@@ -26,21 +26,23 @@ Built solo by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Block
 ### Sealed and checkable
 - **Sealed on Polygon.** Each fingerprint is salted and gathered into a Merkle tree, and only the root goes on-chain, through `EvidenceAnchor` on Polygon Amoy (about 24,000 gas a root). A relayer pays, so she never needs a wallet. A database job seals every minute, even after her phone is gone.
 - **Public Verify page.** Anyone can drop a downloaded recording on it. It is hashed in the browser, split into its pieces, and every Merkle proof and transaction is checked on-chain from the browser. A recording’s proof screen shows a QR code that opens its result. Without a file of your own, the page checks a sealed sample recording, then the same file with one byte changed.
+- **Checking without us.** After a file checks out, the Verify page saves its proof receipt. The offline checker (`web/public/verify-offline.html`, served at [/verify-offline.html](https://saakshi-witness.vercel.app/verify-offline.html)) is one self-contained page: given the file and its receipt, it re-hashes the pieces, climbs each Merkle proof and reads each transaction from public Polygon servers. It never talks to Saakshi, and the contract address is fixed in the page, so a forged receipt fails.
 - **Section 63 certificate.** One tap prints the certificate the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and the verify QR code.
+- **Court packet.** A complaint from Sahayak prints as one document: the complaint, the Section 63 certificate with a hash report for every sealed item it lists, and where to get free legal help.
 
 ### Beyond the night itself
 - **Journal and photo vault.** Dated entries and photos of injuries or messages, encrypted and sealed like recordings.
 - **Guardians on Telegram.** Trusted people link through the Saakshi Guardian bot. When she starts an SOS they get her live location after the 10-second undo, at once if the duress PIN is used, and a warning if her phone goes silent.
 - **Moving to a new phone.** If her phone is lost, broken or taken, a new phone shows a six-digit code. She reads it to her guardians, who send it to the bot and approve. After two approvals (or her only guardian’s), every other device is signed out of her account, the new phone signs in with a single-use token, and her PIN opens her recordings there. Guardians vouch for her; they can never open anything.
-- **Sahayak, legal help in her language.** She asks in Bengali, Hindi, English or a mix, typed or spoken, and can have the answer read aloud in her language (Sarvam’s Bulbul voice). Answers may cite only ids from a checked list of 27 sections and 8 helplines (`web/lib/law.ts`), and the law cards show our text, never the model’s. Sahayak drafts:
+- **Sahayak, legal help in her language.** She asks in any of 11 languages (English, Bengali, Hindi, Marathi, Telugu, Tamil, Gujarati, Kannada, Malayalam, Odia, Punjabi) or a mix, typed or spoken, and can have the answer read aloud in that language (Sarvam’s Bulbul voice). Answers may cite only ids from a checked list of 27 sections and 8 helplines (`web/lib/law.ts`), and the law cards show our text, never the model’s. Sahayak drafts:
   - an FIR request to any police station (a Zero FIR);
   - an application to a Protection Officer under the Domestic Violence Act;
   - a complaint to the Internal Committee at her workplace (POSH);
   - a takedown request to the platform under Rule 3(2)(b) of the IT Rules, 2021;
   - the text for cybercrime.gov.in.
 
-  Each draft can list her sealed evidence.
-- **Bengali, Hindi and English** throughout the app.
+  Each draft can list her sealed evidence. If she chooses, Sahayak also reads her journal entries on the phone and sets out the incidents in order, with the dates she wrote them.
+- **Bengali, Hindi and English** throughout the app; Sahayak goes further, as above.
 
 ## How the encryption works
 Each woman has an ECDH P-256 key pair.
@@ -58,15 +60,17 @@ Sahayak tries models in order and moves on when one is busy or slow:
 
 `SAHAYAK_MODELS` reorders or limits them without a deploy. Every answer must fit a JSON schema whose law and helpline fields accept only our ids.
 
-`eval/` holds 15 situations, each asked in Bengali, Hindi and English. An answer passes if it cites an expected law, is in the right language and flags danger when there is danger. Each provider was run on its own:
+`eval/` holds 15 situations, each asked in Bengali, Hindi and English; five of them are also asked in the other eight languages. An answer passes if it cites an expected law, is in the right language and flags danger when there is danger. Each provider was run on its own:
 
 | Model | Passed | Median time |
 |---|---|---|
-| Gemma 4 31B (Adaption) | 45/45 | 3.4 s |
+| Gemma 4 31B (Adaption) | 45/45 | 3.7 s |
 | Gemini (Flash and Flash-Lite) | 45/45 | 6.6 s |
 | Sarvam-105B | 44/45 | 1.3 s |
 
-Run it against a running app with `node eval/run.mjs <base-url>`.
+In the other eight languages, the five situations (40 questions, including the danger case in each) passed 40/40, almost all answered by Gemma 4 through Adaption (`eval/results-indic.json`).
+
+Run it against a running app with `node eval/run.mjs <base-url> [langs]`.
 
 ## Repository
 | Path | What |

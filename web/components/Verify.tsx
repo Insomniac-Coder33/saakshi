@@ -5,7 +5,7 @@
 // pieces it was sealed as, and every piece's Merkle proof and Polygon transaction is checked against
 // the chain directly. Our server only says where to look; it is never trusted for the answer.
 import { useCallback, useEffect, useState } from "react";
-import { ANCHOR_ADDRESS, CHAIN_NAME, EXPLORER, findAnchor, SOURCE_URL, txUrl, type OnChainSeal } from "@/lib/chain";
+import { ANCHOR_ADDRESS, CHAIN_ID, CHAIN_NAME, EXPLORER, findAnchor, SOURCE_URL, txUrl, type OnChainSeal } from "@/lib/chain";
 import { leafOf, rootFromProof, sha256Of } from "@/lib/merkle";
 import { shortHash } from "@/lib/recordings";
 
@@ -36,7 +36,22 @@ type Outcome =
       sealedBy: Date | null;
       maxDelayS: number | null;
       txs: { hash: string; block: number; at: Date }[];
+      receipt: Receipt | null; // once every piece is sealed
     };
+
+// Everything public needed to check this file again later without our server: the offline checker
+// (public/verify-offline.html) re-hashes the file, climbs each proof and reads each transaction itself.
+interface Receipt {
+  format: "saakshi-proof";
+  version: 1;
+  chainId: number;
+  contract: string;
+  match: "file" | "piece";
+  file: { name?: string; sha256: string; size: number | null };
+  pieces: { seq: number; size: number; sha256: string; salt: string; capturedAt: string; root: string; proof: string[]; tx: string }[];
+  savedAt: string;
+  checkWith: string;
+}
 
 interface Check {
   id: string;
@@ -86,15 +101,41 @@ async function verify(hash: string, bytes: ArrayBuffer | null): Promise<Outcome>
     delays.push((onChain.timestamp.getTime() - Date.parse(p.capturedAt)) / 1000);
   }
   const sealedTimes = [...txs.values()].map((t) => t.at.getTime());
+  const all = sealedPieces === body.pieces.length;
   return {
-    kind: sealedPieces === body.pieces.length ? "sealed" : "partial",
+    kind: all ? "sealed" : "partial",
     pieces: body.pieces.length,
     sealedPieces,
     recordedAt: new Date(body.pieces[0].capturedAt),
     sealedBy: sealedTimes.length ? new Date(Math.max(...sealedTimes)) : null,
     maxDelayS: delays.length ? Math.max(0, Math.round(Math.max(...delays))) : null,
     txs: [...txs.values()].sort((a, b) => a.block - b.block),
+    receipt: all
+      ? {
+          format: "saakshi-proof",
+          version: 1,
+          chainId: CHAIN_ID,
+          contract: ANCHOR_ADDRESS.toLowerCase(),
+          match: body.match,
+          file: { sha256: hash, size: bytes?.byteLength ?? body.file?.size ?? null },
+          pieces: body.pieces.map((p) => ({ seq: p.seq, size: p.size, sha256: p.sha256, salt: p.salt, capturedAt: p.capturedAt, root: p.seal!.root, proof: p.seal!.proof, tx: p.seal!.tx! })),
+          savedAt: new Date().toISOString(),
+          checkWith: `${location.origin}${OFFLINE}`,
+        }
+      : null,
   };
+}
+
+const OFFLINE = "/verify-offline.html";
+
+function saveReceipt(receipt: Receipt, name: string | null) {
+  const file = name ?? `${receipt.file.sha256.slice(0, 16)}`;
+  const blob = new Blob([JSON.stringify({ ...receipt, file: { ...receipt.file, name: name ?? undefined } }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${file}.proof.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
 }
 
 export function Verify() {
@@ -248,7 +289,7 @@ function Result({ check }: { check: Check }) {
         <p className="text-[17px] font-medium leading-snug [overflow-wrap:anywhere]">{title}</p>
         {check.name && <p className="mt-1 font-mono text-[13px] text-muted">{shortHash(check.hash)}</p>}
         <div className="mt-2 text-[13px] leading-relaxed text-muted">
-          <Meta o={o} />
+          <Meta o={o} name={check.name} />
         </div>
       </div>
       <span
@@ -265,7 +306,7 @@ function Result({ check }: { check: Check }) {
   );
 }
 
-function Meta({ o }: { o: Outcome }) {
+function Meta({ o, name }: { o: Outcome; name: string | null }) {
   switch (o.kind) {
     case "checking":
       return <>Checking the fingerprint and its seal on {CHAIN_NAME}…</>;
@@ -299,6 +340,18 @@ function Meta({ o }: { o: Outcome }) {
               ))}
             </span>
           )}
+          {o.receipt && (
+            <span className="mt-2 block">
+              <button type="button" onClick={() => saveReceipt(o.receipt!, name)} className="font-medium text-rani underline underline-offset-2">
+                Save its proof receipt
+              </button>{" "}
+              to check it later with the{" "}
+              <a href={OFFLINE} className="underline underline-offset-2 hover:text-ink">
+                offline checker
+              </a>
+              , without Saakshi.
+            </span>
+          )}
         </>
       );
   }
@@ -327,6 +380,21 @@ function HowItWorks() {
         <li>This page splits your file back into those pieces, re-hashes each one, and checks its proof against the root.</li>
         <li>It then reads the transaction from the blockchain itself, so the answer doesn’t depend on trusting Saakshi’s servers.</li>
       </ol>
+      <p className="mt-4">
+        To check without Saakshi at all, save a file’s proof receipt here once, then use the{" "}
+        <a href={OFFLINE} download className="text-rani underline underline-offset-2">
+          offline checker
+        </a>
+        : a single page you can keep, which talks only to public Polygon servers. Try it with the{" "}
+        <a href={SAMPLE} download className="text-rani underline underline-offset-2">
+          sample
+        </a>{" "}
+        and{" "}
+        <a href={`${SAMPLE}.proof.json`} download className="text-rani underline underline-offset-2">
+          its receipt
+        </a>
+        .
+      </p>
     </details>
   );
 }

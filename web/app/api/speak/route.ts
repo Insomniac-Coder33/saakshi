@@ -1,13 +1,12 @@
 // Reads one of Sahayak's answers aloud. Signed in as her; each listen counts towards Sahayak's daily
 // allowance, so the voice can't be run up by anyone.
 import { adminClient } from "@/lib/admin";
-import type { Language } from "@/lib/local";
 import { speak, speechReady } from "@/lib/speech";
+import { isTongue } from "@/lib/tongues";
 
 export const maxDuration = 30;
 
 const DAILY_LIMIT = 80;
-const LANGS: Language[] = ["en", "bn", "hi"];
 
 export async function POST(request: Request) {
   if (!speechReady()) return Response.json({ error: "not configured" }, { status: 503 });
@@ -18,7 +17,7 @@ export async function POST(request: Request) {
   if (error || !auth.user) return Response.json({ error: "invalid token" }, { status: 401 });
 
   const body = (await request.json().catch(() => ({}))) as { lang?: string; text?: string };
-  const lang = LANGS.includes(body.lang as Language) ? (body.lang as Language) : "en";
+  const lang = isTongue(body.lang) ? body.lang : "en";
   const text = typeof body.text === "string" ? body.text.trim().slice(0, 3000) : "";
   if (!text) return Response.json({ error: "nothing to read" }, { status: 400 });
 

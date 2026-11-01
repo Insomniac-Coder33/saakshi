@@ -21,11 +21,7 @@ export function downloadBlob(blob: Blob, name: string) {
 }
 
 /** 20261026-2147, for file names. */
-export function fileStamp(iso: string): string {
-  const d = new Date(iso);
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
-}
+export { fileStamp } from "@/lib/recordings";
 
 export function ProofPanel({
   lang,

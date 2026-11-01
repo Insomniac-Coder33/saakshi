@@ -57,7 +57,7 @@ export function Vault(props: VaultProps) {
   };
   if (view === "settings") return <Settings {...props} onBack={() => setView("home")} />;
   if (view === "write") return <JournalCompose setup={setup} onDone={home} />;
-  if (view === "sahayak") return <Sahayak setup={setup} onBack={home} />;
+  if (view === "sahayak") return <Sahayak setup={setup} privateKey={privateKey} onBack={home} />;
   if (typeof view === "object" && "photo" in view) return <PhotoCompose setup={setup} file={view.photo} url={view.url} onDone={home} />;
   if (typeof view === "object" && "item" in view) return <EvidenceItem setup={setup} session={view.item} privateKey={privateKey} onBack={home} />;
   if (typeof view === "object") {
