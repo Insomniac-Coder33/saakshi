@@ -15,6 +15,7 @@ import { Story } from "@/components/site/Story";
 import { Bead, Key } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
 import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
+import { TONGUES, type Tongue } from "@/lib/tongues";
 
 export const metadata: Metadata = {
   title: "Saakshi · A witness that never looks away",
@@ -30,12 +31,19 @@ export default async function Site() {
     errorCorrectionLevel: "M",
     color: { dark: "#1d1419", light: "#0000" },
   });
+  // For a judge at a computer: the same live demo, on the phone in their pocket.
+  const demoQr = await QRCode.toString(`${APP_ORIGIN}/?demo`, {
+    type: "svg",
+    margin: 0,
+    errorCorrectionLevel: "M",
+    color: { dark: "#1d1419", light: "#0000" },
+  });
 
   return (
     <div className="bg-plum-night text-white">
       <SmoothScroll />
       <Header />
-      <Hero />
+      <Hero demoQr={demoQr} />
       <Problem />
       <section id="story" className="mx-auto max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
         <Eyebrow>How it works</Eyebrow>
@@ -47,6 +55,7 @@ export default async function Site() {
       <Proof />
       <Beyond />
       <UnderTheHood />
+      <Tested />
       <Limits />
       <Questions />
       <Built />
@@ -72,7 +81,7 @@ function Title({ eyebrow, children, className = "" }: { eyebrow: string; childre
 
 // Centred, like a title card: the third eye opens, then the promise, then the live app lit from behind,
 // between two of its real screens. Each part waits its turn (the `opening` utilities), once, on load.
-function Hero() {
+function Hero({ demoQr }: { demoQr: string }) {
   return (
     <section id="top" className="grain relative overflow-hidden pt-[76px]">
       <div
@@ -105,13 +114,22 @@ function Hero() {
         </div>
         <SideScreen src="/site/proof.webp" tone="light" />
       </div>
-      <p style={{ animationDelay: "2.5s" }} className="opening relative mx-auto max-w-[34rem] px-6 pb-24 pt-8 text-center text-[14px] leading-[1.9] text-on-dark-muted">
+      <p style={{ animationDelay: "2.5s" }} className="opening relative mx-auto max-w-[34rem] px-6 pt-8 text-center text-[14px] leading-[1.9] text-on-dark-muted max-lg:pb-24">
         It’s a working calculator. Type{" "}
         <span className="whitespace-nowrap">
           <Key>{DEMO_PIN}</Key> then <Key>=</Key>
         </span>{" "}
         to open Saakshi, or tap the display three times for a silent SOS. Duress PIN <Key>{DEMO_DURESS_PIN}</Key>.
       </p>
+      {/* On a computer only: on a phone, she's already holding it. */}
+      <div style={{ animationDelay: "2.65s" }} className="opening relative mx-auto hidden w-fit items-center gap-4 pb-24 pt-6 lg:flex">
+        <div className="size-[76px] rounded-[14px] bg-white p-2 [&>svg]:size-full" role="img" aria-label="QR code to open this demo on a phone" dangerouslySetInnerHTML={{ __html: demoQr }} />
+        <p className="text-left text-[14px] leading-snug text-on-dark-muted">
+          <span className="text-white">Try it on your phone.</span>
+          <br />
+          Scan to open this demo there, with the same PINs.
+        </p>
+      </div>
     </section>
   );
 }
@@ -243,7 +261,7 @@ function Beyond() {
   const items = [
     {
       title: "Sahayak, her rights in her language",
-      body: "Ask in Bengali, Hindi, English or eight more Indian languages, typed or spoken, and hear the answer read aloud. Answers cite only a fixed list of 27 sections and 8 helplines under BNS, BNSS, the DV Act, POSH, POCSO and the IT Act. Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee, and the takedown request for the platform. Running on Gemma 4 through Adaption, it named a correct law for all 85 of our test questions, in 11 languages.",
+      body: "Ask in Bengali, Hindi, English or eight more Indian languages, typed or spoken, and hear the answer read aloud. Answers cite only a fixed list of 27 sections and 8 helplines under BNS, BNSS, the DV Act, POSH, POCSO and the IT Act. Sahayak drafts the complaint for the police, a Protection Officer or the workplace committee, and the takedown request for the platform. Running on Gemma 4 through Adaption, with Sarvam behind it, it named a correct law for all 85 of our test questions, in 11 languages.",
     },
     {
       title: "Guardians who know at once",
@@ -336,6 +354,60 @@ function UnderTheHood() {
           </a>{" "}
           as an exact match.
         </p>
+      </div>
+    </section>
+  );
+}
+
+// The numbers come from eval/results-adaption.json and eval/results-indic.json (run 1 Nov 2026)
+// and from `npm test`. Change them when those change.
+const EVAL_RUN = "1 Nov 2026";
+const ASKED: Partial<Record<Tongue, number>> = { en: 15, bn: 15, hi: 15 };
+
+function Tested() {
+  const stats = [
+    { n: "85/85", label: "questions where Sahayak named a correct law, answered in the language she asked in, and flagged danger when there was danger." },
+    { n: "11/11", label: "questions describing danger marked urgent, at least one in every language." },
+    { n: "3.7 s", label: "median time to an answer in English, Bengali and Hindi, on Gemma 4 through Adaption." },
+    { n: "33", label: "unit tests, among them the encryption, the Merkle proofs, the calculator and phone recovery. GitHub runs them, with type and lint checks, on every change." },
+  ];
+  return (
+    <section className="border-t border-white/10">
+      <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-24 md:px-10 md:py-32 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
+        <div>
+          <Title eyebrow="How we test it">Checked before it’s claimed.</Title>
+          <p className="reveal mt-6 max-w-[28rem] text-[16px] leading-[1.6] text-on-dark">
+            We wrote 15 situations a woman might bring to Sahayak, and ask each in English, Bengali and Hindi, and five of them in eight
+            more languages. A script checks every answer against the laws we listed for that situation. Gemma 4 answered 83 of the 85; Sarvam,
+            its backup, answered two. Last run {EVAL_RUN}.
+          </p>
+        </div>
+        <dl className="grid gap-x-10 gap-y-12 sm:grid-cols-2">
+          {stats.map((s) => (
+            <div key={s.n} className="reveal border-t border-white/15 pt-6">
+              <dt className="font-display text-[56px] leading-none">{s.n}</dt>
+              <dd className="mt-3 text-[15px] leading-snug text-on-dark">{s.label}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+      <div className="mx-auto max-w-[1200px] px-6 pb-24 md:px-10 md:pb-32">
+        <p className="label text-rani-bright!">Passed, by language</p>
+        <ul className="reveal mt-5 grid grid-cols-3 border-t border-white/15 sm:grid-cols-4 lg:grid-cols-11">
+          {TONGUES.map((t) => {
+            const n = ASKED[t.id] ?? 5;
+            return (
+              <li key={t.id} className="border-b border-white/10 py-4 pr-3">
+                <p lang={t.id} className="text-[16px] text-white">
+                  {t.label}
+                </p>
+                <p className="mt-1 font-display text-[24px] leading-none text-on-dark">
+                  {n}/{n}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

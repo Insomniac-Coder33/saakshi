@@ -79,6 +79,7 @@ Run it against a running app with `node eval/run.mjs <base-url> [langs]`.
 | `contracts/` | `EvidenceAnchor.sol` and its solc-js deploy script. `deployment.json` holds the address, ABI and compiler metadata. |
 | `supabase/migrations/` | Schema, row-level security, audit triggers, the private evidence bucket and the sealing job |
 | `supabase/migrate.mjs` | Applies migrations in order (`node supabase/migrate.mjs`) |
+| `.github/workflows/` | Type, lint and unit-test checks on every push |
 | `eval/` | Sahayak’s evaluation set, runner and each model’s results |
 | `brand/` | Design system and UI kit (`screens.html`) that the app matches |
 | `round1/` | Round 1 pitch deck |
@@ -88,7 +89,7 @@ Run it against a running app with `node eval/run.mjs <base-url> [langs]`.
 1. Put the values below in `.env.local` at the repo root (`SETUP.md` shows where to find the Supabase ones).
 2. Run `node supabase/migrate.mjs`.
 3. Run `cd web && npm install && npm run dev`.
-4. Run the tests with `npm test`.
+4. Run the tests with `npm test`. GitHub runs them on every push, with type and lint checks (`.github/workflows/ci.yml`).
 
 Camera, microphone, wake lock and service workers need HTTPS or `localhost`.
 
