@@ -4,11 +4,13 @@
 import type { Metadata } from "next";
 import QRCode from "qrcode";
 import type { ReactNode } from "react";
+import { Fingerprint } from "@/components/site/Fingerprint";
 import { Header } from "@/components/site/Header";
 import { LiveDemo } from "@/components/site/LiveDemo";
 import { LiveStats } from "@/components/site/LiveStats";
 import { OpeningEye } from "@/components/site/OpeningEye";
 import { Phone, Screenshot } from "@/components/site/Phone";
+import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { Story } from "@/components/site/Story";
 import { Bead, Key } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
@@ -31,6 +33,7 @@ export default async function Site() {
 
   return (
     <div className="bg-plum-night text-white">
+      <SmoothScroll />
       <Header />
       <Hero />
       <Problem />
@@ -45,6 +48,7 @@ export default async function Site() {
       <Beyond />
       <UnderTheHood />
       <Limits />
+      <Questions />
       <Built />
       <Install qr={installQr} />
       <Footer />
@@ -172,8 +176,12 @@ function Proof() {
           </p>
         </div>
 
+        <div className="reveal mt-16">
+          <Fingerprint />
+        </div>
+
         {/* What the Verify page says about its sample recording and the same file with one byte flipped, set in type. */}
-        <div className="reveal mt-16 grid gap-5 md:grid-cols-2">
+        <div className="reveal mt-20 grid gap-5 md:grid-cols-2">
           <Result
             name="recording-20261031-1246.webm"
             hash="e8db1524 … 653bed5d"
@@ -357,6 +365,61 @@ function Limits() {
   );
 }
 
+// What people ask first, answered as plainly as the limits above. Native <details>: keyboard and
+// screen readers get it for free, and it opens with no script at all.
+function Questions() {
+  const items = [
+    [
+      "Can Saakshi see her recordings?",
+      "No. Each piece is encrypted on her phone before it leaves, with a key only her PIN unlocks. Our servers hold scrambled data, fingerprints and a locked copy of her key. Nobody here can play a single second.",
+    ],
+    [
+      "What if he takes her phone?",
+      "He can stop the recording, not undo it. Every five seconds, what was recorded has already left the phone. Her guardians see her live location, and are told if the phone goes quiet.",
+    ],
+    [
+      "What if he knows her PIN?",
+      "Then he can open the vault, as she can. That is why there is a second PIN: typed under pressure, it looks like everything stopped, while recording carries on and her guardians are told she may not be able to talk.",
+    ],
+    [
+      "Does a seal prove what happened?",
+      "No. It proves the file hasn’t changed by a single byte since a moment fixed on Polygon. What the file shows is for the police and a court to weigh.",
+    ],
+    [
+      "Will a court accept it?",
+      "Electronic records are admissible with a certificate under Section 63 of the Bharatiya Sakshya Adhiniyam, 2023. Saakshi fills one in from its seal records; she completes and signs it. Whether any evidence is accepted is for the court.",
+    ],
+    [
+      "Does it work without internet?",
+      "Recording does. Pieces wait on the phone, encrypted, and upload the moment there is a signal. Sealing and guardian alerts need a connection.",
+    ],
+    [
+      "Does it cost her anything?",
+      "No. She never needs a wallet or crypto: Saakshi pays for every seal. Sahayak and guardian alerts are free too.",
+    ],
+  ];
+  return (
+    <section className="border-t border-white/10">
+      <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-24 md:px-10 md:py-32 lg:grid-cols-[1fr_1.6fr] lg:gap-20">
+        <Title eyebrow="Questions" className="lg:sticky lg:top-16 lg:self-start">What people ask first.</Title>
+        <div className="border-b border-white/15">
+          {items.map(([q, a]) => (
+            <details key={q} className="faq group border-t border-white/15">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-display text-[24px] leading-tight md:text-[28px] [&::-webkit-details-marker]:hidden">
+                {q}
+                <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden className="flex-none fill-none stroke-rani-bright transition-transform duration-300 [stroke-linecap:round] [stroke-width:1.6] group-open:rotate-45">
+                  <path d="M9 3v12M3 9h12" />
+                </svg>
+              </summary>
+              <p className="max-w-[40rem] pb-7 text-[16px] leading-[1.6] text-on-dark">{a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Built() {
   const days = [
     { d: "19 Oct", t: "The idea, the research and the Round 1 pitch." },
@@ -366,7 +429,8 @@ function Built() {
     { d: "28–29 Oct", t: "Sahayak: legal help, complaints and takedown requests in Bengali, Hindi and English, typed or spoken, on Gemma 4 through Adaption. Tested on 45 questions." },
     { d: "30–31 Oct", t: "A sealed sample anyone can check on the Verify page. Moving to a new phone with her guardians’ approval. Sahayak reads its answers aloud." },
     { d: "1 Nov", t: "Sahayak in eight more Indian languages. The court packet: her complaint, dated from her journal, with the evidence certificate. An offline checker that never talks to Saakshi." },
-    { d: "Next", t: "The Android app, so recording carries on with the screen locked.", planned: true },
+    { d: "2 Nov", t: "Edge cases closed: an SOS cut off by a restart, browsers that can’t record, opening offline. The first Android build, disguised as a calculator." },
+    { d: "Next", t: "The Android app on real phones, so recording carries on with the screen locked.", planned: true },
   ];
   return (
     <section className="border-t border-white/10">

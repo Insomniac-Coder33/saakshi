@@ -173,3 +173,12 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Showcase FAQ: answers open smoothly where the browser can animate to auto height; elsewhere they simply open. */
+:root { interpolate-size: allow-keywords; }
+.faq::details-content {
+  height: 0;
+  overflow: clip;
+  transition: height 0.35s var(--ease-calm), content-visibility 0.35s allow-discrete;
+}
+.faq[open]::details-content { height: auto; }
