@@ -14,8 +14,24 @@ export function Guardians({ lang }: { lang: Language }) {
   const [busy, setBusy] = useState(false);
   const [tested, setTested] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [offline, setOffline] = useState(false);
 
-  const refresh = useCallback(() => listGuardians().then(setList, () => setList([])), []);
+  // Offline, keep whatever list we had, and say so instead of showing "no guardians".
+  const refresh = useCallback(
+    () =>
+      listGuardians().then(
+        (l) => {
+          setList(l);
+          setOffline(false);
+        },
+        () => {
+          setList((l) => l ?? []);
+          setOffline(true);
+        },
+      ),
+    [],
+  );
+  const attempt = (fn: () => Promise<unknown>) => fn().then(refresh, () => setOffline(true));
   useEffect(() => {
     refresh();
   }, [refresh]);
@@ -51,7 +67,7 @@ export function Guardians({ lang }: { lang: Language }) {
         <div className="mt-4 h-16 animate-pulse rounded-card bg-blush" />
       ) : (
         <ul className="mt-3 border-t border-hairline">
-          {linked.length === 0 && pending.length === 0 && <li className="py-4 text-body-sm text-muted">{tr("guardianNone")}</li>}
+          {linked.length === 0 && pending.length === 0 && !offline && <li className="py-4 text-body-sm text-muted">{tr("guardianNone")}</li>}
           {linked.map((g) => (
             <li key={g.id} className="flex items-center gap-3 border-b border-hairline py-3.5">
               <span className="flex size-10 items-center justify-center rounded-full bg-blush font-display text-[20px] text-rani">
@@ -63,7 +79,7 @@ export function Guardians({ lang }: { lang: Language }) {
                   {tr("guardianLinked", { date: new Date(g.linkedAt!).toLocaleDateString(LOCALE[lang], { day: "numeric", month: "short" }) })}
                 </span>
               </span>
-              <button type="button" onClick={() => removeGuardian(g.id).then(refresh)} className="h-11 px-2 text-caption text-rani">
+              <button type="button" onClick={() => void attempt(() => removeGuardian(g.id))} className="h-11 px-2 text-caption text-rani">
                 {tr("guardianRemove")}
               </button>
             </li>
@@ -74,7 +90,7 @@ export function Guardians({ lang }: { lang: Language }) {
               <p className="mt-2 break-all rounded-xl bg-blush px-3 py-2 font-mono text-caption">{inviteLink(g.token)}</p>
               <div className="mt-3 flex gap-2.5">
                 <Button onClick={() => void share(g)}>{copied === g.id ? tr("linkCopied") : tr("guardianShare")}</Button>
-                <Button variant="ghost" className="w-auto shrink-0" onClick={() => removeGuardian(g.id).then(refresh)}>
+                <Button variant="ghost" className="w-auto shrink-0" onClick={() => void attempt(() => removeGuardian(g.id))}>
                   {tr("cancel")}
                 </Button>
               </div>
@@ -86,6 +102,11 @@ export function Guardians({ lang }: { lang: Language }) {
           ))}
         </ul>
       )}
+      {offline && (
+        <p role="alert" className="mt-3 text-body-sm text-rani">
+          {tr("offline")}
+        </p>
+      )}
       <div className="mt-4 flex flex-col gap-2.5">
         {pending.length === 0 && (
           <Button
@@ -93,12 +114,8 @@ export function Guardians({ lang }: { lang: Language }) {
             disabled={busy || list === null}
             onClick={async () => {
               setBusy(true);
-              try {
-                await inviteGuardian();
-                await refresh();
-              } finally {
-                setBusy(false);
-              }
+              await attempt(inviteGuardian);
+              setBusy(false);
             }}
           >
             {tr("guardianAdd")}
@@ -110,6 +127,7 @@ export function Guardians({ lang }: { lang: Language }) {
             disabled={tested}
             onClick={async () => {
               if (await sendAlert("test")) setTested(true);
+              else setOffline(true);
             }}
           >
             {tested ? tr("guardianTestSent") : tr("guardianTest")}

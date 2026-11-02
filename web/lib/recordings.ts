@@ -174,6 +174,21 @@ export async function registerFile(sessionId: string, segment: number, file: Blo
   return sha256;
 }
 
+/**
+ * An SOS whose page was closed or reloaded mid-recording stays "active", and its guardians are told
+ * her phone went quiet. Only her own PIN ends it: whoever reopens the calculator could be him.
+ */
+export async function endInterruptedSessions(): Promise<void> {
+  const stale = (await localSessions()).filter((s) => s.kind === "sos" && s.status === "active");
+  if (!stale.length) return;
+  const queued = await outbox();
+  for (const s of stale) {
+    const last = queued.filter((q) => q.sessionId === s.id).map((q) => q.capturedAt).sort().at(-1);
+    await putSession({ ...s, status: "ended", endedAt: last ?? new Date().toISOString(), dirty: true });
+  }
+  void drain();
+}
+
 /** Erasure of one recording: marked here at once, removed from the server on the next sync. */
 export async function deleteRecording(sessionId: string): Promise<void> {
   const s = await getSession(sessionId);

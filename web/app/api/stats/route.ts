@@ -3,15 +3,28 @@
 import { adminClient } from "@/lib/admin";
 
 export async function GET() {
-  const { data, error } = await adminClient()
-    .from("seals")
-    .select("leaf_count, tx_hash, block_number, anchored_at")
-    .eq("status", "confirmed")
-    .order("id", { ascending: false });
-  if (error) return Response.json({ error: "unavailable" }, { status: 503 });
-  const latest = data[0];
+  const db = adminClient();
+  // Pieces are counted from the seals themselves: an erased account's pieces are gone from our tables,
+  // but their seals stand on-chain. A select returns at most 1,000 rows, so read them page by page.
+  const PAGE = 1000;
+  let seals = 0;
+  let piecesSealed = 0;
+  let latest: { tx_hash: string | null; block_number: number | null; anchored_at: string | null } | undefined;
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await db
+      .from("seals")
+      .select("leaf_count, tx_hash, block_number, anchored_at")
+      .eq("status", "confirmed")
+      .order("id", { ascending: false })
+      .range(from, from + PAGE - 1);
+    if (error) return Response.json({ error: "unavailable" }, { status: 503 });
+    latest ??= data[0];
+    seals += data.length;
+    piecesSealed += data.reduce((n, s) => n + s.leaf_count, 0);
+    if (data.length < PAGE) break;
+  }
   // How long a piece waits between reaching us and its block: the median over recent sealed pieces.
-  const { data: waits } = await adminClient()
+  const { data: waits } = await db
     .from("pieces")
     .select("received_at, seals!inner(anchored_at, status)")
     .eq("seals.status", "confirmed")
@@ -26,8 +39,8 @@ export async function GET() {
     .sort((a, b) => a - b);
   return Response.json(
     {
-      seals: data.length,
-      piecesSealed: data.reduce((n, s) => n + s.leaf_count, 0),
+      seals,
+      piecesSealed,
       medianSealSeconds: secs.length ? Math.round(secs[Math.floor(secs.length / 2)]) : null,
       latest: latest ? { tx: latest.tx_hash, block: latest.block_number, at: latest.anchored_at } : null,
     },

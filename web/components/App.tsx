@@ -7,7 +7,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Capture, type CaptureStatus } from "@/lib/capture";
 import { listGuardians, sendAlert } from "@/lib/guardians";
-import { getSetup, outbox, type DeviceSetup } from "@/lib/local";
+import { clearDevice, getSetup, outbox, type DeviceSetup } from "@/lib/local";
+import { endInterruptedSessions } from "@/lib/recordings";
 import { checkPin, createSetup } from "@/lib/setup";
 import { DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
 import { onSynced, startBackgroundSync } from "@/lib/sync";
@@ -184,6 +185,7 @@ export function App() {
       const result = await checkPin(setup, pin);
       if (result.kind === "vault") {
         if (capture.current) await stopCapture("ended");
+        void endInterruptedSessions();
         setPrivateKey(result.privateKey);
         setPhase("vault");
         return true;
@@ -246,8 +248,10 @@ export function App() {
         onStartSos={() => void startSos()}
         onStopCapture={() => void stopCapture("ended")}
         onSetupChange={setSetup}
-        onErased={() => {
-          void stopCapture("undone");
+        onErased={async () => {
+          // The account is gone; stop recording before this phone is wiped, so nothing is written back.
+          await stopCapture("undone");
+          await clearDevice();
           setPrivateKey(null);
           setSetup(null);
           setPhase("onboarding");

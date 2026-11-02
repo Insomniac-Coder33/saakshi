@@ -40,7 +40,7 @@ export function Settings({ setup, privateKey, onSetupChange, onErased, onBack }:
       setDone(panel);
       open(null);
     } catch {
-      setError("needsNetwork");
+      setError("offline");
     } finally {
       setBusy(false);
     }

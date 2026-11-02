@@ -13,10 +13,16 @@ export async function POST(request: Request) {
   if (error || !data.user) return Response.json({ error: "invalid token" }, { status: 401 });
 
   const uid = data.user.id;
-  const { data: folders } = await admin.storage.from("evidence").list(uid, { limit: 1000 });
+  const bucket = admin.storage.from("evidence");
+  // A listing returns at most 1,000 names and an hour-long SOS holds more, so empty each folder page by page.
+  const { data: folders } = await bucket.list(uid, { limit: 1000 });
   for (const folder of folders ?? []) {
-    const { data: files } = await admin.storage.from("evidence").list(`${uid}/${folder.name}`, { limit: 1000 });
-    if (files?.length) await admin.storage.from("evidence").remove(files.map((f) => `${uid}/${folder.name}/${f.name}`));
+    for (let page = 0; page < 100; page++) {
+      const { data: files } = await bucket.list(`${uid}/${folder.name}`, { limit: 1000 });
+      if (!files?.length) break;
+      const { error: removeError } = await bucket.remove(files.map((f) => `${uid}/${folder.name}/${f.name}`));
+      if (removeError) return Response.json({ error: "erase failed" }, { status: 500 });
+    }
   }
   const del = await admin.auth.admin.deleteUser(uid);
   if (del.error) return Response.json({ error: "delete failed" }, { status: 500 });

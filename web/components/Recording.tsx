@@ -187,7 +187,7 @@ export function Recording({
       </div>
 
       {urls.length > 1 && (
-        <div className="mt-3 flex gap-2" lang={lang}>
+        <div className="mt-3 flex flex-wrap gap-2" lang={lang}>
           {urls.map((u, i) => (
             <button
               key={u}

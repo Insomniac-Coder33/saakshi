@@ -35,6 +35,20 @@ function pickType(candidates: string[]): string | undefined {
   return candidates.find((t) => typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(t));
 }
 
+/** A recorder for the stream, or null where the browser has none or refuses every format we ask for. */
+function makeRecorder(stream: MediaStream, mimeType: string | undefined): MediaRecorder | null {
+  if (typeof MediaRecorder === "undefined") return null;
+  const bitrates = { videoBitsPerSecond: 500_000, audioBitsPerSecond: 48_000 };
+  for (const options of [{ mimeType, ...bitrates }, bitrates, {}]) {
+    try {
+      return new MediaRecorder(stream, options);
+    } catch {
+      // Try with fewer demands.
+    }
+  }
+  return null;
+}
+
 async function openStream(): Promise<{ stream: MediaStream | null; mode: CaptureMode }> {
   const md = navigator.mediaDevices;
   if (!md?.getUserMedia) return { stream: null, mode: "location-only" };
@@ -153,7 +167,15 @@ export class Capture {
       return;
     }
     const mimeType = pickType(mode === "video" ? VIDEO_TYPES : AUDIO_TYPES);
-    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 500_000, audioBitsPerSecond: 48_000 });
+    const recorder = makeRecorder(stream, mimeType);
+    if (!recorder) {
+      // A browser that can open the camera but not record it: location is still worth sending.
+      stream.getTracks().forEach((t) => t.stop());
+      this.stream = null;
+      this.recorder = null;
+      this.status.mode = "location-only";
+      return;
+    }
     const segment = ++this.segment;
     this.session.mime ??= recorder.mimeType || mimeType || null;
     recorder.ondataavailable = (e) => {
@@ -164,7 +186,14 @@ export class Capture {
     stream.getTracks().forEach((t) => t.addEventListener("ended", () => void this.restart(), { once: true }));
     this.recorder = recorder;
     this.lastDataAt = Date.now();
-    recorder.start(PIECE_MS);
+    try {
+      recorder.start(PIECE_MS);
+    } catch {
+      stream.getTracks().forEach((t) => t.stop());
+      this.stream = null;
+      this.recorder = null;
+      this.status.mode = "location-only";
+    }
   }
 
   /** Finishes the current segment (keeping whatever it recorded) and starts a fresh one. */

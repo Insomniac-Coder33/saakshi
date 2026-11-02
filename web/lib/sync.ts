@@ -75,9 +75,11 @@ async function discardRemote(s: LocalSession): Promise<void> {
   const { data: user } = await sb.auth.getUser();
   if (!user.user) return;
   const folder = `${user.user.id}/${s.id}`;
-  const { data: files, error: listError } = await sb.storage.from(EVIDENCE_BUCKET).list(folder, { limit: 1000 });
-  if (listError) return;
-  if (files.length) {
+  // A listing returns at most 1,000 names; a long recording holds more, so empty the folder page by page.
+  for (let page = 0; ; page++) {
+    const { data: files, error: listError } = await sb.storage.from(EVIDENCE_BUCKET).list(folder, { limit: 1000 });
+    if (listError || page >= 100) return;
+    if (!files.length) break;
     const { error } = await sb.storage.from(EVIDENCE_BUCKET).remove(files.map((f) => `${folder}/${f.name}`));
     if (error) return;
   }

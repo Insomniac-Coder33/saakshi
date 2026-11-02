@@ -13,6 +13,8 @@ export const maxDuration = 60;
 
 const MIN_GAP_SECONDS = Number(process.env.SEAL_MIN_GAP_SECONDS ?? 30);
 const MAX_LEAVES = 4096;
+// A seal uses about 24k gas; the network wants gas limit × max fee in the wallet before it accepts one.
+const SEAL_GAS = BigInt(30_000);
 // Amoy rejects tips under 25 gwei, and ethers' default tip is 1 gwei.
 const MIN_TIP = BigInt(30e9);
 const ZERO = BigInt(0);
@@ -28,6 +30,15 @@ export async function POST() {
   const db = adminClient();
   const chain = provider();
   await recoverStuck(db, chain);
+
+  // A relayer that can't pay for a seal would build one, fail and put it back every minute. Say why instead;
+  // the pieces wait, safely stored, until it is topped up.
+  const wallet = new Wallet(process.env.RELAYER_PRIVATE_KEY, chain);
+  const [balance, fee] = await Promise.all([chain.getBalance(wallet.address), fees(chain)]).catch(() => [null, null] as const);
+  if (balance !== null && fee !== null && balance < fee.maxFeePerGas * SEAL_GAS) {
+    console.error(`[seal] relayer ${wallet.address} is low: ${balance} wei`);
+    return Response.json({ error: "relayer low", retryAfter: 300 }, { status: 503 });
+  }
 
   const { data: claimed, error: claimError } = await db.rpc("seal_claim", { min_gap_seconds: MIN_GAP_SECONDS });
   if (claimError) return Response.json({ error: "claim failed" }, { status: 500 });
@@ -56,7 +67,7 @@ export async function POST() {
     if (recordError) throw recordError;
     attempted = true; // from here on, space out the next try even if this one fails
 
-    const anchor = new Contract(ANCHOR_ADDRESS, ANCHOR_ABI, new Wallet(process.env.RELAYER_PRIVATE_KEY, chain));
+    const anchor = new Contract(ANCHOR_ADDRESS, ANCHOR_ABI, wallet);
     let txHash: string;
     try {
       const tx = await anchor.anchor(`0x${tree.root}`, rows.length, await fees(chain));

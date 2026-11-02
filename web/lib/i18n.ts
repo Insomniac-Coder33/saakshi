@@ -39,6 +39,7 @@ const en = {
   openCalculator: "Open the calculator",
   settingUp: "Setting up your keys…",
   needsNetwork: "Saakshi needs the internet once to set up. Check your connection and try again.",
+  offline: "No connection. Check your internet and try again.",
 
   // SOS
   rec: "REC",
@@ -368,6 +369,7 @@ const bn: Dict = {
   openCalculator: "ক্যালকুলেটর খোলো",
   settingUp: "তোমার চাবি তৈরি হচ্ছে…",
   needsNetwork: "সেট আপ করতে একবার ইন্টারনেট লাগবে। কানেকশন দেখে আবার চেষ্টা করো।",
+  offline: "কানেকশন নেই। ইন্টারনেট দেখে আবার চেষ্টা করো।",
   whisper: "তুমি একা নও",
   savedRow: "{n}টি অংশ এনক্রিপ্ট করে সেভ হয়েছে",
   sealedRow: "{n}টি পলিগনে সিল হয়েছে",
@@ -592,6 +594,7 @@ const hi: Dict = {
   openCalculator: "कैलकुलेटर खोलें",
   settingUp: "आपकी चाबियाँ बन रही हैं…",
   needsNetwork: "सेट अप के लिए एक बार इंटरनेट चाहिए। कनेक्शन देखकर फिर कोशिश करें।",
+  offline: "कनेक्शन नहीं है। इंटरनेट देखकर फिर कोशिश करें।",
   whisper: "तुम अकेली नहीं हो",
   savedRow: "{n} हिस्से एन्क्रिप्ट होकर सेव हुए",
   sealedRow: "{n} पॉलिगॉन पर सील हुए",
