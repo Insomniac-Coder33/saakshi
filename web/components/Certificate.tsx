@@ -70,6 +70,7 @@ export function Certificate({
   onBack: () => void;
 }) {
   const tr = (k: StringKey) => t(lang, k);
+  usePaper();
   return (
     <main className="min-h-dvh bg-blush print:bg-white">
       <header className="sticky top-0 z-10 mx-auto flex max-w-[860px] items-center gap-3 bg-blush/95 px-4 py-3 backdrop-blur print:hidden" lang={lang}>
@@ -88,6 +89,19 @@ export function Certificate({
       </div>
     </main>
   );
+}
+
+/**
+ * While paper is on screen, the app steps out of its phone frame (globals.css) and takes the whole
+ * window: a certificate is read and printed at full width.
+ */
+export function usePaper() {
+  useEffect(() => {
+    document.documentElement.dataset.paper = "";
+    return () => {
+      delete document.documentElement.dataset.paper;
+    };
+  }, []);
 }
 
 /** A sheet of paper on screen; on print, only what is on it. */

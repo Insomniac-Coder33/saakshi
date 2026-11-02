@@ -7,6 +7,7 @@ import { digits, LANGUAGES, t, type StringKey } from "@/lib/i18n";
 import type { DeviceSetup, Language } from "@/lib/local";
 import { completeRecovery, ownProfile, recoveryStatus, startRecovery, type RecoveryRequest, type RecoveryStatus, type RemoteProfile } from "@/lib/recover";
 import { createSetup, opensWith, restoreSetup } from "@/lib/setup";
+import { OpeningEye } from "./site/OpeningEye";
 import { BackIcon, Button, PinInput, RoundButton, Screen, Wordmark } from "./ui";
 
 type Step = "welcome" | "name" | "age" | "pin" | "duress" | "perms" | "ready" | "recover" | "code" | "recoverPin";
@@ -173,52 +174,66 @@ export function Onboarding({ onDone }: { onDone: (setup: DeviceSetup) => void })
   }
 
   const progress = ORDER.indexOf(step);
+  // Setup opens and closes in the dark, like the SOS screen and the showcase; the questions between are light.
+  const night = step === "welcome" || step === "ready";
 
   return (
-    <Screen tone={step === "welcome" || step === "ready" ? "blush" : "white"}>
-      <header className="flex h-14 items-center justify-between">
-        {step !== "welcome" && step !== "perms" && step !== "ready" && step !== "recoverPin" ? (
+    <Screen tone={night ? "night" : "white"}>
+      {night && (
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="opening-light absolute -top-40 left-1/2 size-[560px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(214_36_110/0.32),transparent)]" />
+          <div className="grain absolute inset-0" />
+        </div>
+      )}
+      <header className={`relative flex h-14 items-center ${night ? "justify-center" : "justify-between"}`}>
+        {night ? (
+          <Wordmark dark className="h-[22px] opacity-90" />
+        ) : step !== "perms" && step !== "recoverPin" ? (
           <RoundButton label={tr("back")} onClick={back}>
             <BackIcon />
           </RoundButton>
         ) : (
           <Wordmark />
         )}
-        <div className={`flex gap-1.5 ${progress < 0 ? "invisible" : ""}`} aria-hidden>
-          {ORDER.slice(1).map((s, i) => (
-            <i key={s} className={`h-1 w-5 rounded-full ${i < progress ? "bg-rani" : "bg-hairline"}`} />
-          ))}
-        </div>
+        {!night && (
+          <div className={`flex gap-1.5 ${progress < 0 ? "invisible" : ""}`} aria-hidden>
+            {ORDER.slice(1, -1).map((s, i) => (
+              <i key={s} className={`h-1 w-5 rounded-full transition-colors ${i < progress ? "bg-rani" : "bg-hairline"}`} />
+            ))}
+          </div>
+        )}
       </header>
 
-      <div key={step} className="flex flex-1 animate-rise flex-col" lang={lang}>
+      <div key={step} className={`relative flex flex-1 flex-col ${night ? "" : "animate-rise"}`} lang={lang}>
         {step === "welcome" && (
           <>
-            <div className="mt-[12vh]">
-              <img src="/brand/mark.svg" alt="" className="size-14" />
-              <h1 className="mt-6 font-display text-h1 leading-[1.05]">{tr("welcomeTitle")}</h1>
-              <p className="mt-4 text-body leading-relaxed text-muted">{tr("welcomeBody")}</p>
+            {/* A title card: the third eye opens (as on the showcase), then the promise, then the choice. */}
+            <div className="mt-[9vh] flex flex-col items-center text-center">
+              <OpeningEye className="size-[76px]" />
+              <h1 className="opening mt-9 font-display text-[44px] leading-[1.02] [animation-delay:1.6s]">{tr("welcomeTitle")}</h1>
+              <p className="opening mt-5 max-w-[21rem] text-body leading-relaxed text-on-dark [animation-delay:1.8s]">{tr("welcomeBody")}</p>
             </div>
-            <div className="mt-auto">
-              <p className="label">{tr("chooseLanguage")}</p>
-              <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="opening mt-auto pt-10 [animation-delay:2s]">
+              <p className="label text-center text-rani-bright!">{tr("chooseLanguage")}</p>
+              <div role="radiogroup" aria-label={tr("chooseLanguage")} className="mt-3 grid grid-cols-3 rounded-full bg-white/[0.07] p-1 ring-1 ring-white/10">
                 {LANGUAGES.map((l) => (
                   <button
                     key={l.id}
                     type="button"
+                    role="radio"
                     lang={l.id}
                     onClick={() => setLang(l.id)}
-                    aria-pressed={lang === l.id}
-                    className={`h-14 rounded-full border text-[16px] ${lang === l.id ? "border-rani bg-rani text-white" : "border-blush-line bg-white"}`}
+                    aria-checked={lang === l.id}
+                    className={`h-12 rounded-full text-[16px] transition-colors duration-200 ${lang === l.id ? "bg-white font-medium text-ink" : "text-on-dark active:bg-white/10"}`}
                   >
                     {l.label}
                   </button>
                 ))}
               </div>
-              <Button className="mt-4" onClick={() => go("name")}>
+              <Button className="mt-5" onClick={() => go("name")}>
                 {tr("continue")}
               </Button>
-              <button type="button" onClick={() => go("recover")} className="mt-2 h-12 w-full text-[15px] text-muted underline underline-offset-4">
+              <button type="button" onClick={() => go("recover")} className="mt-2 h-12 w-full text-[15px] text-on-dark-muted underline underline-offset-4">
                 {tr("moveLink")}
               </button>
             </div>
@@ -368,16 +383,20 @@ export function Onboarding({ onDone }: { onDone: (setup: DeviceSetup) => void })
 
         {step === "ready" && setup && (
           <>
-            <div className="mt-[10vh]">
-              <img src="/icons/calculator-192.png" alt="" className="size-16 rounded-[18px]" />
-              <h1 className="mt-6 font-display text-h1 leading-[1.05]">{tr("readyTitle")}</h1>
-              <ol className="mt-6 flex flex-col gap-4 text-body">
-                <li className="border-t border-blush-line pt-4">{tr("readyPin")}</li>
-                <li className="border-t border-blush-line pt-4">{tr("readyTap")}</li>
-                <li className="border-t border-blush-line pt-4 text-muted">{tr("readyInstall")}</li>
-              </ol>
+            {/* The last thing she sees as Saakshi: what it will look like from now on, and how to get back in. */}
+            <div className="mt-[8vh] flex flex-col items-center text-center">
+              <img src="/icons/calculator-192.png" alt="" className="opening size-[76px] rounded-[22px] shadow-[0_20px_60px_-12px_rgb(214_36_110/0.45)] ring-1 ring-white/10" />
+              <h1 className="opening mt-8 font-display text-[44px] leading-[1.02] [animation-delay:0.15s]">{tr("readyTitle")}</h1>
             </div>
-            <Button className="mt-auto" onClick={() => onDone(setup)}>
+            <ol className="mt-9 flex flex-col text-body text-on-dark">
+              {(["readyPin", "readyTap", "readyInstall"] as const).map((k, i) => (
+                <li key={k} className={`opening flex gap-4 border-t border-white/12 py-4 ${k === "readyInstall" ? "text-on-dark-muted" : ""}`} style={{ animationDelay: `${0.3 + i * 0.12}s` }}>
+                  <span className="w-5 flex-none font-display text-[20px] leading-6 text-rani-bright">{digits(lang, i + 1)}</span>
+                  <span>{tr(k)}</span>
+                </li>
+              ))}
+            </ol>
+            <Button className="opening mt-auto [animation-delay:0.7s]" onClick={() => onDone(setup)}>
               {tr("openCalculator")}
             </Button>
           </>

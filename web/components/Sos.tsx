@@ -78,7 +78,7 @@ export function Sos({ lang, status, pending, countdown, guardianName, onUndo, on
   return (
     <main
       onPointerDown={wake}
-      className="relative mx-auto flex h-dvh max-w-[480px] flex-col overflow-hidden bg-plum-night pt-[max(env(safe-area-inset-top),16px)] text-[#e9dde3] select-none"
+      className="relative mx-auto flex h-(--app-h) max-w-[480px] flex-col overflow-hidden bg-plum-night pt-[max(env(safe-area-inset-top),16px)] text-[#e9dde3] select-none"
     >
       <div className="flex items-center justify-between px-7 pt-3.5">
         <span className="flex items-center gap-2.5 text-[13px] font-medium tracking-[0.18em] text-rani-bright">

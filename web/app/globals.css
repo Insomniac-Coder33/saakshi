@@ -182,3 +182,54 @@
   transition: height 0.35s var(--ease-calm), content-visibility 0.35s allow-discrete;
 }
 .faq[open]::details-content { height: auto; }
+
+/* The phone app's screens fill --app-h: the window on a phone. On a computer the app sits in a phone-sized
+   frame on a quiet graphite stage, so it reads as the phone app it is. The stage carries no Saakshi colour:
+   the same frame holds the calculator disguise. Paper (the certificate, the court packet) takes the whole
+   window again, and so does printing. */
+:root { --app-h: 100dvh; }
+@media (min-width: 640px) and (min-height: 640px) and (hover: hover) and (pointer: fine) {
+  .app-stage {
+    display: grid;
+    min-height: 100dvh;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgb(255 255 255 / 0.06), transparent 70%),
+      #0a090a;
+  }
+  .app-frame {
+    --app-h: min(880px, calc(100dvh - 48px));
+    position: relative;
+    width: 412px;
+    height: var(--app-h);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    border-radius: 52px;
+    background: var(--color-calc);
+    /* A thin bezel: glass edge, dark band, outer edge, then the shadow it casts. */
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.1),
+      0 0 0 11px #161416,
+      0 0 0 12px rgb(255 255 255 / 0.07),
+      0 50px 120px -30px rgb(0 0 0 / 0.9);
+    /* Anything positioned "fixed" inside stays inside the phone. */
+    transform: translateZ(0);
+  }
+  .app-frame::-webkit-scrollbar { display: none; }
+  html[data-paper] .app-stage { display: block; padding: 0; background: none; }
+  html[data-paper] .app-frame {
+    --app-h: 100dvh;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+  }
+}
+@media print {
+  .app-stage, .app-frame { display: block !important; padding: 0 !important; width: auto !important; height: auto !important; overflow: visible !important; box-shadow: none !important; transform: none !important; background: none !important; }
+}

@@ -25,18 +25,21 @@ export function Button({
   );
 }
 
-export function Screen({ children, tone = "white" }: { children: ReactNode; tone?: "white" | "blush" }) {
+const TONE = { white: "bg-white text-ink", blush: "bg-blush text-ink", night: "bg-plum-night text-white" };
+
+/** One screen of the phone app, as tall as the phone (--app-h). "night" is for the moments that open and close setup. */
+export function Screen({ children, tone = "white" }: { children: ReactNode; tone?: keyof typeof TONE }) {
   return (
     <main
-      className={`mx-auto flex min-h-dvh max-w-[480px] flex-col px-6 pb-[max(env(safe-area-inset-bottom),24px)] pt-[max(env(safe-area-inset-top),16px)] text-ink ${tone === "blush" ? "bg-blush" : "bg-white"}`}
+      className={`relative mx-auto flex min-h-(--app-h) max-w-[480px] flex-col overflow-x-clip px-6 pb-[max(env(safe-area-inset-bottom),24px)] pt-[max(env(safe-area-inset-top),16px)] ${TONE[tone]}`}
     >
       {children}
     </main>
   );
 }
 
-export function Wordmark({ className = "h-[22px]" }: { className?: string }) {
-  return <img src="/brand/wordmark-on-light.svg" alt="Saakshi" className={className} />;
+export function Wordmark({ className = "h-[22px]", dark = false }: { className?: string; dark?: boolean }) {
+  return <img src={`/brand/wordmark-on-${dark ? "dark" : "light"}.svg`} alt="Saakshi" className={className} />;
 }
 
 export function RoundButton({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {

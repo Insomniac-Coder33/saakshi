@@ -80,7 +80,7 @@ export function Calculator({ onPin, onTripleTap }: CalculatorProps) {
   const size = shown.length > 12 ? "text-[44px]" : shown.length > 9 ? "text-[60px]" : shown.length > 6 ? "text-[76px]" : "text-[96px]";
 
   return (
-    <main className="mx-auto flex h-dvh max-w-[480px] flex-col bg-calc text-white select-none">
+    <main className="mx-auto flex h-(--app-h) max-w-[480px] flex-col bg-calc text-white select-none">
       <div
         role="presentation"
         onPointerDown={onDisplayTap}

@@ -1,7 +1,9 @@
 // Keeps the calculator opening without a network. Pages are network-first with a cached fallback;
 // Next's hashed build assets are cache-first. Evidence never passes through here: pieces go to
 // IndexedDB and upload from the page.
-const CACHE = "calc-v2";
+const CACHE = "calc-v3";
+// Images the app shows that aren't in the page's HTML: setup draws them after it loads.
+const IMAGES = ["/brand/wordmark-on-light.svg", "/brand/wordmark-on-dark.svg", "/brand/mark.svg", "/brand/seal-pink.svg", "/icons/calculator-192.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(precache().then(() => self.skipWaiting()));
@@ -16,7 +18,7 @@ async function precache() {
   if (!page?.ok) return;
   const html = await page.clone().text();
   await cache.put("/", page);
-  const assets = new Set(html.match(/\/_next\/static\/[^"'\s)\\]+/g) ?? []);
+  const assets = new Set([...IMAGES, ...(html.match(/\/_next\/static\/[^"'\s)\\]+/g) ?? [])]);
   for (const css of [...assets].filter((a) => a.endsWith(".css"))) {
     const text = await fetch(css).then((r) => (r.ok ? r.text() : ""), () => "");
     for (const m of text.matchAll(/url\((\/_next\/static\/[^)"']+)\)/g)) assets.add(m[1]);

@@ -205,7 +205,7 @@ export function App() {
     [setup, startSos, stopCapture],
   );
 
-  if (phase === "loading") return <main className="h-dvh bg-calc" />;
+  if (phase === "loading") return <main className="h-(--app-h) bg-calc" />;
 
   if (phase === "onboarding" || !setup)
     return (
@@ -232,7 +232,7 @@ export function App() {
         onHoldStop={() => setPhase("calculator")}
       />
     ) : (
-      <main className="h-dvh bg-plum-night" />
+      <main className="h-(--app-h) bg-plum-night" />
     );
 
   if (phase === "vault" && privateKey)

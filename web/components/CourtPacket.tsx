@@ -11,7 +11,7 @@ import type { Language } from "@/lib/local";
 import { listPieces, type PieceInfo } from "@/lib/recordings";
 import type { SealedItem } from "@/lib/sahayak-client";
 import type { Tongue } from "@/lib/tongues";
-import { CertificatePaper, PAPER, type CertItem } from "./Certificate";
+import { CertificatePaper, PAPER, usePaper, type CertItem } from "./Certificate";
 import { BackIcon, Button, RoundButton } from "./ui";
 
 const KIND = { recording: "Recording", photo: "Photo", journal: "Journal entry" } as const;
@@ -52,6 +52,7 @@ export function CourtPacket({
 }) {
   const tr = (k: Parameters<typeof t>[1]) => t(lang, k);
   const [items, setItems] = useState<CertItem[] | null>(evidence.length ? null : []);
+  usePaper();
   const prepared = new Date().toLocaleString("en-IN", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Kolkata" });
 
   useEffect(() => {
