@@ -88,9 +88,9 @@ export function Guardians({ lang }: { lang: Language }) {
             <li key={g.id} className="border-b border-hairline py-4">
               <p className="text-body-sm leading-relaxed">{tr("guardianInvite")}</p>
               <p className="mt-2 break-all rounded-xl bg-blush px-3 py-2 font-mono text-caption">{inviteLink(g.token)}</p>
-              <div className="mt-3 flex gap-2.5">
+              <div className="mt-3 grid grid-cols-[1fr_auto] gap-2.5">
                 <Button onClick={() => void share(g)}>{copied === g.id ? tr("linkCopied") : tr("guardianShare")}</Button>
-                <Button variant="ghost" className="w-auto shrink-0" onClick={() => void attempt(() => removeGuardian(g.id))}>
+                <Button variant="ghost" onClick={() => void attempt(() => removeGuardian(g.id))}>
                   {tr("cancel")}
                 </Button>
               </div>
