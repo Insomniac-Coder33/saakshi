@@ -446,12 +446,12 @@ function Questions() {
       "No. Each piece is encrypted on her phone before it leaves, with a key only her PIN unlocks. Our servers hold scrambled data, fingerprints and a locked copy of her key. Nobody here can play a single second.",
     ],
     [
-      "What if he takes her phone?",
-      "He can stop the recording, not undo it. Every five seconds, what was recorded has already left the phone. Her guardians see her live location, and are told if the phone goes quiet.",
+      "What if someone takes her phone?",
+      "They can stop the recording, not undo it. Every five seconds, what was recorded has already left the phone. Her guardians see her live location, and are told if the phone goes quiet.",
     ],
     [
-      "What if he knows her PIN?",
-      "Then he can open the vault, as she can. That is why there is a second PIN: typed under pressure, it looks like everything stopped, while recording carries on and her guardians are told she may not be able to talk.",
+      "What if someone knows her PIN?",
+      "Then they can open the vault, as she can. That is why there is a second PIN: typed under pressure, it looks like everything stopped, while recording carries on and her guardians are told she may not be able to talk.",
     ],
     [
       "Does a seal prove what happened?",
