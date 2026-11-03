@@ -201,22 +201,22 @@ function Proof() {
         {/* What the Verify page says about its sample recording and the same file with one byte flipped, set in type. */}
         <div className="reveal mt-20 grid gap-5 md:grid-cols-2">
           <Result
-            name="recording-20261031-1246.webm"
-            hash="e8db1524 … 653bed5d"
+            name="recording-20261103-2045.webm"
+            hash="c2d9e85c … 4bee0453"
             verdict="Untampered"
             ok
             body={
               <>
-                Recorded 31 Oct 2026, 12:47:06 pm IST. All 7 pieces sealed on Polygon Amoy, each within 58 s of being recorded.{" "}
-                <a href={`${EXPLORER}/block/51608507`} target="_blank" rel="noreferrer" className="text-white underline underline-offset-2">
-                  Block 51608507
+                Recorded 3 Nov 2026, 8:45:55 pm IST. All 9 pieces sealed on Polygon Amoy, each within 69 s of being recorded.{" "}
+                <a href={`${EXPLORER}/block/51896446`} target="_blank" rel="noreferrer" className="text-white underline underline-offset-2">
+                  Block 51896446
                 </a>
               </>
             }
           />
           <Result
-            name="recording-20261031-1246.webm, byte 1,04,986 changed"
-            hash="96bb5911 … 9355e2f9"
+            name="recording-20261103-2045.webm, byte 8,70,558 changed"
+            hash="943ebfdd … 4f0d9772"
             verdict="No seal found"
             body="This file does not match any sealed fingerprint. If it is a copy of a file from Saakshi, it has been changed."
           />

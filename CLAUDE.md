@@ -29,4 +29,4 @@ In practice:
 - Secrets live in the git-ignored root `.env.local`. Never print or commit them.
 - Tests: `cd web && npm test`. Sahayak’s evaluation: `node eval/run.mjs <base-url>` against a running app.
 - Test sign-ups are anonymous Supabase users. List recent users before deleting any; real people use the live app.
-- Never delete user `db0a4559-5432-4a44-9d9f-39b54e41de57`. It holds the Verify page’s sample recording (`web/public/sample/`), which only checks as untampered while its seal records exist.
+- Never delete user `573c7030-2d5b-4cb3-881e-cca6f09dc1d1`. It holds the Verify page’s sample recording (`web/public/sample/`), which only checks as untampered while its seal records exist. Keep `db0a4559-5432-4a44-9d9f-39b54e41de57` too: it held the earlier sample.

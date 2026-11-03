@@ -60,10 +60,10 @@ interface Check {
   outcome: Outcome;
 }
 
-// A real recording from our tests, sealed on 31 Oct 2026, for anyone without a file of their own.
+// A real recording from our tests, sealed on 3 Nov 2026, for anyone without a file of their own.
 // Its account is kept on purpose: the check only passes while its seal records exist.
-const SAMPLE = "/sample/recording-20261031-1246.webm";
-const SAMPLE_NAME = "recording-20261031-1246.webm";
+const SAMPLE = "/sample/recording-20261103-2045.webm";
+const SAMPLE_NAME = "recording-20261103-2045.webm";
 
 const IST: Intl.DateTimeFormatOptions = { dateStyle: "medium", timeStyle: "medium", timeZone: "Asia/Kolkata" };
 const when = (d: Date) => `${d.toLocaleString("en-IN", IST)} IST`;
@@ -222,7 +222,7 @@ export function Verify() {
           <div id="sample" className="mt-8 scroll-mt-6 border-t border-hairline pt-6">
             <p className="text-[16px] font-medium">No file to hand?</p>
             <p className="mt-1.5 text-[14px] leading-[1.55] text-muted">
-              Check a sample recording from our tests, sealed on 31 Oct. Then change one byte of it and check again.
+              Check a sample recording from our tests, sealed on 3 Nov. Then change one byte of it and check again.
             </p>
             <div className="mt-4 flex flex-wrap gap-2.5">
               <button
