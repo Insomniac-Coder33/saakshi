@@ -17,6 +17,9 @@ import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
 import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
 import { TONGUES, type Tongue } from "@/lib/tongues";
 
+// The app’s own address, shown where the site explains why it’s so forgettable.
+const APP_HOST = new URL(APP_ORIGIN).host;
+
 export const metadata: Metadata = {
   title: "Saakshi · A witness that never looks away",
   description:
@@ -454,6 +457,10 @@ function Questions() {
       "Then they can open the vault, as she can. That is why there is a second PIN: typed under pressure, it looks like everything stopped, while recording carries on and her guardians are told she may not be able to talk.",
     ],
     [
+      "Why does the app have such a plain address?",
+      `So it gives nothing away. The app runs at ${APP_HOST}, and that is what her browser history, her phone’s app settings and any link she opens will show. Saakshi’s name lives only on this public site.`,
+    ],
+    [
       "Does a seal prove what happened?",
       "No. It proves the file hasn’t changed by a single byte since a moment fixed on Polygon. What the file shows is for the police and a court to weigh.",
     ],
@@ -536,6 +543,9 @@ function Install({ qr }: { qr: string }) {
             <Step n={2}>Choose ⋮ then “Add to Home screen”. It appears as “Calculator”.</Step>
             <Step n={3}>Open it and set your own PIN. Nothing on the phone says Saakshi.</Step>
           </ol>
+          <p className="mt-8 max-w-[34rem] text-[15px] leading-[1.6] text-on-dark-muted">
+            Even its address is plain: <span className="whitespace-nowrap text-white">{APP_HOST}</span>. It’s what her browser history shows, so it says nothing about Saakshi.
+          </p>
         </div>
         <div className="reveal mx-auto rounded-[28px] bg-white p-7 text-center text-ink">
           <div className="size-[200px] [&>svg]:size-full" role="img" aria-label="QR code to open Saakshi" dangerouslySetInnerHTML={{ __html: qr }} />
