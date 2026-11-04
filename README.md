@@ -6,7 +6,7 @@ Built solo by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Block
 
 | | |
 |---|---|
-| **Try it** | [web-alpha-orcin-85.vercel.app/?demo](https://web-alpha-orcin-85.vercel.app/?demo): a demo setup with PIN **1931** (then `=`) and duress PIN **0000**. Tap the calculator display three times to start an SOS. The app’s address is deliberately plain: it’s what an abuser would see in her browser history, so it says nothing about Saakshi. |
+| **Try it** | [web-alpha-orcin-85.vercel.app/?demo](https://web-alpha-orcin-85.vercel.app/?demo): a demo setup with PIN **1931** (then `=`) and duress PIN **0000**. Tap the calculator display three times to start an SOS. The app’s address is deliberately plain: if someone checks her phone, “Saakshi” in her browser history would tell them she’s collecting evidence, and could put her in more danger. |
 | **About it** | [saakshi.dev](https://saakshi.dev), with the app running live inside a phone |
 | **Verify a file** | [saakshi.dev/verify](https://saakshi.dev/verify) |
 | **Contract** | `EvidenceAnchor` on Polygon Amoy, [`0x39eA5AB65824af57297cE863CB54B1A84E3C4719`](https://amoy.polygonscan.com/address/0x39eA5AB65824af57297cE863CB54B1A84E3C4719). Source code [verified on Sourcify](https://repo.sourcify.dev/80002/0x39eA5AB65824af57297cE863CB54B1A84E3C4719) as an exact match. |
