@@ -3,7 +3,7 @@
 // never reveals what the app really is.
 import { NextResponse, type NextRequest } from "next/server";
 
-const SITE_HOSTS = (process.env.SITE_HOSTS ?? "saakshi-witness.vercel.app")
+const SITE_HOSTS = (process.env.SITE_HOSTS ?? "saakshi-witness.vercel.app,saakshi.dev,www.saakshi.dev")
   .split(",")
   .map((h) => h.trim().toLowerCase())
   .filter(Boolean);
