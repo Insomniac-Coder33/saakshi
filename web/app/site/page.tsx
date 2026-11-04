@@ -458,7 +458,7 @@ function Questions() {
     ],
     [
       "Why does the app have such a plain address?",
-      `Because her safety depends on it. If someone who controls her checks her phone and finds “Saakshi” in her browser history or app settings, they learn she is collecting evidence, and that can put her in more danger. So the app runs at ${APP_HOST}, an address that means nothing to anyone. Saakshi’s name lives only on this public site.`,
+      `If someone checks her phone, they find a calculator and a forgettable address, ${APP_HOST}. Nothing that says she’s collecting evidence against them. Finding “Saakshi” in her browser history could put her in more danger, so the name lives only on this public site.`,
     ],
     [
       "Does a seal prove what happened?",
@@ -544,7 +544,7 @@ function Install({ qr }: { qr: string }) {
             <Step n={3}>Open it and set your own PIN. Nothing on the phone says Saakshi.</Step>
           </ol>
           <p className="mt-8 max-w-[34rem] text-[15px] leading-[1.6] text-on-dark-muted">
-            Even its address is plain: <span className="whitespace-nowrap text-white">{APP_HOST}</span>. If someone checks her phone, “Saakshi” in her history would tell them she’s collecting evidence. This address tells them nothing.
+            If someone checks her phone, they find a calculator and a forgettable address: <span className="whitespace-nowrap text-white">{APP_HOST}</span>. Nothing that says she’s collecting evidence against them.
           </p>
         </div>
         <div className="reveal mx-auto rounded-[28px] bg-white p-7 text-center text-ink">
