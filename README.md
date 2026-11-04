@@ -7,8 +7,8 @@ Built solo by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Block
 | | |
 |---|---|
 | **Try it** | [web-alpha-orcin-85.vercel.app/?demo](https://web-alpha-orcin-85.vercel.app/?demo): a demo setup with PIN **1931** (then `=`) and duress PIN **0000**. Tap the calculator display three times to start an SOS. |
-| **About it** | [saakshi-witness.vercel.app](https://saakshi-witness.vercel.app), with the app running live inside a phone |
-| **Verify a file** | [saakshi-witness.vercel.app/verify](https://saakshi-witness.vercel.app/verify) |
+| **About it** | [saakshi.dev](https://saakshi.dev), with the app running live inside a phone |
+| **Verify a file** | [saakshi.dev/verify](https://saakshi.dev/verify) |
 | **Contract** | `EvidenceAnchor` on Polygon Amoy, [`0x39eA5AB65824af57297cE863CB54B1A84E3C4719`](https://amoy.polygonscan.com/address/0x39eA5AB65824af57297cE863CB54B1A84E3C4719). Source code [verified on Sourcify](https://repo.sourcify.dev/80002/0x39eA5AB65824af57297cE863CB54B1A84E3C4719) as an exact match. |
 
 ## What works today
@@ -26,7 +26,7 @@ Built solo by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Block
 ### Sealed and checkable
 - **Sealed on Polygon.** Each fingerprint is salted and gathered into a Merkle tree, and only the root goes on-chain, through `EvidenceAnchor` on Polygon Amoy (about 24,000 gas a root). A relayer pays, so she never needs a wallet. A database job seals every minute, even after her phone is gone.
 - **Public Verify page.** Anyone can drop a downloaded recording on it. It is hashed in the browser, split into its pieces, and every Merkle proof and transaction is checked on-chain from the browser. A recording’s proof screen shows a QR code that opens its result. Without a file of your own, the page checks a sealed sample recording, then the same file with one byte changed.
-- **Checking without us.** After a file checks out, the Verify page saves its proof receipt. The offline checker (`web/public/verify-offline.html`, served at [/verify-offline.html](https://saakshi-witness.vercel.app/verify-offline.html)) is one self-contained page: given the file and its receipt, it re-hashes the pieces, climbs each Merkle proof and reads each transaction from public Polygon servers. It never talks to Saakshi, and the contract address is fixed in the page, so a forged receipt fails.
+- **Checking without us.** After a file checks out, the Verify page saves its proof receipt. The offline checker (`web/public/verify-offline.html`, served at [/verify-offline.html](https://saakshi.dev/verify-offline.html)) is one self-contained page: given the file and its receipt, it re-hashes the pieces, climbs each Merkle proof and reads each transaction from public Polygon servers. It never talks to Saakshi, and the contract address is fixed in the page, so a forged receipt fails.
 - **Section 63 certificate.** One tap prints the certificate the Bharatiya Sakshya Adhiniyam requires for electronic evidence: fingerprint, times, block and the verify QR code.
 - **Court packet.** A complaint from Sahayak prints as one document: the complaint, the Section 63 certificate with a hash report for every sealed item it lists, and where to get free legal help.
 

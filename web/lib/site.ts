@@ -3,7 +3,7 @@ export const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN ?? "https://web-alp
 
 // Verify links and QR codes point at the public showcase address, so a link she shares with the
 // police never names the address her disguised app runs on.
-export const VERIFY_ORIGIN = process.env.NEXT_PUBLIC_VERIFY_ORIGIN ?? "https://saakshi-witness.vercel.app";
+export const VERIFY_ORIGIN = process.env.NEXT_PUBLIC_VERIFY_ORIGIN ?? "https://saakshi.dev";
 export const verifyUrlFor = (sha256: string) => `${VERIFY_ORIGIN}/verify?h=${sha256}`;
 
 // The live demo sets itself up with these, so judges skip onboarding. Real users never see them.

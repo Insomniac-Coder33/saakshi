@@ -14,4 +14,4 @@ jobs:
       - name: The database answers
         run: curl --fail --silent --show-error --retry 3 --retry-delay 20 --max-time 30 https://web-alpha-orcin-85.vercel.app/api/stats -o /dev/null
       - name: The showcase loads
-        run: curl --fail --silent --show-error --retry 3 --retry-delay 20 --max-time 30 https://saakshi-witness.vercel.app/ -o /dev/null
+        run: curl --fail --silent --show-error --retry 3 --retry-delay 20 --max-time 30 https://saakshi.dev/ -o /dev/null
