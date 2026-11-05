@@ -509,7 +509,7 @@ function Built() {
     { d: "30–31 Oct", t: "A sealed sample anyone can check on the Verify page. Moving to a new phone with her guardians’ approval. Sahayak reads its answers aloud." },
     { d: "1 Nov", t: "Sahayak in eight more Indian languages. The court packet: her complaint, dated from her journal, with the evidence certificate. An offline checker that never talks to Saakshi." },
     { d: "2 Nov", t: "Edge cases closed: an SOS cut off by a restart, browsers that can’t record, opening offline. The first Android build, disguised as a calculator." },
-    { d: "Next", t: "The Android app on real phones, so recording carries on with the screen locked.", planned: true },
+    { d: "3–4 Nov", t: "Tested live, end to end: a real SOS reached a guardian on Telegram, and every piece was sealed within 69 seconds. Sahayak passed 85 of 85 questions in 11 languages. The showcase moved to saakshi.dev." },
   ];
   return (
     <section className="border-t border-white/10">
@@ -518,10 +518,7 @@ function Built() {
         <ol className="mt-16">
           {days.map((x) => (
             <li key={x.d} className="reveal grid gap-2 border-t border-white/12 py-7 sm:grid-cols-[200px_1fr] sm:gap-10">
-              <p className={`font-display text-[34px] leading-none ${x.planned ? "text-rani-bright" : ""}`}>
-                {x.d}
-                {x.planned && <span className="ml-3 align-middle font-sans text-[13px] text-on-dark-muted">Planned</span>}
-              </p>
+              <p className="font-display text-[34px] leading-none">{x.d}</p>
               <p className="max-w-[40rem] text-[16px] leading-[1.6] text-on-dark">{x.t}</p>
             </li>
           ))}
