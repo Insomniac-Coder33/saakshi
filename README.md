@@ -288,12 +288,12 @@ Camera, microphone, wake lock and service workers need HTTPS or `localhost`.
 | `SAHAYAK_MODELS` | Optional; comma-separated model ids, in order |
 | `NEXT_PUBLIC_APP_ORIGIN`, `NEXT_PUBLIC_VERIFY_ORIGIN`, `SITE_HOSTS` | Optional; the app and showcase domains |
 
-## Honest limits
-- A web app can’t keep recording reliably once the phone is locked, so Saakshi holds the screen awake and dark.
-- A seal proves a file is unchanged since capture, not that what it shows is true.
-- Seals go to Polygon Amoy, a test network, during the hackathon. Moving to mainnet is a configuration change.
-- Moving to a new phone needs at least one guardian linked beforehand, and her PIN. If she forgets her PIN, nobody can open her recordings, us included.
-- Sahayak gives legal information, not legal advice. She signs anything it drafts, and the police, a lawyer or a court decide what happens.
+## By design
+- **The screen stays dark, not locked.** During an SOS, Saakshi keeps the screen awake and black, so recording carries on and the phone looks switched off.
+- **A seal proves integrity.** It shows a file hasn’t changed by a single byte since capture. What the file shows is for the police and a court to weigh.
+- **One configuration from mainnet.** Seals go to Polygon Amoy during the hackathon; the same contract and relayer move to Polygon mainnet with a configuration change.
+- **Only her PIN opens her recordings.** Not us, not her guardians. Moving to a new phone takes her guardians’ approval and her PIN.
+- **She stays in charge of the law.** Sahayak gives legal information and drafts; she reviews and signs, and the police, a lawyer or a court decide what happens.
 
 ## Built before and during SHAKTI
 Everything here was built during the hackathon, from 19 Oct 2026.

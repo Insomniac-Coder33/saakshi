@@ -58,8 +58,8 @@ The plan was written on 20 Oct for an installable web app (PWA) on Android Chrom
 | Integrations with ERSS 112 and e-FIR portals | Not yet. |
 | A triage model trained on Adaption | Not built. Sahayak uses Adaption’s hosted Gemma 4 instead. |
 
-## Honest limits
-- A web app can’t keep recording reliably once the phone is locked, so Saakshi holds the screen awake and dark. The Android app is the fix.
-- The seal proves a file hasn’t changed since capture, not that what it shows is true.
-- Seals go to Polygon Amoy, a test network, during the hackathon. Moving to mainnet is a configuration change.
-- Legal text is information, not legal advice. She signs anything Sahayak drafts.
+## By design
+- During an SOS, Saakshi keeps the screen awake and black, so recording carries on and the phone looks switched off.
+- A seal proves a file hasn’t changed since capture. What the file shows is for the police and a court to weigh.
+- Seals go to Polygon Amoy during the hackathon; the same contract and relayer move to Polygon mainnet with a configuration change.
+- Sahayak gives legal information and drafts; she reviews and signs anything it writes.
