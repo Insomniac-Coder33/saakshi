@@ -97,7 +97,7 @@ export function CourtPacket({
 
         <section className="mt-10 border-t border-hairline pt-8">
           <p className="text-[11px] uppercase tracking-[0.16em] text-muted">1 · Complaint</p>
-          <div lang={letterLang} className="mt-4 whitespace-pre-wrap text-[14px] leading-[1.75]">
+          <div lang={letterLang} className="mt-4 whitespace-pre-wrap text-[14px] leading-[1.75] [overflow-wrap:anywhere]">
             {letter}
           </div>
         </section>
