@@ -1,6 +1,6 @@
 # Saakshi: notes for Claude
 
-Saakshi is a women’s-safety PWA disguised as a calculator, built for the SHAKTI Hackathon. `README.md` says what it does; `BUILD_PLAN.md` maps every pitch-deck promise to its code.
+Saakshi is a women’s-safety PWA disguised as a calculator, built for the SHAKTI Hackathon. `README.md` says what it does; `BUILD_PLAN.md` maps every Round 1 promise to what shipped.
 
 ## Design brief
 The brand lives in `brand/`. Its rules win over general design advice, including any design skill. App screens match `brand/screens.html`, the UI kit.

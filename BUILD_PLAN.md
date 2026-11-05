@@ -1,57 +1,65 @@
-# Saakshi: build plan for the coding round
+# Saakshi: what Round 1 promised, and what shipped
 
-Every promise in the Round 1 deck, and how it gets built. The coding window runs from 21 Oct (after the Round 1 noon deadline) to the evening of 24 Oct; the Round 2 video closes at 25 Oct 00:01 IST.
+Every promise in the Round 1 deck (`round1/Saakshi_Round1_Appvengers.pdf`), how it was built, and where to find it. Where the approach changed during the build, the row says what changed and why.
 
-**Target:** an installable web app (PWA) on **Android Chrome**. iOS is best-effort.
+**Shipped:** built and live at [web-alpha-orcin-85.vercel.app](https://web-alpha-orcin-85.vercel.app/?demo). **Changed:** the promise holds, by a different route than the deck planned. **Started:** begun, not finished.
 
-**Design target:** `brand/screens.html` (UI kit) plus `brand/theme.css` (Tailwind v4 tokens). Slides 7, 11 and 12 of the deck show renders of these exact screens, so the app must match them:
-- calculator disguise (`brand/icons/calculator-*` in the manifest)
-- silent SOS (plum, "9 saved · 6 sealed", Hold to stop)
-- guardian alert with a time-limited live location
-- proof screen with the Verify QR and a Section 63 download
-- Bengali agent chat with citation chips
-- desktop Verify page that hashes the file in the browser
+The plan was written on 20 Oct for an installable web app (PWA) on Android Chrome. The build ran from 19 Oct to 4 Nov 2026.
 
-## Deck claim → implementation
-| Deck claim | How we build it | Day |
-|---|---|---|
-| Looks like a working calculator; her PIN and `=` opens Saakshi | Calculator UI is the PWA home screen; manifest name and icon say "Calculator" | 21 |
-| Duress PIN looks like cancel, silently escalates | A second PIN shows the normal "cancelled" screen but flags the session as duress and keeps alerting | 21 |
-| Silent SOS: three taps on the display, screen goes dark | Triple-tap handler; black UI plus Screen Wake Lock API keep recording alive | 21 |
-| Audio, video and location in encrypted 5-second pieces | `MediaRecorder` with a 5 s timeslice + `watchPosition`; each piece encrypted with AES-GCM (Web Crypto) and uploaded straight away | 21 |
-| If the phone is snatched, everything up to then is safe | Upload each piece as soon as it's recorded; at most the last 5 s is lost | 21 |
-| SHA-256 fingerprint on her phone | `crypto.subtle.digest` on the plaintext piece, before encryption | 21 |
-| Sealed on Polygon; one salted fingerprint per batch | `EvidenceAnchor.sol` (Hardhat) on **Polygon Amoy**; leaf = H(salt‖hash); a Merkle root is anchored at a session's first piece, then every ~30 s | 22 |
-| Gasless, she never needs a wallet | Server-side relayer wallet signs with ethers.js; keys stay in Vercel environment variables | 22 |
-| Public Verify page | Drop a file → hash it in the browser → look up its salt and Merkle proof → check the root on-chain | 22 |
-| QR code any officer can verify | QR links to the Verify result for that recording (hash and timestamp only, no content) | 22 |
-| Her trusted contact gets an alert with her live location | Web Push (VAPID) to the guardian's installed Saakshi; time-limited live-location page (Leaflet + OpenStreetMap) | 22 |
-| Consent first: sharing is time-limited and visible | Sharing only during an SOS or for a chosen duration; a visible banner on her screen | 22 |
-| AI agent explains which laws apply, with citations | Claude API with tool-calling; a curated corpus of BNS / BNSS / BSA / DV Act / POSH / IT Act provisions is loaded into context; citations are checked against the corpus before display | 23 |
-| Speak or type in Bengali, Hindi or English | Web Speech API (`bn-IN`, `hi-IN`, `en-IN`) for voice input; Claude replies in her language | 23 |
-| Drafts the complaint, Zero FIR request and Section 63 certificate | Claude drafts the text; `pdf-lib` fills a Section 63 Part A draft with hash values; she reviews and signs | 23 |
-| Routing to 112, 181, NCW, One Stop Centre, cybercrime.gov.in, NALSA 15100 | Static, verified links and `tel:` links; no "nearest centre" claims | 23 |
-| Hidden journal (Mitali) and screenshot vault (Ananya) | Same seal pipeline for text entries and image uploads | 23 |
-| Draft takedown request the same night | Claude drafts the request for the platform's grievance officer; she sends it herself | 23 |
-| Under 18 → POCSO help and Childline 1098 | An age question at onboarding changes routing | 23 |
-| Works offline: queues and syncs later | IndexedDB queue + retry on the `online` event and Background Sync | 24 |
-| Ten seconds to undo; calling 112 is her choice | Cancel countdown; the app never contacts police on its own | 21 |
-| Encrypted before it leaves her phone; erasure built in | Key derived from her vault PIN (PBKDF2); delete removes the ciphertext and the wrapped key | 21–23 |
-| Row-level security and audit log | Supabase RLS policies + an `audit_log` table written by the API | 21–22 |
+## The disguise and the SOS
+| Deck promise | Status | How it was built | Where |
+|---|---|---|---|
+| Looks like a working calculator; her PIN and `=` opens Saakshi | Shipped | A full calculator is the home screen. The manifest, page title, icon, storage names and service worker cache all say “Calculator”. | `web/components/Calculator.tsx`, `web/lib/calc.ts` |
+| Silent SOS: three taps on the display, screen goes dark | Shipped | Triple tap starts it; the plum screen turns black after 8 seconds; a Screen Wake Lock keeps recording alive. | `web/components/Calculator.tsx`, `web/components/Sos.tsx`, `web/lib/capture.ts` |
+| Audio, video and location in encrypted 5-second pieces | Shipped | `MediaRecorder` with a 5-second timeslice, plus `watchPosition`. If the camera is taken away mid-SOS, recording restarts as a new segment, falling back to microphone only. | `web/lib/capture.ts` |
+| If the phone is snatched, everything up to then is safe | Shipped | Each piece is uploaded the moment it is recorded, so at most the last 5 seconds are lost. | `web/lib/sync.ts` |
+| Duress PIN looks like cancel, silently escalates | Shipped | A second PIN shows the calculator as if the SOS stopped; recording carries on, the session is flagged and guardians are told at once. | `web/components/Sos.tsx`, `web/lib/alerts.ts` |
+| Ten seconds to undo; calling 112 is her choice | Shipped | Undo erases every trace on the phone and the server. The app never contacts the police; guardians are told to call 112 if they think she is in danger. | `web/lib/telegram.ts` |
+| Works offline: queues and syncs later | Shipped | Encrypted pieces wait in an IndexedDB outbox and upload when the `online` event fires or on the next retry. Background Sync was not needed. | `web/lib/sync.ts` |
 
-## Deliberately *not* in the MVP (roadmap slide only)
-- Power-button or volume-button trigger, and SMS fallback: these need a native Android app.
-- Key recovery through trusted contacts (Shamir secret sharing).
-- Integrations with ERSS 112 and e-FIR portals.
-- A triage model trained on Adaption: a stretch goal, mentioned only in the speaker notes.
+## Encryption and the seal
+| Deck promise | Status | How it was built | Where |
+|---|---|---|---|
+| SHA-256 fingerprint on her phone | Shipped | `crypto.subtle.digest` on each plain piece, before encryption. | `web/lib/crypto.ts` |
+| Encrypted before it leaves her phone | Shipped | An ECDH P-256 key pair per woman; the private key is wrapped by her PIN (PBKDF2, 150,000 rounds); each session’s AES-GCM key comes from ECDH and HKDF. The server holds only ciphertext. | `web/lib/crypto.ts`, `web/lib/crypto.test.ts` |
+| Sealed on Polygon; one salted fingerprint per leaf | Changed | Leaf = SHA-256(salt ‖ fingerprint), gathered into a Merkle tree; only the root goes on-chain through `EvidenceAnchor` on Polygon Amoy. **Changed:** the deck planned a root every ~30 seconds from the app; a database job (pg_cron) now seals every minute, so sealing carries on even after her phone is gone. Pieces are sealed within about a minute of capture. | `contracts/EvidenceAnchor.sol`, `web/app/api/seal/route.ts`, `supabase/migrations/0006_seal_cron.sql` |
+| Contract built and deployed | Changed | **Changed:** compiled and deployed with solc-js and ethers instead of Hardhat, which kept the toolchain small. The source is verified on Sourcify as an exact match. | `contracts/`, [Sourcify](https://repo.sourcify.dev/80002/0x39eA5AB65824af57297cE863CB54B1A84E3C4719) |
+| Gasless: she never needs a wallet | Shipped | A server relayer wallet signs every seal with ethers.js; its key lives only in Vercel’s environment. | `web/app/api/seal/route.ts` |
+| Public Verify page | Shipped | Drop a file: it is hashed in the browser, split into its pieces, and every Merkle proof and root is checked on-chain from the browser. A sealed sample shows Untampered, then No seal found with one byte changed. | `web/components/Verify.tsx`, [saakshi.dev/verify](https://saakshi.dev/verify) |
+| QR code any officer can verify | Shipped | Each recording’s proof screen shows a QR code that opens its Verify result: fingerprint and times only, never the content. | `web/components/Proof.tsx` |
+| Row-level security and audit log | Shipped | Supabase row-level security on every table, and an `audit_log` written by database triggers. | `supabase/migrations/0001_core.sql` |
+| Erasure built in | Shipped | Delete one recording or everything; erasing removes the ciphertext, fingerprints and wrapped key, and leaves only an anonymous audit entry. | `web/app/api/erase/route.ts` |
+| Not in the deck: checking without Saakshi | Shipped | An offline checker, one self-contained page, checks a file and its proof receipt against Polygon without ever talking to Saakshi. | `web/public/verify-offline.html` |
 
-## You need to set up before 21 Oct
-1. **Accounts:** GitHub (public repo), Vercel, Supabase (free tier).
-2. **Anthropic API key**, with a few dollars of credit.
-3. **Test wallet with Polygon Amoy POL from a faucet.** Faucets can rate-limit or ask for verification, so do this *first*. If no faucet works, tell me and we'll switch chains *and* update the deck wording.
-4. **Two Android phones** with Chrome (Ria and Payel) for the demo video.
+## Guardians
+| Deck promise | Status | How it was built | Where |
+|---|---|---|---|
+| Her trusted contact gets an alert with her live location | Changed | **Changed:** the plan was Web Push to a guardian’s installed app with a Leaflet map. Guardians now link through a Telegram bot instead, with nothing to install: they get the SOS after the 10-second undo, a Telegram live location that follows her, and a warning if her phone goes quiet. | `web/lib/alerts.ts`, `web/app/api/telegram/route.ts` |
+| Consent first: sharing is time-limited and visible | Shipped | Her location is shared only during an SOS, as a Telegram live location that ends with it (at most 8 hours). Her screen shows that guardians are being alerted. Her location passes through the server and is never stored. | `web/lib/alerts.ts` |
+| Roadmap: key recovery through trusted contacts | Changed | **Changed:** instead of Shamir secret sharing, guardians approve moving Saakshi to a new phone (two approvals, or her only guardian’s). Her PIN still opens the recordings; guardians can never open anything. | `web/lib/recovery.ts`, `web/app/api/recover/` |
 
-## Known limits we state honestly
-- A web app can't keep recording reliably once the phone is locked, so Saakshi holds a wake lock with a black screen.
-- The seal proves a file hasn't changed since capture, not that what it shows is true.
-- Legal text is information, not legal advice.
+## Sahayak, the legal helper
+| Deck promise | Status | How it was built | Where |
+|---|---|---|---|
+| AI agent explains which laws apply, with citations | Changed | **Changed:** the plan was the Claude API. Sahayak runs on Gemma 4 31B through Adaption, SHAKTI’s technology partner, with Sarvam-105B and Gemini behind it. Answers must fit a JSON schema that accepts only ids from a checked list of 27 sections and 8 helplines; the law cards show our text, never the model’s. Tested on 85 questions in 11 languages. | `web/lib/sahayak.ts`, `web/lib/law.ts`, `eval/` |
+| Speak or type in Bengali, Hindi or English | Shipped, and more | Voice input through the browser’s speech recognition; answers in any of 11 Indian languages, read aloud by Sarvam’s Bulbul voice. | `web/components/Sahayak.tsx`, `web/lib/speech.ts` |
+| Drafts the complaint, Zero FIR request and Section 63 certificate | Changed | Sahayak drafts an FIR request (Zero FIR), a Protection Officer application, a POSH complaint, a platform takedown and the text for cybercrime.gov.in, dated from her journal if she chooses. **Changed:** the Section 63 certificate is filled in from the seal records and printed from the page (or saved as PDF) instead of with `pdf-lib`. The court packet prints the complaint, the certificate and free legal help as one document. | `web/components/Certificate.tsx`, `web/components/CourtPacket.tsx` |
+| Draft takedown request the same night | Shipped | A request to the platform’s grievance officer under Rule 3(2)(b) of the IT Rules, 2021. She sends it herself. | `web/lib/sahayak.ts` |
+| Routing to 112, 181, NCW, One Stop Centre, cybercrime.gov.in, NALSA 15100 | Shipped | Fixed, checked numbers and links: 112, 181 (One Stop Centres), 1930, cybercrime.gov.in, NCW, 15100, 1098 and Tele-MANAS 14416. No “nearest centre” claims. | `web/lib/law.ts` |
+| Under 18 → POCSO help and Childline 1098 | Shipped | An age question at setup. If she is under 18, Sahayak always includes POCSO and Childline 1098 and suggests telling a trusted adult. | `web/components/Onboarding.tsx`, `web/lib/sahayak.ts` |
+| Hidden journal (Mitali) and screenshot vault (Ananya) | Shipped | Dated journal entries and photos, encrypted and sealed like recordings. | `web/components/Evidence.tsx` |
+
+## The deck’s roadmap
+| Roadmap item | Status |
+|---|---|
+| Power-button or volume-button trigger, SMS fallback | Not yet. These need the native Android app. |
+| A native Android app | Started. `mobile/` is a Capacitor shell named and iconed as Calculator, with a foreground service that keeps recording with the screen locked. It is not yet proven on a real phone. |
+| Key recovery through trusted contacts | Changed and shipped, as above. |
+| Integrations with ERSS 112 and e-FIR portals | Not yet. |
+| A triage model trained on Adaption | Not built. Sahayak uses Adaption’s hosted Gemma 4 instead. |
+
+## Honest limits
+- A web app can’t keep recording reliably once the phone is locked, so Saakshi holds the screen awake and dark. The Android app is the fix.
+- The seal proves a file hasn’t changed since capture, not that what it shows is true.
+- Seals go to Polygon Amoy, a test network, during the hackathon. Moving to mainnet is a configuration change.
+- Legal text is information, not legal advice. She signs anything Sahayak drafts.

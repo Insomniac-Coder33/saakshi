@@ -266,7 +266,8 @@ Run it against a running app with `node eval/run.mjs <base-url> [langs]`.
 | `brand/` | Design system and UI kit (`screens.html`) that the app matches |
 | `docs/readme/` | The screenshots on this page, taken from the live app |
 | `round1/` | Round 1 pitch deck |
-| `BUILD_PLAN.md` | Every deck claim mapped to its implementation |
+| `BUILD_PLAN.md` | Every Round 1 promise, what shipped and what changed |
+| `mobile/` | The Android app (Capacitor), named Calculator; not yet proven on a phone |
 
 ## Running it
 1. Put the values below in `.env.local` at the repo root (`SETUP.md` shows where to find the Supabase ones).
