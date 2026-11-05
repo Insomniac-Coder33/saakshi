@@ -575,7 +575,7 @@ function Footer() {
             <span className="text-white">Saakshi</span> · <span lang="hi">साक्षी</span> · <span lang="bn">সাক্ষী</span>: witness.
           </p>
         </div>
-        <p>Built solo by Team Appvengers for the SHAKTI Hackathon 2026.</p>
+        <p>Built by Team Appvengers for the SHAKTI Hackathon 2026.</p>
       </div>
     </footer>
   );

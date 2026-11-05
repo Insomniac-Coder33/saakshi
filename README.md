@@ -29,7 +29,7 @@
 
 *Saakshi* means witness. It is a web app (PWA) that looks and works like an ordinary calculator. Behind it, a woman can start a silent SOS that records audio, video and location in encrypted 5-second pieces, fingerprints each piece on her phone, and seals the fingerprints on Polygon, so the evidence survives even if the phone is taken and anyone can check it hasn’t been changed.
 
-Built solo by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Blockchain track, “Dharma & Trust”).
+Built by team **Appvengers** for the SHAKTI Hackathon (Women Safety / Blockchain track, “Dharma & Trust”).
 
 | | |
 |---|---|
