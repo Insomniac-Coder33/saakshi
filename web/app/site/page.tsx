@@ -14,7 +14,7 @@ import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { Story } from "@/components/site/Story";
 import { Bead, Key } from "@/components/site/TrySteps";
 import { ANCHOR_ADDRESS, EXPLORER, SOURCE_URL } from "@/lib/chain";
-import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN } from "@/lib/site";
+import { APP_ORIGIN, DEMO_DURESS_PIN, DEMO_PIN, VERIFY_ORIGIN } from "@/lib/site";
 import { TONGUES, type Tongue } from "@/lib/tongues";
 
 // The app’s own address, shown where the site explains why it’s so forgettable.
@@ -25,6 +25,18 @@ export const metadata: Metadata = {
   description:
     "Saakshi hides inside a calculator. It silently records, encrypts every five seconds on her phone, and seals the evidence on Polygon so anyone can verify it.",
   robots: { index: true, follow: true },
+  // The card a shared link shows. Only this page carries it; the app's address stays a calculator.
+  metadataBase: new URL(VERIFY_ORIGIN),
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Saakshi",
+    title: "Saakshi · A witness that never looks away",
+    description: "A calculator on her phone that silently records, encrypts every five seconds and seals the evidence on Polygon, so anyone can check it.",
+    images: [{ url: "/site/og.jpg", width: 1200, height: 630, alt: "Saakshi: What happened has a witness." }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default async function Site() {
